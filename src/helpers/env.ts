@@ -8,6 +8,10 @@ const schema = z.object({
   TOKEN: z.string().min(1),
   MONGO_URI: z.string().url().default("mongodb://localhost:27017/spolka-bot"),
   DISCORD_CLIENT_ID: z.string().min(1),
+  ENVIRONMENT: z
+    .enum(["development", "production", "test"])
+    .default("production"),
+  DEV_GUILD_ID: z.string().min(1).optional(),
 });
 
 const env = schema.parse(process.env);

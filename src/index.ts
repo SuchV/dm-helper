@@ -1,17 +1,39 @@
-import { Client, GatewayIntentBits, Interaction } from "discord.js";
+import {
+  ActivityType,
+  Client,
+  GatewayIntentBits,
+  Interaction,
+} from "discord.js";
 import env from "./helpers/env";
 import path from "path";
 import fs from "fs";
 import { connectToDatabase } from "./db";
+import { parse } from "date-fns";
+import cron from "node-cron";
+
+import { presenceOptions } from "./helpers/presence";
 
 const client = new Client({
   intents: ["Guilds", "GuildMessages", "DirectMessages"],
 });
 
 import "./deploy-commands";
+import { birthdateSchema } from "./validators/birthdate";
+import { birthdayMentionCronJob } from "./helpers/birthday-mention";
 
 client.once("ready", async () => {
   console.log("Discord bot is ready! 🤖");
+
+  client.user?.setActivity({
+    name: presenceOptions[Math.floor(Math.random() * presenceOptions.length)],
+    type: ActivityType.Custom,
+  });
+
+  //0 */3 * * *
+
+  cron.schedule("* * * * *", async () => {
+    await birthdayMentionCronJob(client);
+  });
 });
 
 client.on("interactionCreate", async (interaction: Interaction) => {

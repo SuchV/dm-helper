@@ -1,21 +1,69 @@
-import { REST, Routes, SlashCommandBuilder } from "discord.js";
+import { REST, Routes } from "discord.js";
 import env from "./helpers/env";
 import fs from "node:fs";
 import path from "node:path";
 
-const commands: SlashCommandBuilder[] = [];
+// Change the type to match what you're actually storing
+const commands: any[] = [];
 const commandsPath = path.join(__dirname, "commands");
-const commandFiles = fs
-  .readdirSync(commandsPath)
-  .filter((file) => file.endsWith(".ts") || file.endsWith(".js"));
 
-for (const file of commandFiles) {
-  const filePath = path.join(commandsPath, file);
-  const command = require(filePath);
-  if ("data" in command) {
-    commands.push(command.data.toJSON());
+// Load commands only from the main directory, not subdirectories
+function loadCommandsFromMainDirectory(dirPath: string) {
+  const items = fs.readdirSync(dirPath, { withFileTypes: true });
+
+  for (const item of items) {
+    // Skip subdirectories - only process files in the main directory
+    if (item.isDirectory()) {
+      continue; // Skip directories completely
+    }
+
+    const itemPath = path.join(dirPath, item.name);
+
+    if (
+      (item.name.endsWith(".ts") || item.name.endsWith(".js")) &&
+      !item.name.endsWith(".d.ts")
+    ) {
+      try {
+        // Import the command file
+        const commandModule = require(itemPath);
+
+        // Handle files that export a 'commands' array
+        if (
+          "commands" in commandModule &&
+          Array.isArray(commandModule.commands)
+        ) {
+          for (const commandFile of commandModule.commands) {
+            if ("data" in commandFile) {
+              console.log(
+                `Loading command from ${item.name}: ${
+                  commandFile.data.name || "[unnamed]"
+                }`
+              );
+              commands.push(commandFile.data.toJSON());
+            }
+          }
+        }
+        // Handle files that directly export a command with 'data'
+        else if ("data" in commandModule) {
+          console.log(
+            `Loading command from ${item.name}: ${
+              commandModule.data.name || "[unnamed]"
+            }`
+          );
+          commands.push(commandModule.data.toJSON());
+        }
+      } catch (error) {
+        console.error(`Error loading command from ${itemPath}:`, error);
+      }
+    }
   }
 }
+
+// Start the loading process (non-recursive)
+loadCommandsFromMainDirectory(commandsPath);
+
+// Log the total number of commands found
+console.log(`Found ${commands.length} commands to register`);
 
 const rest = new REST().setToken(env.TOKEN);
 
@@ -23,12 +71,44 @@ const rest = new REST().setToken(env.TOKEN);
   try {
     console.log("🔁 Refreshing application (/) commands...");
 
-    await rest.put(Routes.applicationCommands(env.DISCORD_CLIENT_ID), {
-      body: commands,
-    });
+    if (commands.length === 0) {
+      console.warn("⚠️ No commands found to register!");
+      return;
+    }
 
-    console.log("✅ Successfully reloaded application (/) commands.");
+    let result;
+
+    if (env.DEV_GUILD_ID) {
+      const GUILD_ID = env.DEV_GUILD_ID;
+      console.log(`⚙️ Registering commands to guild: ${GUILD_ID}`);
+
+      result = await rest.put(
+        Routes.applicationGuildCommands(env.DISCORD_CLIENT_ID, GUILD_ID),
+        { body: commands }
+      );
+    } else {
+      // Register globally
+      console.log("🌍 Registering global commands...");
+
+      result = await rest.put(
+        Routes.applicationCommands(env.DISCORD_CLIENT_ID),
+        { body: commands }
+      );
+    }
+
+    // const result = await rest.put(
+    //   Routes.applicationCommands(env.DISCORD_CLIENT_ID),
+    //   {
+    //     body: commands,
+    //   }
+    // );
+
+    console.log(
+      `✅ Successfully reloaded ${
+        Array.isArray(result) ? result.length : 0
+      } application (/) commands.`
+    );
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error refreshing commands:", error);
   }
 })();

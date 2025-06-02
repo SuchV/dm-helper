@@ -1,0 +1,39 @@
+{
+  "name": "spolka-bot-ts",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsup src/index.ts --minify",
+    "clear-db": "ts-node src/scripts/clear-db.ts",
+    "seed-db": "ts-node src/scripts/seed-db.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@spolka-z-l-o/db": "workspace:*",
+    "@spolka-z-l-o/env": "workspace:*",
+    "date-fns": "^4.1.0",
+    "discord.js": "^14.19.3",
+    "dotenv": "^16.5.0",
+    "mongoose": "^8.15.0",
+    "node-cron": "^4.0.6",
+    "zod": "^3.25.29"
+  },
+  "devDependencies": {
+    "@spolka-z-l-o/eslint-config": "workspace:*",
+    "@spolka-z-l-o/prettier-config": "workspace:*",
+    "@spolka-z-l-o/tailwind-config": "workspace:*",
+    "@spolka-z-l-o/tsconfig": "workspace:*",
+    "@types/node": "^22.15.21",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.5.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}

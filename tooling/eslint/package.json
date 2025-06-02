@@ -1,0 +1,36 @@
+{
+  "name": "@spolka-z-l-o/eslint-config",
+  "version": "0.3.0",
+  "private": true,
+  "license": "SEE LICENSE IN LICENSE",
+  "type": "module",
+  "exports": {
+    "./base": "./base.js",
+    "./nextjs": "./nextjs.js",
+    "./react": "./react.js",
+    "./types": "./types.ts"
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo node_modules",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@eslint/compat": "^1.1.1",
+    "@next/eslint-plugin-next": "^14.2.5",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.9.0",
+    "eslint-plugin-react": "^7.35.0",
+    "eslint-plugin-react-hooks": "rc",
+    "eslint-plugin-turbo": "^2.1.1",
+    "typescript-eslint": "^8.3.0"
+  },
+  "devDependencies": {
+    "@spolka-z-l-o/prettier-config": "workspace:*",
+    "@spolka-z-l-o/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@spolka-z-l-o/prettier-config"
+}

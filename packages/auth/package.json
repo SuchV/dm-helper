@@ -1,0 +1,43 @@
+{
+  "name": "@spolka-z-l-o/auth",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "browser": {
+    "child_process": false
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "types": "./dist/src/*.d.ts",
+      "default": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ]
+    }
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@next-auth/prisma-adapter": "^1.0.7",
+    "@spolka-z-l-o/db": "workspace:*",
+    "@spolka-z-l-o/env": "workspace:*",
+    "next-auth": "beta"
+  },
+  "devDependencies": {
+    "@spolka-z-l-o/eslint-config": "workspace:*",
+    "@spolka-z-l-o/prettier-config": "workspace:*",
+    "@spolka-z-l-o/tsconfig": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore --ignore-path ./.prettierignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "prettier": "@spolka-z-l-o/prettier-config"
+}

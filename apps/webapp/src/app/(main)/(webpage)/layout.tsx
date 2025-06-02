@@ -1,0 +1,37 @@
+import "server-only";
+
+import type { ReactNode } from "react";
+
+import {
+  BasicPage,
+  BasicPageContent,
+  BasicPageFooter,
+  BasicPageHeader,
+} from "@spolka-z-l-o/ui/recipes/basic-page";
+import { Logo } from "@spolka-z-l-o/ui/recipes/logo";
+import { ThemeToggle } from "@spolka-z-l-o/ui/theme";
+
+import { Footer } from "./footer";
+import { Navigation } from "./nav";
+
+const Layout = ({ children }: { children: ReactNode }) => {
+  return (
+    <BasicPage>
+      <BasicPageHeader>
+        <div className="flex-1">
+          <Logo />
+        </div>
+        <Navigation />
+        <div className="flex flex-1 items-center justify-end gap-2">
+          <ThemeToggle />
+        </div>
+      </BasicPageHeader>
+      <BasicPageContent>{children}</BasicPageContent>
+      <BasicPageFooter>
+        <Footer />
+      </BasicPageFooter>
+    </BasicPage>
+  );
+};
+
+export default Layout;

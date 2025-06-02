@@ -1,0 +1,52 @@
+{
+  "name": "@spolka-z-l-o/env",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "dependencies": {
+    "@t3-oss/env-nextjs": "^0.12.0",
+    "dotenv": "^16.5.0",
+    "dotenv-mono": "^1.3.14",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@spolka-z-l-o/eslint-config": "workspace:*",
+    "@spolka-z-l-o/prettier-config": "workspace:*",
+    "@spolka-z-l-o/tsconfig": "workspace:*",
+    "@types/node": "^22.15.21",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "prettier": "@spolka-z-l-o/prettier-config",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "types": "./dist/src/*.d.ts",
+      "default": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ]
+    },
+    "./next-env": {
+      "types": "./dist/src/next-env.d.ts",
+      "default": "./src/next-env.ts"
+    },
+    "./bot-env": {
+      "types": "./dist/src/bot-env.d.ts",
+      "default": "./src/bot-env.ts"
+    }
+  }
+}

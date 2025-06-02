@@ -1,0 +1,82 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "globalDependencies": ["**/.env"],
+  "ui": "tui",
+  "tasks": {
+    "topo": {
+      "dependsOn": ["^topo"]
+    },
+    "migrate": {
+      "cache": false
+    },
+    "build": {
+      "dependsOn": ["migrate", "^build"],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "next-env.d.ts",
+        ".output/**",
+        ".vercel/output/**",
+        ".cache/tsbuildinfo.json",
+        "dist/**"
+      ]
+    },
+    "dev": {
+      "cache": false
+    },
+    "format": {
+      "outputs": [".cache/.prettiercache"],
+      "outputLogs": "new-only"
+    },
+    "lint": {
+      "dependsOn": ["^topo", "^build"],
+      "outputs": [".cache/.eslintcache"]
+    },
+    "typecheck": {
+      "dependsOn": ["^topo", "^build"],
+      "outputs": [".cache/tsbuildinfo.json"]
+    },
+    "prepare-tests": {},
+    "test": {
+      "dependsOn": ["prepare-tests"]
+    },
+    "clean": {
+      "cache": false
+    },
+    "//#clean": {
+      "cache": false
+    },
+    "generate:types": {
+      "cache": false
+    },
+    "db:reset": {
+      "cache": false
+    },
+    "ui-add": {
+      "cache": false,
+      "interactive": true
+    }
+  },
+  "globalEnv": [
+    "DATABASE_URL",
+    "NEXT_PUBLIC_VERCEL_URL",
+    "NEXT_PUBLIC_VERCEL_BRANCH_URL",
+    "NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL",
+    "NEXT_PUBLIC_APP_URL",
+    "SKIP_ENV_VALIDATION",
+    "PORT",
+    "NEXT_PUBLIC_NEXTAUTH_URL"
+  ],
+  "globalPassThroughEnv": [
+    "NODE_ENV",
+    "CI",
+    "VERCEL",
+    "VERCEL_ENV",
+    "NEXTAUTH_URL",
+    "VERCEL_URL",
+    "npm_lifecycle_event"
+  ],
+  "remoteCache": {
+    "signature": true
+  }
+}

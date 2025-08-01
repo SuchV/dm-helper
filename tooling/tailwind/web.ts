@@ -14,6 +14,25 @@ export default {
         "2xl": "1400px",
       },
     },
+    colors: {
+      brand: {
+        50: "#EDFAE1",
+        100: "#DEF5C6",
+        200: "#BDEC8E",
+        300: "#9CE255",
+        400: "#7AD124",
+        500: "#59981A",
+        600: "#477A15",
+        700: "#365B10",
+        800: "#243D0A",
+        900: "#121E05",
+        950: "#080D02",
+      },
+      background: {
+        DEFAULT: "var(--background)",
+        secondary: "var(--background-secondary)",
+      },
+    },
     extend: {
       borderRadius: {
         lg: "var(--radius)",

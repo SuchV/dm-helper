@@ -4,11 +4,13 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
+    "@discordjs/next": "0.1.1-dev.1673526225-a580768.0",
     "@opentelemetry/api": "1.9.0",
     "@spolka-z-l-o/auth": "workspace:*",
+    "@spolka-z-l-o/db": "workspace:*",
     "@spolka-z-l-o/discord": "workspace:*",
     "@spolka-z-l-o/env": "workspace:*",
-    "@spolka-z-l-o/logger": "workspace:*",
+    "@spolka-z-l-o/validators": "workspace:*",
     "@tanstack/react-query": "^5.69.0",
     "@trpc/client": "^11.0.0",
     "@trpc/react-query": "^11.0.0",
@@ -16,7 +18,7 @@
     "next": "^15.2.3",
     "react": "^19.0.0",
     "superjson": "^2.2.1",
-    "zod": "^3.25.29"
+    "zod": "^3.25.51"
   },
   "devDependencies": {
     "@spolka-z-l-o/eslint-config": "workspace:*",

@@ -1,5 +1,5 @@
 {
-  "name": "spolka-bot-ts",
+  "name": "@spolka-z-l-o/bot",
   "version": "1.0.0",
   "description": "",
   "private": true,
@@ -12,6 +12,19 @@
     "clear-db": "ts-node src/scripts/clear-db.ts",
     "seed-db": "ts-node src/scripts/seed-db.ts"
   },
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "types": "./dist/src/*.d.ts",
+      "default": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ]
+    }
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -19,11 +32,10 @@
     "@spolka-z-l-o/db": "workspace:*",
     "@spolka-z-l-o/env": "workspace:*",
     "date-fns": "^4.1.0",
-    "discord.js": "^14.19.3",
     "dotenv": "^16.5.0",
     "mongoose": "^8.15.0",
     "node-cron": "^4.0.6",
-    "zod": "^3.25.29"
+    "zod": "^3.25.51"
   },
   "devDependencies": {
     "@spolka-z-l-o/eslint-config": "workspace:*",

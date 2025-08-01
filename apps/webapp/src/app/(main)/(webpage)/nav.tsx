@@ -6,7 +6,6 @@ import {
   BasicPageNav,
   BasicPageNavItem,
 } from "@spolka-z-l-o/ui/recipes/basic-page";
-import UserButton from "~/components/UserButton";
 
 const Navigation = () => {
   const segment = useSelectedLayoutSegment();
@@ -15,8 +14,8 @@ const Navigation = () => {
       <BasicPageNavItem href="/" isActive={!segment}>
         Home
       </BasicPageNavItem>
-      <BasicPageNavItem href="/about" isActive={segment === "about"}>
-        About
+      <BasicPageNavItem href="/guild" isActive={segment === "guild"}>
+        Guilds
       </BasicPageNavItem>
     </BasicPageNav>
   );

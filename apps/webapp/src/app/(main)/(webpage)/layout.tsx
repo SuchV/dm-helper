@@ -13,6 +13,7 @@ import { ThemeToggle } from "@spolka-z-l-o/ui/theme";
 
 import { Footer } from "./footer";
 import { Navigation } from "./nav";
+import UserAvatarButton from "~/app/_components/main/UserAvatarButton";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
@@ -24,12 +25,10 @@ const Layout = ({ children }: { children: ReactNode }) => {
         <Navigation />
         <div className="flex flex-1 items-center justify-end gap-2">
           <ThemeToggle />
+          <UserAvatarButton />
         </div>
       </BasicPageHeader>
       <BasicPageContent>{children}</BasicPageContent>
-      <BasicPageFooter>
-        <Footer />
-      </BasicPageFooter>
     </BasicPage>
   );
 };

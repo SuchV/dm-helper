@@ -24,6 +24,7 @@
     "@next-auth/prisma-adapter": "^1.0.7",
     "@spolka-z-l-o/db": "workspace:*",
     "@spolka-z-l-o/env": "workspace:*",
+    "discord-api-types": "^0.38.10",
     "next-auth": "beta"
   },
   "devDependencies": {

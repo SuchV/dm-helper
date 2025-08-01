@@ -11,6 +11,7 @@ import {
   IVerification,
   Verification,
 } from "@spolka-z-l-o/db/models/Verification";
+import { withPermission } from "~/helpers/with-permissions";
 
 export const data = new SlashCommandBuilder()
   .setName("verification")
@@ -52,9 +53,9 @@ export const data = new SlashCommandBuilder()
       )
   );
 
-export async function execute(
+export const commandHandler = async (
   interaction: ChatInputCommandInteraction<CacheType>
-) {
+) => {
   const subcommand = interaction.options.getSubcommand();
 
   if (subcommand === "setchannel") {
@@ -143,6 +144,9 @@ export async function execute(
       content: "Unknown subcommand.",
     });
   }
-}
+};
 
+export const execute = withPermission(commandHandler, [
+  PermissionFlagsBits.Administrator,
+]);
 export const cooldown = 30;

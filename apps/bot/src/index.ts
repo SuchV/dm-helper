@@ -12,7 +12,7 @@ import cron from "node-cron";
 
 import { presenceOptions } from "./helpers/presence";
 
-const client = new CustomClient({
+export const client = new CustomClient({
   intents: ["Guilds", "GuildMessages", "DirectMessages", "GuildMembers"],
 });
 

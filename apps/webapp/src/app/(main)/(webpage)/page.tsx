@@ -9,12 +9,16 @@ import {
   TabsList,
   TabsTrigger,
 } from "@spolka-z-l-o/ui/tabs";
-import UserButton from "~/components/UserButton";
+import UserLoginButton from "~/app/_components/main/UserLoginButton";
 import { auth } from "@spolka-z-l-o/auth";
 import prisma from "@spolka-z-l-o/db";
 
 const HomePage = async () => {
-  return <div className="flex flex-col">xome example content...</div>;
+  return (
+    <div className="flex flex-col">
+      <UserLoginButton />
+    </div>
+  );
 };
 
 export default HomePage;

@@ -61,7 +61,7 @@ type TimePickerSegmentProps = Omit<
 };
 
 const timePickerSegemntVariants = cva(
-  "box-content border-transparent bg-transparent font-[inherit] text-[length:inherit] tabular-nums leading-[inherit] caret-transparent outline-none ring-0 ring-offset-0 focus-visible:border-transparent focus-visible:ring-0",
+  "border-transparent bg-transparent caret-transparent focus-visible:border-transparent box-content font-[inherit] text-[length:inherit] tabular-nums leading-[inherit] outline-none ring-0 ring-offset-0 focus-visible:ring-0",
   {
     variants: {
       segment: {

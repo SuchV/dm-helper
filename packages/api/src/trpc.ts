@@ -12,15 +12,24 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { auth } from "@spolka-z-l-o/auth";
-import client, { DiscordClient } from "@spolka-z-l-o/discord";
+import { DiscordAPIClient } from "@spolka-z-l-o/discord";
+import { env } from "@spolka-z-l-o/env/next-env";
 
-import { createLoggerPlugin } from "./logger";
+import { TwoLevelMemoryCache } from "./cache";
 
 interface DiscordConfig {
   discordId: string;
   discordSecret: string;
   discordToken: string;
 }
+
+interface CustomNodeJsGlobal extends Global {
+  memoryCache: TwoLevelMemoryCache<unknown>;
+}
+
+declare const global: CustomNodeJsGlobal;
+const memoryCache = global.memoryCache || new TwoLevelMemoryCache<unknown>();
+if (env.NODE_ENV === "development") global.memoryCache = memoryCache;
 
 /**
  * 1. CONTEXT
@@ -43,7 +52,7 @@ export const createTRPCContext = async (opts: {
 }) => {
   const source = opts.headers?.get("x-trpc-source") ?? opts.source ?? "unknown";
 
-  //const discordClient = new DiscordClient(opts.discord.discordToken);
+  const dc = new DiscordAPIClient(opts.discord.discordToken);
 
   const session = await auth();
 
@@ -56,8 +65,8 @@ export const createTRPCContext = async (opts: {
       opts.headers?.get("x-forwarded-host") ??
       opts.headers?.get("host") ??
       "http://localhost:3000",
-    user: session?.user ?? null,
-    //discord: discordClient,
+    session: session,
+    discord: dc,
   };
 };
 
@@ -97,8 +106,41 @@ export const createCallerFactory = t.createCallerFactory;
  */
 export const createTRPCRouter = t.router;
 
-const loggerPlugin = createLoggerPlugin();
-const baseProcedure = t.procedure.unstable_concat(loggerPlugin.logger);
+const baseProcedure = t.procedure;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const cacheMiddleware = t.middleware(async ({ ctx, path, type, next }) => {
+  if (type !== "query") {
+    console.log("Cache middleware skipped for non-query type:", type);
+    // Cache middleware only applies to queries
+    return next();
+  }
+
+  const pathParsed = path ?? "unknown";
+  const userId = ctx.session?.user?.id ?? "unknown";
+
+  const cachedResponse: unknown = memoryCache.getElem(pathParsed, userId);
+  if (cachedResponse) {
+    console.log(`Cache hit for: ${pathParsed} - ${userId}`);
+    console.log(`Cached response:`, cachedResponse);
+    return {
+      ok: true,
+      data: cachedResponse,
+      error: null,
+    };
+  }
+
+  const result = await next();
+
+  if (!result.ok) {
+    console.error(`Error in cache middleware: ${result.error.message}`);
+    return result;
+  }
+  console.log(`Cache miss for: ${pathParsed} - ${userId}, caching result.`);
+  memoryCache.setElem(pathParsed, userId, result.data);
+
+  return result;
+});
 
 /**
  * Public (unauthed) procedure
@@ -107,16 +149,19 @@ const baseProcedure = t.procedure.unstable_concat(loggerPlugin.logger);
  * tRPC API. It does not guarantee that a user querying is authorized, but you
  * can still access user session data if they are logged in
  */
-export const publicProcedure = baseProcedure;
+export const publicProcedure: typeof baseProcedure =
+  baseProcedure.use(cacheMiddleware);
 
-export const protectedProcedure = baseProcedure.use(({ ctx, next }) => {
-  if (!ctx.user) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
+export const protectedProcedure: typeof baseProcedure = baseProcedure
+  .use(cacheMiddleware)
+  .use(({ ctx, next }) => {
+    if (!ctx.session?.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
 
-  return next({
-    ctx: {
-      user: ctx.user,
-    },
+    return next({
+      ctx: {
+        session: ctx.session,
+      },
+    });
   });
-});

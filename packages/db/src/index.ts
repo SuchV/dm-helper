@@ -3,7 +3,7 @@ import { env } from "@spolka-z-l-o/env/next-env";
 import dotenv from "dotenv";
 
 // add prisma to the NodeJS global type
-interface CustomNodeJsGlobal extends NodeJS.Global {
+interface CustomNodeJsGlobal extends Global {
   prisma: PrismaClient;
 }
 

@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated"
 }
 
 datasource db {
@@ -19,7 +18,7 @@ model Account {
   userId  String
   type  String
   provider  String
-  providerAccountId String
+  providerAccountId String @unique
   refresh_token String? 
   access_token  String? 
   expires_at  Int?
@@ -27,6 +26,8 @@ model Account {
   scope String?
   id_token  String?
   session_state String?
+
+  birthday Birthday?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -46,12 +47,11 @@ model User {
   id            String    @id @default(cuid()) @map("_id")
   name          String?
   email         String?   @unique
-  emailVerified DateTime?
   image         String?
+  emailVerified DateTime?
 
   accounts Account[]
   sessions Session[]
-  birthdays Birthday[]
 }
 
 model VerificationToken {
@@ -65,14 +65,14 @@ model VerificationToken {
 
 model Birthday {
   id String @id @default(cuid()) @map("_id")
-  userId String
+  providerAccountId String @unique
   birthday_date DateTime
   guildId String
-  last_year_mentioned Int
+  last_year_mentioned Int @default(0)
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account Account @relation(fields: [providerAccountId], references: [providerAccountId], onDelete: Cascade)
 
-  @@unique([userId, guildId])
+  @@unique([providerAccountId, guildId])
 }
 
 model GuildSettings {

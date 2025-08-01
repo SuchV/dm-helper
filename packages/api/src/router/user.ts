@@ -1,7 +1,7 @@
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
-  profile: publicProcedure.query(({ ctx }) => {
-    return ctx.user;
+  getUser: publicProcedure.query(async ({ ctx }) => {
+    return ctx.session;
   }),
 });

@@ -1,0 +1,30 @@
+{
+  "name": "@spolka-z-l-o/validators",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@spolka-z-l-o/discord": "workspace:*",
+    "discord-api-types": "^0.38.10",
+    "zod": "^3.25.51"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "types": "./dist/src/*.d.ts",
+      "default": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ]
+    }
+  }
+}

@@ -44,7 +44,7 @@ function AuthPage({ children, appTitle }: AuthPageProps) {
   return (
     <>
       <div className="container relative hidden h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-        <div className="relative hidden h-full flex-col bg-muted p-10 text-black dark:border-r dark:text-white lg:flex">
+        <div className="text-black dark:text-white relative hidden h-full flex-col bg-muted p-10 dark:border-r lg:flex">
           <div className="absolute inset-0 hidden items-stretch justify-stretch lg:flex">
             <Image
               src="/images/bg-light.jpg"

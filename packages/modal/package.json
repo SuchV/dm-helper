@@ -1,0 +1,40 @@
+{
+  "name": "@spolka-z-l-o/modal",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "with-env": "dotenv -e ../../.env --",
+    "dev": "pnpm with-env docker compose up"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "types": "./dist/src/*.d.ts",
+      "default": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ]
+    }
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "tsx": "^4.19.4",
+    "zustand": "^5.0.5"
+  },
+  "devDependencies": {
+    "@spolka-z-l-o/eslint-config": "workspace:*",
+    "@spolka-z-l-o/prettier-config": "workspace:*",
+    "@spolka-z-l-o/tsconfig": "workspace:*",
+    "dotenv-cli": "^7.3.0"
+  }
+}

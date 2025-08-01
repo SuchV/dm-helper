@@ -1,19 +1,13 @@
-import { PrismaClient } from "@prisma/client";
-import { env } from "@spolka-z-l-o/env/bot-env";
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: env.DATABASE_URL,
-    },
-  },
+import { runQuery as runQueryBirthday } from "../src/seed/Birthday";
+
+async function main() {
+  console.log("Seeding database...");
+
+  // Run the birthday seed query
+  await runQueryBirthday();
+
+  console.log("Database seeded successfully.");
+}
+main().catch(async (e) => {
+  console.error(e);
 });
-async function main() {}
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });

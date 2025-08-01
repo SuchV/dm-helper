@@ -1,5 +1,6 @@
 import { fileURLToPath } from "url";
 import _jiti from "jiti";
+import webpack from "webpack";
 
 const jiti = _jiti(fileURLToPath(import.meta.url));
 
@@ -24,8 +25,6 @@ const nextConfig = {
     PORT: process.env.PORT,
   },
 
-  serverExternalPackages: ["sequelize", "pino", "pino-pretty"],
-
   /** We already do linting and typechecking as separate tasks in CI */
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
@@ -41,15 +40,16 @@ const nextConfig = {
     ];
   },
 
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        fs: false,
-        net: false,
-        tls: false,
-        "discord.js": false,
-      };
-    }
-    return config;
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.discordapp.com",
+        port: "",
+        pathname: "/**",
+      },
+    ],
   },
 };
+
+export default nextConfig;

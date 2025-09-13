@@ -110,11 +110,11 @@ model Verification {
 model BingoEntry {
   id String @id @default(cuid()) @map("_id")
   bingoId String
-  userId String
+  userId String?
   entry String
 
   bingo Bingo @relation(fields: [bingoId], references: [id], onDelete: Cascade)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -126,6 +126,8 @@ model Bingo {
   guildId String
   channelId String
   messageId String
+  name String
+  dimension Int
   bingoEntries BingoEntry[]
 
   @@unique([guildId, channelId, messageId])

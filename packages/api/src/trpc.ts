@@ -12,6 +12,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { auth } from "@spolka-z-l-o/auth";
+import prisma from "@spolka-z-l-o/db";
 import { DiscordAPIClient } from "@spolka-z-l-o/discord";
 import { env } from "@spolka-z-l-o/env/next-env";
 
@@ -49,10 +50,13 @@ export const createTRPCContext = async (opts: {
   source?: string;
   logLevel?: "trace" | "debug" | "info" | "warn" | "error" | "fatal";
   discord: DiscordConfig;
+  db: typeof prisma;
 }) => {
   const source = opts.headers?.get("x-trpc-source") ?? opts.source ?? "unknown";
 
   const dc = new DiscordAPIClient(opts.discord.discordToken);
+
+  const db = prisma;
 
   const session = await auth();
 
@@ -67,6 +71,7 @@ export const createTRPCContext = async (opts: {
       "http://localhost:3000",
     session: session,
     discord: dc,
+    db,
   };
 };
 
@@ -153,7 +158,7 @@ export const publicProcedure: typeof baseProcedure =
   baseProcedure.use(cacheMiddleware);
 
 export const protectedProcedure: typeof baseProcedure = baseProcedure
-  .use(cacheMiddleware)
+  // .use(cacheMiddleware)
   .use(({ ctx, next }) => {
     if (!ctx.session?.user) {
       throw new TRPCError({ code: "UNAUTHORIZED" });

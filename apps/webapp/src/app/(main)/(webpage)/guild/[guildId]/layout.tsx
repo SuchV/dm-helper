@@ -8,7 +8,7 @@ interface GuildLayoutProps {
   };
 }
 const GuildLayout = async ({ children, params }: GuildLayoutProps) => {
-  const { guildId } = params;
+  const { guildId } = await params;
   const [guildMembersWithBirthday, birthdays] = await Promise.all([
     api.discord.getGuildMembersWithBirthday({ guildId }),
     api.birthday.getGuildBirthdays({ guildId }),

@@ -41,15 +41,13 @@ const TabsParent = ({
           <span className="hidden lg:inline">Overview</span>
         </TabsTrigger>
         <TabsTrigger value="birthdays">
-          <Button type="button" variant="ghost">
-            <Link
-              href={`/guild/${guildId}/birthdays`}
-              className="flex flex-row items-center"
-            >
-              <Cake className="mr-2 h-4 w-4" />
-              <span className="hidden lg:inline">Birthdays</span>
-            </Link>
-          </Button>
+          <Link
+            href={`/guild/${guildId}/birthdays`}
+            className="flex flex-row items-center"
+          >
+            <Cake className="mr-2 h-4 w-4" />
+            <span className="hidden lg:inline">Birthdays</span>
+          </Link>
         </TabsTrigger>
         <TabsTrigger value="settings" disabled>
           <Settings className="mr-2 h-4 w-4" />
@@ -72,15 +70,13 @@ const TabsParent = ({
           <span className="hidden lg:inline">Roles</span>
         </TabsTrigger>
         <TabsTrigger value="bingo">
-          <Button type="button" variant="ghost">
-            <Link
-              href={`/guild/${guildId}/bingo`}
-              className="flex flex-row items-center"
-            >
-              <Target className="mr-2 h-4 w-4" />
-              <span className="hidden lg:inline">Bingo</span>
-            </Link>
-          </Button>
+          <Link
+            href={`/guild/${guildId}/bingo`}
+            className="flex flex-row items-center"
+          >
+            <Target className="mr-2 h-4 w-4" />
+            <span className="hidden lg:inline">Bingo</span>
+          </Link>
         </TabsTrigger>
       </TabsList>
       <TabsContent value="overview">

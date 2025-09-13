@@ -1,6 +1,7 @@
+import { Birthday } from "@prisma/client";
 import prisma from "..";
 
-const seedData = [
+const seedData: Omit<Birthday, "id">[] = [
   {
     providerAccountId: "249276751400665088",
     birthday_date: new Date(),

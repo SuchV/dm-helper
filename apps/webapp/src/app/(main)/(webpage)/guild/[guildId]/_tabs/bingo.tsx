@@ -1,25 +1,7 @@
 "use client";
 
 import { TabsContent } from "@spolka-z-l-o/ui/tabs";
-import {
-  useForm,
-  Form,
-  FormField,
-  FormItem,
-  useFieldArray,
-} from "@spolka-z-l-o/ui/form";
-import { Button } from "@spolka-z-l-o/ui/button";
-import { FormControl, FormLabel, FormMessage } from "@spolka-z-l-o/ui/form";
-import { verificationFormSchema } from "@spolka-z-l-o/validators";
-import type { VerificationForm } from "@spolka-z-l-o/validators";
 
-import { Textarea } from "@spolka-z-l-o/ui/textarea";
-import { Input } from "@spolka-z-l-o/ui/input";
-
-import type { APIGuildChannel } from "@spolka-z-l-o/validators";
-import { ChannelType } from "@spolka-z-l-o/validators";
-
-import { ChannelCommandBox } from "./_components/channelCommandBox";
 import {
   Command,
   CommandItem,
@@ -28,31 +10,61 @@ import {
   CommandEmpty,
   CommandInput,
 } from "@spolka-z-l-o/ui/command";
+import type { Bingo } from "@prisma/client";
+import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@spolka-z-l-o/ui/dialog";
+import { BingoForm } from "./_components/BingoForm";
 
-const BingoTab = ({ children }: { children: React.ReactNode }) => {
+const BingoTab = ({
+  guildBingos,
+  children,
+}: {
+  guildBingos: Bingo[];
+  children: React.ReactNode;
+}) => {
   return (
     <TabsContent value="bingo">
       <div className="flex h-screen w-full flex-row items-start justify-center gap-4 p-4">
-        <div className="w-full bg-brand-500 lg:w-1/3">
+        <div className="w-full lg:w-1/3">
           <Command>
             <CommandInput placeholder="Search for bingo..." />
             <CommandList>
               <CommandEmpty>No bingo found.</CommandEmpty>
               <CommandGroup heading="Bingo">
-                <CommandItem>Create Bingo</CommandItem>
+                {guildBingos.map((bingo) => (
+                  <CommandItem key={bingo.id}>
+                    <Link
+                      href={`/guild/${bingo.guildId}/bingo/${bingo.id}`}
+                      className="block w-full"
+                    >
+                      {bingo.name}
+                    </Link>
+                  </CommandItem>
+                ))}
+                <CommandItem>
+                  <Dialog>
+                    <DialogTrigger>Create Bingo</DialogTrigger>
+                    <DialogContent>
+                      <DialogTitle>Create Bingo</DialogTitle>
+                      <DialogDescription>
+                        Create a new bingo for this guild.
+                      </DialogDescription>
+                      <BingoForm />
+                    </DialogContent>
+                  </Dialog>
+                </CommandItem>
               </CommandGroup>
             </CommandList>
           </Command>
         </div>
-        <div className="w-full bg-brand-300 lg:w-2/3">
-          {children ? (
-            children
-          ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-4">
-              <h2 className="text-lg font-semibold">Bingo</h2>
-              <p>Not implemented yet...</p>
-            </div>
-          )}
+        <div className="w-full lg:w-2/3">
+          {children ?? "Choose a bingo to start"}
         </div>
       </div>
     </TabsContent>

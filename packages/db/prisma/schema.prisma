@@ -52,6 +52,7 @@ model User {
 
   accounts Account[]
   sessions Session[]
+  bingoEntries BingoEntry[]
 }
 
 model VerificationToken {
@@ -104,5 +105,32 @@ model Verification {
   messageId String
 
   requiredRoleGroups RoleGroup[]
+}
+
+model BingoEntry {
+  id String @id @default(cuid()) @map("_id")
+  bingoId String
+  userId String
+  entry String
+
+  bingo Bingo @relation(fields: [bingoId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Only square bingo is supported for now
+model Bingo {
+  id String @id @default(cuid()) @map("_id")
+  guildId String
+  channelId String
+  messageId String
+  bingoEntries BingoEntry[]
+
+  @@unique([guildId, channelId, messageId])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 

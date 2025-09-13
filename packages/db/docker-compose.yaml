@@ -19,17 +19,17 @@ services:
     volumes:
       - "mongo1_data:/data/db"
       - "mongo1_config:/data/configdb"
-  mongo-express:
-    image: mongo-express
-    restart: always
-    environment:
-      - ME_CONFIG_MONGODB_SERVER=localhost
-      - ME_CONFIG_MONGODB_PORT=27017
-      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
-    depends_on:
-      - mongo
-    ports:
-      - "8080:8081"
+  # mongo-express:
+  #   image: mongo-express
+  #   restart: always
+  #   environment:
+  #     - ME_CONFIG_MONGODB_SERVER=localhost
+  #     - ME_CONFIG_MONGODB_PORT=27017
+  #     - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+  #   depends_on:
+  #     - mongo
+  #   ports:
+  #     - "8080:8081"
 
 volumes:
   mongo1_data:

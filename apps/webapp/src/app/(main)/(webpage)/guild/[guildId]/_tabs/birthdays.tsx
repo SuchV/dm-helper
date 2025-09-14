@@ -16,17 +16,32 @@ const BirthdaysTab = ({
   guildMembersWithBirthday,
   birthdays,
 }: BirthdaysTabProps) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Normalize to midnight
   const todayBirthdays = birthdays.filter((birthday) => {
-    const today = new Date();
     const birthdayDate = new Date(birthday.birthday_date);
     return (
       birthdayDate.getMonth() === today.getMonth() &&
       birthdayDate.getDate() === today.getDate()
     );
   });
+  const pastBirthdays = birthdays.filter((birthday) => {
+    const birthdayDate = new Date(birthday.birthday_date);
+    birthdayDate.setHours(0, 0, 0, 0); // Normalize to midnight
+    const daysDifference =
+      (today.getTime() - birthdayDate.getTime()) / (1000 * 60 * 60 * 24);
+    return daysDifference <= 14 && daysDifference > 0;
+  });
+  const futureBirthdays = birthdays.filter((birthday) => {
+    const birthdayDate = new Date(birthday.birthday_date);
+    birthdayDate.setHours(0, 0, 0, 0); // Normalize to midnight
+    const daysDifference =
+      (birthdayDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+    return daysDifference <= 14 && daysDifference > 0;
+  });
   return (
     <TabsContent value="birthdays">
-      <div className="flex h-screen w-full flex-row justify-stretch gap-4 p-4">
+      <div className="flex w-full flex-row justify-stretch gap-4 p-4">
         <div>
           <MemberCommandBox
             membersWithBirthday={guildMembersWithBirthday}
@@ -34,6 +49,38 @@ const BirthdaysTab = ({
           />
         </div>
         <div>
+          <h2 className="mt-4">Recent birthdays:</h2>
+          {pastBirthdays.length > 0 ? (
+            <div>
+              {pastBirthdays.map((birthday) => {
+                const userName = birthday.account.user.name || "Unknown User";
+                const birthdayDate = new Date(birthday.birthday_date);
+                return (
+                  <div
+                    key={birthday.id}
+                    className="bg-white mb-2 flex items-center gap-4 rounded p-2 shadow"
+                  >
+                    {!birthday ? (
+                      <Skeleton />
+                    ) : (
+                      <Avatar>
+                        <AvatarFallback>No image found!</AvatarFallback>
+                        <AvatarImage
+                          src={birthday.account.user.image ?? ""}
+                          alt={birthday.providerAccountId}
+                        />
+                      </Avatar>
+                    )}
+                    <span>
+                      {userName} - {birthdayDate.toLocaleDateString()}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p>No recent birthdays.</p>
+          )}
           <h2>Today birthdays:</h2>
           {todayBirthdays.length > 0 ? (
             <div>
@@ -63,6 +110,38 @@ const BirthdaysTab = ({
             </div>
           ) : (
             <p>No birthdays today.</p>
+          )}
+          <h2 className="mt-4">Upcoming birthdays:</h2>
+          {futureBirthdays.length > 0 ? (
+            <div>
+              {futureBirthdays.map((birthday) => {
+                const userName = birthday.account.user.name || "Unknown User";
+                const birthdayDate = new Date(birthday.birthday_date);
+                return (
+                  <div
+                    key={birthday.id}
+                    className="bg-white mb-2 flex items-center gap-4 rounded p-2 shadow"
+                  >
+                    {!birthday ? (
+                      <Skeleton />
+                    ) : (
+                      <Avatar>
+                        <AvatarFallback>No image found!</AvatarFallback>
+                        <AvatarImage
+                          src={birthday.account.user.image ?? ""}
+                          alt={birthday.providerAccountId}
+                        />
+                      </Avatar>
+                    )}
+                    <span>
+                      {userName} - {birthdayDate.toLocaleDateString()}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p>No upcoming birthdays.</p>
           )}
         </div>
       </div>

@@ -43,7 +43,7 @@ export const BingoForm = () => {
     },
   });
 
-  const onSubmit = (data: CreateBingoForm) => {
+  const onSubmit = (data) => {
     createBingo(data);
   };
   return (

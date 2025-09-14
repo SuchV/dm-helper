@@ -43,8 +43,6 @@ export const BingoEntry = ({
 
   const router = useRouter();
 
-  console.log("bingoEntry", bingoEntry);
-
   const { mutate: updateBingoEntry, isPending } =
     api.bingo.updateBingoEntry.useMutation({
       onSuccess: () => {
@@ -69,6 +67,7 @@ export const BingoEntry = ({
       entry: bingoEntry.entry,
     },
   });
+
   return (
     <div
       className={cn(

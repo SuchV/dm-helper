@@ -20,6 +20,7 @@ import {
   DialogDescription,
 } from "@spolka-z-l-o/ui/dialog";
 import { BingoForm } from "./_components/BingoForm";
+import { NewBingoEntry } from "./_components/NewBingoEntry";
 
 const BingoTab = ({
   guildBingos,
@@ -30,9 +31,9 @@ const BingoTab = ({
 }) => {
   return (
     <TabsContent value="bingo">
-      <div className="flex h-screen w-full flex-row items-start justify-center gap-4 p-4">
-        <div className="w-full lg:w-1/3">
-          <Command>
+      <div className="flex h-full w-full flex-row items-start justify-center gap-4 p-4">
+        <div className="flex h-[calc(100vh-200px)] max-h-full w-full flex-col lg:w-1/3">
+          <Command className="flex-1">
             <CommandInput placeholder="Search for bingo..." />
             <CommandList>
               <CommandEmpty>No bingo found.</CommandEmpty>

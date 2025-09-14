@@ -3,7 +3,7 @@ import BingoTab from "../../_tabs/bingo";
 import { api } from "~/trpc/server";
 import { notFound } from "next/navigation";
 import { BingoEntry } from "./components/BingoEntry";
-import { NewBingoEntry } from "./components/NewBingoEntry";
+import { NewBingoEntry } from "../../_tabs/_components/NewBingoEntry";
 interface BingoPageProps {
   params: {
     bingoId: string;
@@ -23,7 +23,7 @@ const BingoPage = async ({ params }: BingoPageProps) => {
       {bingo.bingoEntries.map((bingo) => (
         <BingoEntry key={bingo.id} bingoEntry={bingo} />
       ))}
-      <NewBingoEntry />
+      <NewBingoEntry bingoId={bingo.id} />
     </div>
   );
 };

@@ -7,7 +7,6 @@ import {
 } from "discord.js";
 import { env } from "@spolka-z-l-o/env/bot-env";
 import path from "path";
-import prisma from "@spolka-z-l-o/db";
 import cron from "node-cron";
 
 import { presenceOptions } from "./helpers/presence";
@@ -44,9 +43,9 @@ client.once("ready", async () => {
     {}
   );
 
-  // cron.schedule("0 */3 * * *", async () => {
-  //   await birthdayMentionCronJob(client);
-  // });
+  cron.schedule("0 */3 * * *", async () => {
+    await birthdayMentionCronJob(client);
+  });
 });
 
 client.on("interactionCreate", async (interaction: Interaction) => {
@@ -85,7 +84,5 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 });
 
 (async () => {
-  //await connectToDatabase();
-  console.log(env.DISCORD_CLIENT_TOKEN);
   client.login(env.DISCORD_CLIENT_TOKEN);
 })();

@@ -1,4 +1,4 @@
-import { GuildSettings } from "../../models/GuildSettings";
+import { GuildSettings } from "@prisma/client";
 
 const seedData = [
   {

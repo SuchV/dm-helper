@@ -12,7 +12,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { auth } from "@spolka-z-l-o/auth";
-import prisma from "@spolka-z-l-o/db";
+import { prisma } from "@spolka-z-l-o/db";
 import { DiscordAPIClient } from "@spolka-z-l-o/discord";
 import { env } from "@spolka-z-l-o/env/next-env";
 
@@ -113,39 +113,39 @@ export const createTRPCRouter = t.router;
 
 const baseProcedure = t.procedure;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const cacheMiddleware = t.middleware(async ({ ctx, path, type, next }) => {
-  if (type !== "query") {
-    console.log("Cache middleware skipped for non-query type:", type);
-    // Cache middleware only applies to queries
-    return next();
-  }
+// // eslint-disable-next-line @typescript-eslint/no-explicit-any
+// const cacheMiddleware = t.middleware(async ({ ctx, path, type, next }) => {
+//   if (type !== "query") {
+//     console.log("Cache middleware skipped for non-query type:", type);
+//     // Cache middleware only applies to queries
+//     return next();
+//   }
 
-  const pathParsed = path ?? "unknown";
-  const userId = ctx.session?.user?.id ?? "unknown";
+//   const pathParsed = path ?? "unknown";
+//   const userId = ctx.session?.user?.id ?? "unknown";
 
-  const cachedResponse: unknown = memoryCache.getElem(pathParsed, userId);
-  if (cachedResponse) {
-    console.log(`Cache hit for: ${pathParsed} - ${userId}`);
-    console.log(`Cached response:`, cachedResponse);
-    return {
-      ok: true,
-      data: cachedResponse,
-      error: null,
-    };
-  }
+//   const cachedResponse: unknown = memoryCache.getElem(pathParsed, userId);
+//   if (cachedResponse) {
+//     console.log(`Cache hit for: ${pathParsed} - ${userId}`);
+//     console.log(`Cached response:`, cachedResponse);
+//     return {
+//       ok: true,
+//       data: cachedResponse,
+//       error: null,
+//     };
+//   }
 
-  const result = await next();
+//   const result = await next();
 
-  if (!result.ok) {
-    console.error(`Error in cache middleware: ${result.error.message}`);
-    return result;
-  }
-  console.log(`Cache miss for: ${pathParsed} - ${userId}, caching result.`);
-  memoryCache.setElem(pathParsed, userId, result.data);
+//   if (!result.ok) {
+//     console.error(`Error in cache middleware: ${result.error.message}`);
+//     return result;
+//   }
+//   console.log(`Cache miss for: ${pathParsed} - ${userId}, caching result.`);
+//   memoryCache.setElem(pathParsed, userId, result.data);
 
-  return result;
-});
+//   return result;
+// });
 
 /**
  * Public (unauthed) procedure
@@ -154,8 +154,7 @@ const cacheMiddleware = t.middleware(async ({ ctx, path, type, next }) => {
  * tRPC API. It does not guarantee that a user querying is authorized, but you
  * can still access user session data if they are logged in
  */
-export const publicProcedure: typeof baseProcedure =
-  baseProcedure.use(cacheMiddleware);
+export const publicProcedure: typeof baseProcedure = baseProcedure;
 
 export const protectedProcedure: typeof baseProcedure = baseProcedure
   // .use(cacheMiddleware)

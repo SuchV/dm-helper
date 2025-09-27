@@ -9,7 +9,7 @@
     "db:push": "pnpm with-env prisma db push",
     "test": "echo \"Error: no test specified\" && exit 1",
     "with-env": "dotenv -e ../../.env --",
-    "dev": "pnpm with-env docker compose up",
+    "dev": "pnpm with-env docker-compose up -d",
     "db:seed": "pnpm with-env prisma db seed",
     "mongo:up": "docker-compose up -d",
     "mongo:down": "docker-compose down",

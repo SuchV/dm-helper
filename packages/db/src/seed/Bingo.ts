@@ -1,5 +1,5 @@
 import { Bingo, BingoEntry } from "@prisma/client";
-import prisma from "..";
+import { prisma } from "..";
 
 const seedData: Omit<Bingo, "id" | "createdAt" | "updatedAt"> = {
   guildId: "759383031332339734",

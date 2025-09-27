@@ -2,7 +2,7 @@
 version: "3.8"
 
 services:
-  mongo:
+  mongo_spolka:
     image: mongo:7.0
     command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
     ports:
@@ -17,8 +17,8 @@ services:
       start_interval: 1s
       retries: 30
     volumes:
-      - "mongo1_data:/data/db"
-      - "mongo1_config:/data/configdb"
+      - "mongo_spolka_data:/data/db"
+      - "mongo_spolka_config:/data/configdb"
   # mongo-express:
   #   image: mongo-express
   #   restart: always
@@ -32,5 +32,5 @@ services:
   #     - "8080:8081"
 
 volumes:
-  mongo1_data:
-  mongo1_config:
+  mongo_spolka_data:
+  mongo_spolka_config:

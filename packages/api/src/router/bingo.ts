@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import prisma from "@spolka-z-l-o/db";
+import { prisma } from "@spolka-z-l-o/db";
 import {
   CreateBingoForm,
   createBingoFormSchema,

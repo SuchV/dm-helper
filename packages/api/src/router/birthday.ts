@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { set } from "zod/v4";
 
-import prisma from "@spolka-z-l-o/db";
+import { prisma } from "@spolka-z-l-o/db";
 
 import { upsertUser } from "../helpers/user";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";

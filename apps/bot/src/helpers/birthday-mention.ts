@@ -1,10 +1,7 @@
 import { Client, Guild } from "discord.js";
-import { Birthday, IBirthday } from "@spolka-z-l-o/db/models/Birthday";
+import { Birthday, IBirthday } from "@spolka-z-l-o/db";
 import { birthdateSchema } from "../validators/birthdate";
-import {
-  GuildSettings,
-  IGuildSettings,
-} from "@spolka-z-l-o/db/models/GuildSettings";
+import { GuildSettings, IGuildSettings } from "@spolka-z-l-o/db";
 
 export const mentionBirthdaysForGuild = async (
   client: Client<boolean>,

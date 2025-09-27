@@ -1,4 +1,4 @@
-import prisma from "@spolka-z-l-o/db";
+import { prisma } from "@spolka-z-l-o/db";
 import { DiscordAPIClient } from "@spolka-z-l-o/discord";
 import { CDNRoutes, ImageFormat, RouteBases } from "@spolka-z-l-o/validators";
 

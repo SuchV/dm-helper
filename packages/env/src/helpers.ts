@@ -7,6 +7,7 @@ export const envSchema = {
       .default("development"),
     VERCEL_ENV: z.enum(["development", "preview", "production"]).optional(),
     PORT: z.union([z.number(), z.string()]).default(3000),
+    NEXT_PUBLIC_DISCORD_INVITE_URL: z.string().url().min(1),
   },
   /**
    * Specify your server-side environment variables schema here.
@@ -38,7 +39,6 @@ export const envSchema = {
     NEXT_PUBLIC_VERCEL_URL: z.string().optional(),
     NEXT_PUBLIC_VERCEL_BRANCH_URL: z.string().optional(),
     NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL: z.string().optional(),
-    NEXT_PUBLIC_DISCORD_INVITE_URL: z.string().url().min(1),
   },
   experimental__runtimeEnv: {
     NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,

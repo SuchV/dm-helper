@@ -5,7 +5,7 @@ import { JWT } from "next-auth/jwt";
 import Discord from "next-auth/providers/discord";
 import { signIn } from "next-auth/react";
 
-import prisma from "@spolka-z-l-o/db";
+import { prisma } from "@spolka-z-l-o/db";
 import { env } from "@spolka-z-l-o/env/next-env";
 
 /**
@@ -84,7 +84,7 @@ export const authConfig: NextAuthConfig = {
       session,
       user,
     }: {
-      session: Session;
+      session: Session & { error?: string };
       user: User;
     }): Promise<Session> {
       const account = await prisma.account.findFirst({

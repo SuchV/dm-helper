@@ -1,4 +1,4 @@
-import { Verification } from "../../models/Verification";
+import { Verification } from "@prisma/client";
 
 const seedData = [
   {

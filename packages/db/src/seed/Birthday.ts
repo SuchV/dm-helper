@@ -1,5 +1,5 @@
 import { Birthday } from "@prisma/client";
-import prisma from "..";
+import { prisma } from "..";
 
 const seedData: Omit<Birthday, "id">[] = [
   {

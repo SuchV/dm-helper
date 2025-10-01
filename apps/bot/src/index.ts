@@ -20,7 +20,7 @@ import { birthdateSchema } from "./validators/birthdate";
 import { birthdayMentionCronJob } from "./helpers/birthday-mention";
 import { CustomClient } from "./helpers/custom-client";
 
-client.once("ready", async () => {
+client.once("clientReady", async () => {
   console.log("Discord bot is ready! 🤖");
 
   client.user?.setActivity({

@@ -14,23 +14,12 @@ import { ZodError } from "zod";
 import { auth } from "@spolka-z-l-o/auth";
 import { prisma } from "@spolka-z-l-o/db";
 import { DiscordAPIClient } from "@spolka-z-l-o/discord";
-import { env } from "@spolka-z-l-o/env/next-env";
-
-import { TwoLevelMemoryCache } from "./cache";
 
 interface DiscordConfig {
   discordId: string;
   discordSecret: string;
   discordToken: string;
 }
-
-interface CustomNodeJsGlobal extends Global {
-  memoryCache: TwoLevelMemoryCache<unknown>;
-}
-
-declare const global: CustomNodeJsGlobal;
-const memoryCache = global.memoryCache || new TwoLevelMemoryCache<unknown>();
-if (env.NODE_ENV === "development") global.memoryCache = memoryCache;
 
 /**
  * 1. CONTEXT

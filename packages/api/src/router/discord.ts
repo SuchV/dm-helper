@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 import prisma from "@spolka-z-l-o/db";
+import { guildArray } from "@spolka-z-l-o/discord/mocks/guilds";
+import { env } from "@spolka-z-l-o/env/next-env";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
@@ -26,6 +28,7 @@ export const discordRouter = createTRPCRouter({
     // Fetch the user's guilds using the access token
     const userGuilds = await ctx.discord.getUserGuilds(result.access_token);
     const botGuilds = await ctx.discord.getBotGuilds();
+
     const commonGuilds = userGuilds.filter((guild) =>
       botGuilds.some((botGuild) => botGuild.id === guild.id),
     );

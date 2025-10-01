@@ -4,6 +4,6 @@
     "lib": ["ES2022", "dom", "dom.iterable"],
     "rootDir": "."
   },
-  "include": ["src"],
+  "include": ["src", "../api/src/mocks"],
   "exclude": ["node_modules"]
 }

@@ -21,6 +21,8 @@
     "db:reset": "supabase db reset && pnpm db:types && pnpm format:fix",
     "db:test": "turbo db:test",
     "dev": "turbo dev --parallel",
+    "dev:bot": "turbo dev --filter bot",
+    "dev:webapp": "turbo dev --filter webapp",
     "start": "turbo start",
     "e2e": "turbo e2e",
     "e2e:dev": "pnpm --filter @dfr/e2e run e2e:dev",

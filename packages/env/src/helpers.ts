@@ -27,8 +27,8 @@ export const envSchema = {
     DISCORD_CLIENT_TOKEN: z.string().min(1),
     NEXTAUTH_SECRET: z.string().min(1).default("xoxo-secret-xoxo"),
     DEV_GUILD_ID: z.string().min(1).optional(),
-
     NEXTAUTH_URL: z.string().url(),
+    ENVIRONMENT: z.string().optional().default("local"),
   },
   /**
    * Specify your client-side environment variables schema here.
@@ -48,6 +48,7 @@ export const envSchema = {
     NEXT_PUBLIC_DISCORD_INVITE_URL: process.env.NEXT_PUBLIC_DISCORD_INVITE_URL,
     VERCEL_ENV: process.env.VERCEL_ENV,
     NODE_ENV: process.env.NODE_ENV,
+    ENVIRONMENT: process.env.ENVIRONMENT,
     PORT: process.env.PORT,
   },
   skipValidation:

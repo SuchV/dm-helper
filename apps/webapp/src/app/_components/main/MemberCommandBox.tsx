@@ -22,6 +22,7 @@ const MemberCommandBox = ({
   membersWithBirthday,
   guildId,
 }: MemberCommandBoxProps) => {
+  console.log("membersWithBirthday", membersWithBirthday);
   return (
     <Command>
       <CommandInput placeholder="Search for guild members..." />

@@ -1,29 +1,32 @@
-version: "3.9"
+version: "3.8"
 
 services:
   mongo:
-    image: mongo:7.0
-    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
+    image: mongo:6.0
+    container_name: mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secret
     ports:
       - "27017:27017"
     volumes:
-      - "mongo1_data:/data/db"
-      - "mongo1_config:/data/configdb"
-
+      - mongo-data:/data/db
 
   mongo-express:
-    image: mongo-express:latest
+    image: mongo-express:1.0.0
     container_name: mongo-express
-    restart: always
+    restart: unless-stopped
+    depends_on:
+      - mongo
     ports:
       - "8081:8081"
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_SERVER: mongodb
-    depends_on:
-      - mongodb
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: secret
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: secret
 
 volumes:
-  mongo1_data:
-  mongo1_config:
+  mongo-data:

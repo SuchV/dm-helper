@@ -1,8 +1,6 @@
 import { z } from "zod";
 
 import { prisma } from "@spolka-z-l-o/db";
-import { guildArray } from "@spolka-z-l-o/discord/mocks/guilds";
-import { env } from "@spolka-z-l-o/env/next-env";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 

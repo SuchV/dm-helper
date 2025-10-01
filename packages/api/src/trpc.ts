@@ -12,10 +12,8 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { auth } from "@spolka-z-l-o/auth";
-import { prisma } from "@spolka-z-l-o/db";
-import { DiscordAPIClient } from "@spolka-z-l-o/discord";
 import { getSession } from "@spolka-z-l-o/auth/credentials";
-import prisma from "@spolka-z-l-o/db";
+import { prisma } from "@spolka-z-l-o/db";
 import { DiscordAPIClient } from "@spolka-z-l-o/discord/discord";
 import { DiscordAPIClientMock } from "@spolka-z-l-o/discord/mock";
 import { env } from "@spolka-z-l-o/env/next-env";

@@ -2,11 +2,19 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { OAuth2Routes } from "discord-api-types/v10";
 import { Account, NextAuthConfig, Session, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
+import Credentials, {
+  CredentialInput,
+  CredentialsConfig,
+} from "next-auth/providers/credentials";
 import Discord from "next-auth/providers/discord";
+import Email from "next-auth/providers/email";
+import Nodemailer, { NodemailerConfig } from "next-auth/providers/nodemailer";
 import { signIn } from "next-auth/react";
 
 import { prisma } from "@spolka-z-l-o/db";
 import { env } from "@spolka-z-l-o/env/next-env";
+
+import { getUser } from "./credentials";
 
 /**
  * Takes a token, and returns a new token with updated
@@ -73,6 +81,34 @@ export const authConfig: NextAuthConfig = {
         },
       },
     }),
+    Credentials({
+      type: "credentials",
+      id: "credentials",
+      credentials: {
+        login: {
+          label: "Login",
+          type: "text",
+        },
+        password: {
+          label: "Password",
+          type: "password",
+        },
+      },
+      authorize: async ({ login, password }) => {
+        const user = await prisma.user.findFirst({
+          where: {
+            accounts: {
+              some: {
+                provider: "local",
+                providerAccountId: login as string,
+              },
+            },
+          },
+        });
+        return user;
+      },
+      name: "credentials",
+    } satisfies CredentialsConfig),
   ],
 
   secret: env.NEXTAUTH_SECRET,
@@ -90,12 +126,11 @@ export const authConfig: NextAuthConfig = {
       const account = await prisma.account.findFirst({
         where: {
           userId: user.id,
-          provider: "discord",
         },
       });
 
       if (!account) {
-        throw new Error("No Discord account found for user");
+        throw new Error("No account found for user");
       }
 
       if (account.expires_at && account.expires_at < Date.now() / 1000) {

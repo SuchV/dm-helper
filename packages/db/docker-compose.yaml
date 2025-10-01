@@ -1,36 +1,29 @@
-# packages/db/docker-compose.yml
-version: "3.8"
+version: "3.9"
 
 services:
-  mongo_spolka:
+  mongo:
     image: mongo:7.0
     command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
     ports:
-      - 27017:27017
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    healthcheck:
-      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'host.docker.internal:27017'}]}) }" | mongosh --port 27017 --quiet
-      interval: 5s
-      timeout: 30s
-      start_period: 0s
-      start_interval: 1s
-      retries: 30
+      - "27017:27017"
     volumes:
-      - "mongo_spolka_data:/data/db"
-      - "mongo_spolka_config:/data/configdb"
-  # mongo-express:
-  #   image: mongo-express
-  #   restart: always
-  #   environment:
-  #     - ME_CONFIG_MONGODB_SERVER=localhost
-  #     - ME_CONFIG_MONGODB_PORT=27017
-  #     - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
-  #   depends_on:
-  #     - mongo
-  #   ports:
-  #     - "8080:8081"
+      - "mongo1_data:/data/db"
+      - "mongo1_config:/data/configdb"
+
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_SERVER: mongodb
+    depends_on:
+      - mongodb
 
 volumes:
-  mongo_spolka_data:
-  mongo_spolka_config:
+  mongo1_data:
+  mongo1_config:

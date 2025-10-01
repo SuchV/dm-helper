@@ -1,4 +1,4 @@
-import * as discord from "@spolka-z-l-o/discord";
+import * as discord from "@spolka-z-l-o/discord/discord";
 
 import type { APIGuildMember } from "discord-api-types/v10";
 

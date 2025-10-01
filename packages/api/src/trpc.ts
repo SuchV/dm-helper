@@ -14,6 +14,11 @@ import { ZodError } from "zod";
 import { auth } from "@spolka-z-l-o/auth";
 import { prisma } from "@spolka-z-l-o/db";
 import { DiscordAPIClient } from "@spolka-z-l-o/discord";
+import { getSession } from "@spolka-z-l-o/auth/credentials";
+import prisma from "@spolka-z-l-o/db";
+import { DiscordAPIClient } from "@spolka-z-l-o/discord/discord";
+import { DiscordAPIClientMock } from "@spolka-z-l-o/discord/mock";
+import { env } from "@spolka-z-l-o/env/next-env";
 
 interface DiscordConfig {
   discordId: string;
@@ -43,11 +48,17 @@ export const createTRPCContext = async (opts: {
 }) => {
   const source = opts.headers?.get("x-trpc-source") ?? opts.source ?? "unknown";
 
-  const dc = new DiscordAPIClient(opts.discord.discordToken);
+  const dc =
+    env.ENVIRONMENT !== "local"
+      ? new DiscordAPIClient(opts.discord.discordToken)
+      : new DiscordAPIClientMock(opts.discord.discordToken);
 
   const db = prisma;
 
-  const session = await auth();
+  const session =
+    env.ENVIRONMENT === "local" ? await getSession() : await auth();
+
+  // const session = await auth();
 
   return {
     logLevel: opts.logLevel ?? "info",

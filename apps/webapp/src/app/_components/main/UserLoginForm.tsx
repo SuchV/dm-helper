@@ -1,0 +1,26 @@
+import { Button } from "@spolka-z-l-o/ui/button";
+import { Input } from "@spolka-z-l-o/ui/input";
+import { Separator } from "@spolka-z-l-o/ui/separator";
+import UserLoginButton from "./UserLoginButton";
+import { auth } from "@spolka-z-l-o/auth";
+
+const UserLoginForm = () => {
+  const session = auth();
+
+  if (session) {
+    return null;
+  }
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2">
+        <Input placeholder="Username" />
+        <Input placeholder="Password" />
+        <Button type="submit">Login</Button>
+      </div>
+      <Separator />
+      <UserLoginButton />
+    </div>
+  );
+};
+
+export default UserLoginForm;

@@ -12,11 +12,12 @@ import {
 import UserLoginButton from "~/app/_components/main/UserLoginButton";
 import { auth } from "@spolka-z-l-o/auth";
 import prisma from "@spolka-z-l-o/db";
+import UserLoginForm from "~/app/_components/main/UserLoginForm";
 
 const HomePage = async () => {
   return (
     <div className="flex flex-col">
-      <UserLoginButton />
+      <UserLoginForm />
     </div>
   );
 };

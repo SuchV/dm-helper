@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import UserModel from "../models/auth/User";
-import prisma from "..";
+import { prisma } from "..";
 
 const seedDataUser = {
   name: "TestUser",

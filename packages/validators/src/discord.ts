@@ -1,13 +1,13 @@
-import * as discord from "@spolka-z-l-o/discord/discord";
+import { DiscordAPIClient } from "@spolka-z-l-o/discord/src/discord";
 
 import type { APIGuildMember } from "discord-api-types/v10";
 
 export type DiscordUserGuild = Awaited<
-  ReturnType<discord.DiscordAPIClient["getUserGuilds"]>
+  ReturnType<DiscordAPIClient["getUserGuilds"]>
 >[number];
 
 export type DiscordBotGuild = Awaited<
-  ReturnType<discord.DiscordAPIClient["getBotGuilds"]>
+  ReturnType<DiscordAPIClient["getBotGuilds"]>
 >[number];
 
 export type DiscordGuildMemberWithBirthday = APIGuildMember & {

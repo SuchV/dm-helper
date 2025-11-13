@@ -8,7 +8,7 @@ import {
 import {
   GuildSettings,
   IGuildSettings,
-} from "@spolka-z-l-o/db/models/GuildSettings";
+} from "@spolka-z-l-o/db/models/bot/GuildSettings";
 
 export const setBirthdayChannel = async (
   interaction: ChatInputCommandInteraction<CacheType>

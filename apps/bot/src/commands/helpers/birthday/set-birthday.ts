@@ -1,9 +1,16 @@
-import { CommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+  CacheType,
+  ChatInputCommandInteraction,
+  CommandInteraction,
+  SlashCommandBuilder,
+} from "discord.js";
 import { birthdateSchema } from "../../../validators/birthdate";
-import { Birthday } from "@spolka-z-l-o/db/models/Birthday";
+import { Birthday } from "@spolka-z-l-o/db/models/bot/Birthday";
 import { actionElementsBirthdaySet } from "../../../action-elements/birthday/set-birthday";
 
-export const setBirthday = async (interaction: CommandInteraction) => {
+export const setBirthday = async (
+  interaction: ChatInputCommandInteraction<CacheType>
+) => {
   const user = interaction.user;
   const userId = user.id;
 

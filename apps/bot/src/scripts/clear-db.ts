@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
-import { botEnv } from "@spolka-z-l-o/env";
+import { env as botEnv } from "@spolka-z-l-o/env/bot-env";
 
 (async () => {
   try {
-    await mongoose.connect(botEnv.MONGO_URI);
+    await mongoose.connect(botEnv.DATABASE_URL);
     console.log("Connected to MongoDB");
 
     const db = mongoose.connection.db;

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { RoleGroup } from "../../models/RoleGroup";
+import { RoleGroup } from "@spolka-z-l-o/db/models/bot/RoleGroup";
 
 const seedData = [
   {

@@ -1,4 +1,4 @@
-import { Birthday } from "../../models/Birthday";
+import { Birthday } from "@spolka-z-l-o/db/models/bot/Birthday";
 
 const seedData = [
   {

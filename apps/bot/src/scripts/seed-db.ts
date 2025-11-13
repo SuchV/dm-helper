@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { botEnv } from "@spolka-z-l-o/env";
+import { env as botEnv } from "@spolka-z-l-o/env/bot-env";
 import { runQuery as runQueryBirthday } from "./seed/Birthday";
 import { runQuery as runQueryGuildSettings } from "./seed/GuildSettings";
 import { runQuery as runQueryRoleGroup } from "./seed/RoleGroup";
@@ -10,7 +10,7 @@ import { runQuery as runQueryVerification } from "./seed/Verification";
 
 const seed = async () => {
   try {
-    await mongoose.connect(botEnv.MONGO_URI);
+    await mongoose.connect(botEnv.DATABASE_URL);
     console.log("Connected to MongoDB");
 
     // Import seed scripts

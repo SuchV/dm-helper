@@ -12,7 +12,8 @@
     "build": "tsup src/index.ts --minify",
     "clear-db": "ts-node src/scripts/clear-db.ts",
     "seed-db": "ts-node src/scripts/seed-db.ts",
-    "with-env": "dotenv -e ../../.env --"
+    "with-env": "dotenv -e ../../.env --",
+    "typecheck": "tsc --noEmit"
   },
   "exports": {
     ".": {

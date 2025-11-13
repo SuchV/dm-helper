@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { RoleGroup } from "@prisma/client";
+import { RoleGroup } from "../models/bot/RoleGroup";
 
 const seedData = [
   {

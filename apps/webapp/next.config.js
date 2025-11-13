@@ -5,7 +5,7 @@ import webpack from "webpack";
 const jiti = _jiti(fileURLToPath(import.meta.url));
 
 // Import env files to validate at build time. Use jiti so we can load .ts files in here.
-jiti("@spolka-z-l-o/env/next-env");
+jiti("@repo/env/next-env");
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
@@ -13,13 +13,13 @@ const nextConfig = {
 
   /** Enables hot reloading for local packages without a build step */
   transpilePackages: [
-    "@spolka-z-l-o/api",
-    "@spolka-z-l-o/auth",
-    "@spolka-z-l-o/discord",
-    "@spolka-z-l-o/env/next-env",
-    "@spolka-z-l-o/supabase",
-    "@spolka-z-l-o/ui",
-    "@spolka-z-l-o/validators",
+    "@repo/api",
+    "@repo/auth",
+    "@repo/discord",
+    "@repo/env/next-env",
+    "@repo/supabase",
+    "@repo/ui",
+    "@repo/validators",
   ],
   env: {
     PORT: process.env.PORT,

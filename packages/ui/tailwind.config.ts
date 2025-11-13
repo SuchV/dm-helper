@@ -4,7 +4,7 @@
  */
 import type { Config } from "tailwindcss";
 
-import baseConfig from "@spolka-z-l-o/tailwind-config/web";
+import baseConfig from "@repo/tailwind-config/web";
 
 export default {
   content: ["./src/**/*.tsx"],

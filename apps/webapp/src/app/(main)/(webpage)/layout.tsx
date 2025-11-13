@@ -7,9 +7,9 @@ import {
   BasicPageContent,
   BasicPageFooter,
   BasicPageHeader,
-} from "@spolka-z-l-o/ui/recipes/basic-page";
-import { Logo } from "@spolka-z-l-o/ui/recipes/logo";
-import { ThemeToggle } from "@spolka-z-l-o/ui/theme";
+} from "@repo/ui/recipes/basic-page";
+import { Logo } from "@repo/ui/recipes/logo";
+import { ThemeToggle } from "@repo/ui/theme";
 
 import { Footer } from "./footer";
 import { Navigation } from "./nav";

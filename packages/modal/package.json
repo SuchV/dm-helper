@@ -1,5 +1,5 @@
 {
-  "name": "@spolka-z-l-o/modal",
+  "name": "@repo/modal",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -11,9 +11,9 @@
     "zustand": "^5.0.5"
   },
   "devDependencies": {
-    "@spolka-z-l-o/eslint-config": "workspace:*",
-    "@spolka-z-l-o/prettier-config": "workspace:*",
-    "@spolka-z-l-o/tsconfig": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
     "@types/node": "^22.15.21",
     "eslint": "catalog:",
     "prettier": "catalog:",
@@ -28,7 +28,7 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "license": "SEE LICENSE IN LICENSE",
-  "prettier": "@spolka-z-l-o/prettier-config",
+  "prettier": "@repo/prettier-config",
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",

@@ -1,18 +1,18 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@spolka-z-l-o/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@spolka-z-l-o/ui/dropdown-menu";
+} from "@repo/ui/dropdown-menu";
 import { api } from "~/trpc/react";
-import { Skeleton } from "@spolka-z-l-o/ui/skeleton";
+import { Skeleton } from "@repo/ui/skeleton";
 import UserLoginButton from "~/app/_components/main/UserLoginButton";
 import { useState } from "react";
 import { ChevronDown, Trash } from "lucide-react";
-import { Separator } from "@spolka-z-l-o/ui/separator";
+import { Separator } from "@repo/ui/separator";
 
 const UserAvatarButton = () => {
   const [isOpen, setIsOpen] = useState(false);

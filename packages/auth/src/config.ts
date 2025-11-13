@@ -11,8 +11,8 @@ import Email from "next-auth/providers/email";
 import Nodemailer, { NodemailerConfig } from "next-auth/providers/nodemailer";
 import { signIn } from "next-auth/react";
 
-import { prisma } from "@spolka-z-l-o/db";
-import { env } from "@spolka-z-l-o/env/next-env";
+import { prisma } from "@repo/db";
+import { env } from "@repo/env/next-env";
 
 import { getUser } from "./credentials";
 

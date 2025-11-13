@@ -1,5 +1,5 @@
 {
-  "name": "@spolka-z-l-o/tailwind-config",
+  "name": "@repo/tailwind-config",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -19,12 +19,12 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@spolka-z-l-o/eslint-config": "workspace:*",
-    "@spolka-z-l-o/prettier-config": "workspace:*",
-    "@spolka-z-l-o/tsconfig": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
   },
-  "prettier": "@spolka-z-l-o/prettier-config"
+  "prettier": "@repo/prettier-config"
 }

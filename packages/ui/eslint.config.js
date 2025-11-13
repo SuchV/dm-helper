@@ -1,7 +1,7 @@
-import baseConfig from "@spolka-z-l-o/eslint-config/base";
-import reactConfig from "@spolka-z-l-o/eslint-config/react";
+import baseConfig from "@repo/eslint-config/base";
+import reactConfig from "@repo/eslint-config/react";
 
-/** @type {import('@spolka-z-l-o/eslint-config/types').Config} */
+/** @type {import('@repo/eslint-config/types').Config} */
 export default [
   {
     ignores: ["dist/**"],

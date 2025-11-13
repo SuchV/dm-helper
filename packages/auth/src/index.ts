@@ -1,6 +1,6 @@
 import NextAuth, { NextAuthResult, Session, User } from "next-auth";
 
-import { env } from "@spolka-z-l-o/env/next-env";
+import { env } from "@repo/env/next-env";
 
 import { authConfig } from "./config";
 

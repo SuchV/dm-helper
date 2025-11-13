@@ -1,9 +1,9 @@
 "use client";
 
 import type { BingoEntry as BingoEntryType, User } from "@prisma/client";
-import { cn } from "@spolka-z-l-o/ui";
-import { Avatar, AvatarFallback, AvatarImage } from "@spolka-z-l-o/ui/avatar";
-import { Button } from "@spolka-z-l-o/ui/button";
+import { cn } from "@repo/ui";
+import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
+import { Button } from "@repo/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -11,7 +11,7 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
-} from "@spolka-z-l-o/ui/dialog";
+} from "@repo/ui/dialog";
 import {
   FormField,
   useForm,
@@ -20,19 +20,19 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from "@spolka-z-l-o/ui/form";
+} from "@repo/ui/form";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "@spolka-z-l-o/ui/tooltip";
+} from "@repo/ui/tooltip";
 import { format } from "date-fns";
 import { Edit, Loader2, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "~/trpc/react";
 import { z } from "zod";
-import { Input } from "@spolka-z-l-o/ui/input";
+import { Input } from "@repo/ui/input";
 
 export const BingoEntry = ({
   bingoEntry,

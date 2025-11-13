@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-import { prisma } from "@spolka-z-l-o/db";
+import { prisma } from "@repo/db";
 import {
   CreateBingoForm,
   createBingoFormSchema,
-} from "@spolka-z-l-o/validators";
+} from "@repo/validators";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 

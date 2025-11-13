@@ -32,8 +32,8 @@ export function renameDependencies(dependencies?: unknown, prefix?: string) {
 
   const result: Record<string, string> = {};
   for (const [dep, version] of Object.entries(dependencies)) {
-    if (dep.startsWith("@spolka-z-l-o/")) {
-      result[dep.replace("@spolka-z-l-o", "@" + prefix)] = `${version}`;
+    if (dep.startsWith("@repo/")) {
+      result[dep.replace("@repo", "@" + prefix)] = `${version}`;
     } else {
       result[dep] = `${version}`;
     }

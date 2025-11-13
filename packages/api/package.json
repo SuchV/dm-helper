@@ -1,16 +1,16 @@
 {
-  "name": "@spolka-z-l-o/api",
+  "name": "@repo/api",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
     "@discordjs/next": "0.1.1-dev.1673526225-a580768.0",
     "@opentelemetry/api": "1.9.0",
-    "@spolka-z-l-o/auth": "workspace:*",
-    "@spolka-z-l-o/db": "workspace:*",
-    "@spolka-z-l-o/discord": "workspace:*",
-    "@spolka-z-l-o/env": "workspace:*",
-    "@spolka-z-l-o/validators": "workspace:*",
+    "@repo/auth": "workspace:*",
+    "@repo/db": "workspace:*",
+    "@repo/discord": "workspace:*",
+    "@repo/env": "workspace:*",
+    "@repo/validators": "workspace:*",
     "@tanstack/react-query": "^5.69.0",
     "@trpc/client": "^11.0.0",
     "@trpc/react-query": "^11.0.0",
@@ -21,9 +21,9 @@
     "zod": "^3.25.51"
   },
   "devDependencies": {
-    "@spolka-z-l-o/eslint-config": "workspace:*",
-    "@spolka-z-l-o/prettier-config": "workspace:*",
-    "@spolka-z-l-o/tsconfig": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "eslint": "catalog:",
@@ -39,7 +39,7 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "license": "SEE LICENSE IN LICENSE",
-  "prettier": "@spolka-z-l-o/prettier-config",
+  "prettier": "@repo/prettier-config",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

@@ -1,2 +1,2 @@
-import { handlers } from "@spolka-z-l-o/auth";
+import { handlers } from "@repo/auth";
 export const { GET, POST } = handlers;

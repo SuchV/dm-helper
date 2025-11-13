@@ -3,7 +3,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@spolka-z-l-o/ui/tabs";
+} from "@repo/ui/tabs";
 import {
   Ban,
   Cake,
@@ -17,8 +17,8 @@ import {
 import BirthdaysTab from "./birthdays";
 import BingoTab from "./bingo";
 import type { api } from "~/trpc/server";
-import type { DiscordGuildMemberWithBirthday } from "@spolka-z-l-o/validators";
-import { Button } from "@spolka-z-l-o/ui/button";
+import type { DiscordGuildMemberWithBirthday } from "@repo/validators";
+import { Button } from "@repo/ui/button";
 import Link from "next/link";
 
 interface TabsParentProps {

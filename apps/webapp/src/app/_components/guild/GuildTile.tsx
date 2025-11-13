@@ -1,11 +1,11 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@spolka-z-l-o/ui/avatar";
-import { Badge } from "@spolka-z-l-o/ui/badge";
-import type { DiscordUserGuild } from "@spolka-z-l-o/validators/discord";
+import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
+import { Badge } from "@repo/ui/badge";
+import type { DiscordUserGuild } from "@repo/validators/discord";
 import Image from "next/image";
 import Link from "next/link";
 import { getBotInviteLink, getNameShort } from "../helpers";
 import BlurredTile from "../BlurredTile";
-import { Button } from "@spolka-z-l-o/ui/button";
+import { Button } from "@repo/ui/button";
 
 interface GuildTileProps {
   guild: DiscordUserGuild;

@@ -6,8 +6,8 @@ import { httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import SuperJSON from "superjson";
 
-import type { AppRouter } from "@spolka-z-l-o/api";
-import { env } from "@spolka-z-l-o/env/next-env";
+import type { AppRouter } from "@repo/api";
+import { env } from "@repo/env/next-env";
 
 const createQueryClient = () => new QueryClient();
 

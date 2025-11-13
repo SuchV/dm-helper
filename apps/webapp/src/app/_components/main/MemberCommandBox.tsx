@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@spolka-z-l-o/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
 import {
   Command,
   CommandEmpty,
@@ -8,8 +8,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@spolka-z-l-o/ui/command";
-import type { DiscordGuildMemberWithBirthday } from "@spolka-z-l-o/validators/discord";
+} from "@repo/ui/command";
+import type { DiscordGuildMemberWithBirthday } from "@repo/validators/discord";
 import { getNameShort } from "../helpers";
 import BirthdayModal from "../modals/birthday";
 

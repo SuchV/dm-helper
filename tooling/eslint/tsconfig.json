@@ -1,5 +1,5 @@
 {
-    "extends": "@spolka-z-l-o/tsconfig/base.json",
+    "extends": "@repo/tsconfig/base.json",
     "include": ["."],
     "exclude": ["node_modules"]
   }

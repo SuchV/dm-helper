@@ -1,11 +1,11 @@
 "use client";
 
-import { Button } from "@spolka-z-l-o/ui/button";
-import { type Session } from "@spolka-z-l-o/auth";
+import { Button } from "@repo/ui/button";
+import { type Session } from "@repo/auth";
 import { api } from "~/trpc/react";
 import { login, logout } from "~/app/actions";
 import { useRouter } from "next/navigation";
-import { Skeleton } from "@spolka-z-l-o/ui/skeleton";
+import { Skeleton } from "@repo/ui/skeleton";
 
 const UserLoginButton = () => {
   const { data: session, isLoading, error } = api.user.getUser.useQuery();

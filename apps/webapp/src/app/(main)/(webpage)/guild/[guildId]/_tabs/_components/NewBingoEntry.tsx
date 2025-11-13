@@ -1,9 +1,9 @@
 "use client";
 
-import { cn } from "@spolka-z-l-o/ui";
+import { cn } from "@repo/ui";
 import { Loader2, Plus } from "lucide-react";
 import { api } from "~/trpc/react";
-import { Button } from "@spolka-z-l-o/ui/button";
+import { Button } from "@repo/ui/button";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 

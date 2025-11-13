@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "DM_Helper",
   "private": true,
   "scripts": {
     "build": "turbo run build",

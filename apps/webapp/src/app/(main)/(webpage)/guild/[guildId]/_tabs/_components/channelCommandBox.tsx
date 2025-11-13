@@ -5,10 +5,10 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@spolka-z-l-o/ui/command";
+} from "@repo/ui/command";
 
-import type { APIGuildChannel } from "@spolka-z-l-o/validators";
-import { ChannelType } from "@spolka-z-l-o/validators";
+import type { APIGuildChannel } from "@repo/validators";
+import { ChannelType } from "@repo/validators";
 
 export const ChannelCommandBox = ({
   guildChannels,

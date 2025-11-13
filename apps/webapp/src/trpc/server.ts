@@ -1,8 +1,8 @@
 import { cache } from "react";
 import { cookies, headers } from "next/headers";
 
-import { createCaller, createTRPCContext } from "@spolka-z-l-o/api";
-import { env } from "@spolka-z-l-o/env/next-env";
+import { createCaller, createTRPCContext } from "@repo/api";
+import { env } from "@repo/env/next-env";
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when

@@ -1,5 +1,5 @@
 {
-  "name": "@spolka-z-l-o/discord",
+  "name": "@repo/discord",
   "version": "1.0.0",
   "description": "",
   "private": true,
@@ -28,19 +28,19 @@
     }
   },
   "dependencies": {
-    "@spolka-z-l-o/auth": "workspace:*",
-    "@spolka-z-l-o/db": "workspace:*",
-    "@spolka-z-l-o/env": "workspace:*",
+    "@repo/auth": "workspace:*",
+    "@repo/db": "workspace:*",
+    "@repo/env": "workspace:*",
     "date-fns": "^4.1.0",
     "discord-api-types": "^0.38.10",
     "dotenv": "^16.5.0",
     "zod": "^3.25.51"
   },
   "devDependencies": {
-    "@spolka-z-l-o/eslint-config": "workspace:*",
-    "@spolka-z-l-o/prettier-config": "workspace:*",
-    "@spolka-z-l-o/tailwind-config": "workspace:*",
-    "@spolka-z-l-o/tsconfig": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/tailwind-config": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
     "@types/node": "^22.15.21",
     "ts-node": "^10.9.2",
     "tsup": "^8.5.0",

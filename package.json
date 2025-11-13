@@ -1,5 +1,5 @@
 {
-  "name": "@spolka-z-l-o/bot-monorepo",
+  "name": "@repo/bot-monorepo",
   "private": true,
   "engines": {
     "node": ">=20"

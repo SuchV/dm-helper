@@ -1,6 +1,6 @@
-import { prisma } from "@spolka-z-l-o/db";
-import { discord, mock } from "@spolka-z-l-o/discord";
-import { CDNRoutes, ImageFormat, RouteBases } from "@spolka-z-l-o/validators";
+import { prisma } from "@repo/db";
+import { discord, mock } from "@repo/discord";
+import { CDNRoutes, ImageFormat, RouteBases } from "@repo/validators";
 
 export const upsertUser = async (
   ctx: { discord: discord.DiscordAPIClient | mock.DiscordAPIClientMock },

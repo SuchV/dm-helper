@@ -1,8 +1,8 @@
 import baseConfig, {
   restrictEnvAccess,
-} from "@spolka-z-l-o/eslint-config/base";
-import nextjsConfig from "@spolka-z-l-o/eslint-config/nextjs";
-import reactConfig from "@spolka-z-l-o/eslint-config/react";
+} from "@repo/eslint-config/base";
+import nextjsConfig from "@repo/eslint-config/nextjs";
+import reactConfig from "@repo/eslint-config/react";
 
 /** @type {import('typescript-eslint').Config} */
 export default [

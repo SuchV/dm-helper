@@ -1,5 +1,5 @@
 {
-  "name": "@spolka-z-l-o/prettier-config",
+  "name": "@repo/prettier-config",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -16,8 +16,8 @@
     "prettier-plugin-tailwindcss": "^0.6.6"
   },
   "devDependencies": {
-    "@spolka-z-l-o/tsconfig": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
     "typescript": "catalog:"
   },
-  "prettier": "@spolka-z-l-o/prettier-config"
+  "prettier": "@repo/prettier-config"
 }

@@ -5,7 +5,7 @@ import { useSelectedLayoutSegment } from "next/navigation";
 import {
   BasicPageNav,
   BasicPageNavItem,
-} from "@spolka-z-l-o/ui/recipes/basic-page";
+} from "@repo/ui/recipes/basic-page";
 
 const Navigation = () => {
   const segment = useSelectedLayoutSegment();

@@ -9,10 +9,10 @@ import {
   FormLabel,
   FormField,
   useFieldArray,
-} from "@spolka-z-l-o/ui/form";
-import { createBingoFormSchema } from "@spolka-z-l-o/validators";
-import { Input } from "@spolka-z-l-o/ui/input";
-import { Button } from "@spolka-z-l-o/ui/button";
+} from "@repo/ui/form";
+import { createBingoFormSchema } from "@repo/validators";
+import { Input } from "@repo/ui/input";
+import { Button } from "@repo/ui/button";
 import { api } from "~/trpc/react";
 import { useParams, useRouter } from "next/navigation";
 

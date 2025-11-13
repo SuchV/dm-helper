@@ -1,7 +1,7 @@
 "use server";
 
-import { signIn, signOut } from "@spolka-z-l-o/auth/react";
-import { env } from "@spolka-z-l-o/env/next-env";
+import { signIn, signOut } from "@repo/auth/react";
+import { env } from "@repo/env/next-env";
 
 export const login = async () => {
   env.ENVIRONMENT === "local"

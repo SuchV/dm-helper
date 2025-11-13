@@ -1,8 +1,8 @@
-import { Button } from "@spolka-z-l-o/ui/button";
-import { Input } from "@spolka-z-l-o/ui/input";
-import { Separator } from "@spolka-z-l-o/ui/separator";
+import { Button } from "@repo/ui/button";
+import { Input } from "@repo/ui/input";
+import { Separator } from "@repo/ui/separator";
 import UserLoginButton from "./UserLoginButton";
-import { auth } from "@spolka-z-l-o/auth";
+import { auth } from "@repo/auth";
 
 const UserLoginForm = () => {
   const session = auth();

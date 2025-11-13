@@ -1,4 +1,4 @@
-import { Tabs } from "@spolka-z-l-o/ui/tabs";
+import { Tabs } from "@repo/ui/tabs";
 import BingoTab from "../../_tabs/bingo";
 import { api } from "~/trpc/server";
 import { notFound } from "next/navigation";

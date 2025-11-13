@@ -1,4 +1,4 @@
-import { env } from "@spolka-z-l-o/env/next-env";
+import { env } from "@repo/env/next-env";
 
 export const getNameShort = (name: string) => {
   if (!name) return "";

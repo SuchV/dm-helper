@@ -1,6 +1,6 @@
 import { api } from "~/trpc/server";
-import { env } from "@spolka-z-l-o/env/next-env";
-import { auth } from "@spolka-z-l-o/auth";
+import { env } from "@repo/env/next-env";
+import { auth } from "@repo/auth";
 import { redirect } from "next/navigation";
 import GuildBadge from "~/app/_components/guild/GuildTile";
 import {

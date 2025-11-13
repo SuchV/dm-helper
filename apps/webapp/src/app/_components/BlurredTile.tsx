@@ -1,4 +1,4 @@
-import { cn } from "@spolka-z-l-o/ui";
+import { cn } from "@repo/ui";
 import Image from "next/image";
 
 interface BlurredTileProps {

@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { env } from "@spolka-z-l-o/env/next-env";
+import { env } from "@repo/env/next-env";
 import dotenv from "dotenv";
 
 // add prisma to the NodeJS global type

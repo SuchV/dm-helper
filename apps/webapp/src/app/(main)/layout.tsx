@@ -2,10 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 
-import { env } from "@spolka-z-l-o/env/next-env";
-import { cn } from "@spolka-z-l-o/ui";
-import { ThemeProvider } from "@spolka-z-l-o/ui/theme";
-import { Toaster } from "@spolka-z-l-o/ui/toast";
+import { env } from "@repo/env/next-env";
+import { cn } from "@repo/ui";
+import { ThemeProvider } from "@repo/ui/theme";
+import { Toaster } from "@repo/ui/toast";
 
 import { TRPCReactProvider } from "~/trpc/react";
 

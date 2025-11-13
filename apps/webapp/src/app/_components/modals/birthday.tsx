@@ -1,7 +1,7 @@
 "use client";
 
-import { useModalStore } from "@spolka-z-l-o/modal";
-import { Button } from "@spolka-z-l-o/ui/button";
+import { useModalStore } from "@repo/modal";
+import { Button } from "@repo/ui/button";
 import { api } from "~/trpc/react";
 
 import { z } from "zod";
@@ -14,21 +14,21 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@spolka-z-l-o/ui/dialog";
-import type { DiscordGuildMemberWithBirthday } from "@spolka-z-l-o/validators/discord";
+} from "@repo/ui/dialog";
+import type { DiscordGuildMemberWithBirthday } from "@repo/validators/discord";
 
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@spolka-z-l-o/ui/popover";
-import { Calendar } from "@spolka-z-l-o/ui/calendar";
+} from "@repo/ui/popover";
+import { Calendar } from "@repo/ui/calendar";
 import { CalendarIcon, Loader } from "lucide-react";
 import { startTransition, useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "@spolka-z-l-o/ui/toast";
-import { CommandItem } from "@spolka-z-l-o/ui/command";
-import { Avatar, AvatarFallback, AvatarImage } from "@spolka-z-l-o/ui/avatar";
+import { toast } from "@repo/ui/toast";
+import { CommandItem } from "@repo/ui/command";
+import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
 import { getNameShort } from "../helpers";
 
 interface BirthdayModalProps {

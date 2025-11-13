@@ -2,8 +2,8 @@ import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
-import { appRouter, createTRPCContext } from "@spolka-z-l-o/api";
-import { env } from "@spolka-z-l-o/env/next-env";
+import { appRouter, createTRPCContext } from "@repo/api";
+import { env } from "@repo/env/next-env";
 
 export const runtime = "nodejs";
 

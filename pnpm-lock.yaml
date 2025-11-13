@@ -88,64 +88,6 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
 
-  apps/bot:
-    dependencies:
-      '@spolka-z-l-o/db':
-        specifier: workspace:*
-        version: link:../../packages/db
-      '@spolka-z-l-o/env':
-        specifier: workspace:*
-        version: link:../../packages/env
-      date-fns:
-        specifier: ^4.1.0
-        version: 4.1.0
-      discord.js:
-        specifier: ^14.22.1
-        version: 14.22.1
-      dotenv:
-        specifier: ^16.5.0
-        version: 16.5.0
-      mongoose:
-        specifier: ^8.15.0
-        version: 8.15.0(socks@2.8.4)(supports-color@8.1.1)
-      node-cron:
-        specifier: ^4.0.6
-        version: 4.0.7
-      zod:
-        specifier: ^3.25.51
-        version: 3.25.51
-    devDependencies:
-      '@spolka-z-l-o/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@spolka-z-l-o/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@spolka-z-l-o/tailwind-config':
-        specifier: workspace:*
-        version: link:../../tooling/tailwind
-      '@spolka-z-l-o/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      '@types/node':
-        specifier: ^22.15.21
-        version: 22.15.21
-      dotenv-cli:
-        specifier: ^7.3.0
-        version: 7.4.4
-      ts-node:
-        specifier: ^10.9.2
-        version: 10.9.2(@types/node@22.15.21)(typescript@5.8.3)
-      tsup:
-        specifier: ^8.5.0
-        version: 8.5.0(jiti@2.4.2)(postcss@8.5.4)(supports-color@8.1.1)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.8.0)
-      tsx:
-        specifier: ^4.19.4
-        version: 4.19.4
-      typescript:
-        specifier: 'catalog:'
-        version: 5.8.3
-
   apps/webapp:
     dependencies:
       '@dnd-kit/core':
@@ -166,28 +108,25 @@ importers:
       '@prisma/client':
         specifier: ^6.8.2
         version: 6.8.2(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3)
-      '@spolka-z-l-o/api':
+      '@repo/api':
         specifier: workspace:*
         version: link:../../packages/api
-      '@spolka-z-l-o/auth':
+      '@repo/auth':
         specifier: workspace:*
         version: link:../../packages/auth
-      '@spolka-z-l-o/bot':
-        specifier: workspace:*
-        version: link:../bot
-      '@spolka-z-l-o/db':
+      '@repo/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@spolka-z-l-o/env':
+      '@repo/env':
         specifier: workspace:*
         version: link:../../packages/env
-      '@spolka-z-l-o/modal':
+      '@repo/modal':
         specifier: workspace:*
         version: link:../../packages/modal
-      '@spolka-z-l-o/ui':
+      '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@spolka-z-l-o/validators':
+      '@repo/validators':
         specifier: workspace:*
         version: link:../../packages/validators
       '@tanstack/react-query':
@@ -245,16 +184,16 @@ importers:
         specifier: 'catalog:'
         version: 3.25.29
     devDependencies:
-      '@spolka-z-l-o/eslint-config':
+      '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
-      '@spolka-z-l-o/prettier-config':
+      '@repo/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
-      '@spolka-z-l-o/tailwind-config':
+      '@repo/tailwind-config':
         specifier: workspace:*
         version: link:../../tooling/tailwind
-      '@spolka-z-l-o/tsconfig':
+      '@repo/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
       '@total-typescript/ts-reset':
@@ -293,19 +232,19 @@ importers:
       '@opentelemetry/api':
         specifier: 1.9.0
         version: 1.9.0
-      '@spolka-z-l-o/auth':
+      '@repo/auth':
         specifier: workspace:*
         version: link:../auth
-      '@spolka-z-l-o/db':
+      '@repo/db':
         specifier: workspace:*
         version: link:../db
-      '@spolka-z-l-o/discord':
+      '@repo/discord':
         specifier: workspace:*
         version: link:../discord
-      '@spolka-z-l-o/env':
+      '@repo/env':
         specifier: workspace:*
         version: link:../env
-      '@spolka-z-l-o/validators':
+      '@repo/validators':
         specifier: workspace:*
         version: link:../validators
       '@tanstack/react-query':
@@ -333,13 +272,13 @@ importers:
         specifier: ^3.25.51
         version: 3.25.51
     devDependencies:
-      '@spolka-z-l-o/eslint-config':
+      '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
-      '@spolka-z-l-o/prettier-config':
+      '@repo/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
-      '@spolka-z-l-o/tsconfig':
+      '@repo/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
       '@types/react':
@@ -363,10 +302,10 @@ importers:
       '@next-auth/prisma-adapter':
         specifier: ^1.0.7
         version: 1.0.7(@prisma/client@6.8.2(prisma@6.8.2(typescript@5.9.2))(typescript@5.9.2))(next-auth@5.0.0-beta.29(next@15.3.3(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0))
-      '@spolka-z-l-o/db':
+      '@repo/db':
         specifier: workspace:*
         version: link:../db
-      '@spolka-z-l-o/env':
+      '@repo/env':
         specifier: workspace:*
         version: link:../env
       discord-api-types:
@@ -376,13 +315,13 @@ importers:
         specifier: beta
         version: 5.0.0-beta.29(next@15.3.3(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
     devDependencies:
-      '@spolka-z-l-o/eslint-config':
+      '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
-      '@spolka-z-l-o/prettier-config':
+      '@repo/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
-      '@spolka-z-l-o/tsconfig':
+      '@repo/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
 
@@ -394,7 +333,7 @@ importers:
       '@prisma/client':
         specifier: ^6.8.2
         version: 6.8.2(prisma@6.8.2(typescript@5.9.2))(typescript@5.9.2)
-      '@spolka-z-l-o/env':
+      '@repo/env':
         specifier: workspace:*
         version: link:../env
       dotenv:
@@ -416,13 +355,13 @@ importers:
         specifier: ^4.19.4
         version: 4.19.4
     devDependencies:
-      '@spolka-z-l-o/eslint-config':
+      '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
-      '@spolka-z-l-o/prettier-config':
+      '@repo/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
-      '@spolka-z-l-o/tsconfig':
+      '@repo/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
       dotenv-cli:
@@ -431,13 +370,13 @@ importers:
 
   packages/discord:
     dependencies:
-      '@spolka-z-l-o/auth':
+      '@repo/auth':
         specifier: workspace:*
         version: link:../auth
-      '@spolka-z-l-o/db':
+      '@repo/db':
         specifier: workspace:*
         version: link:../db
-      '@spolka-z-l-o/env':
+      '@repo/env':
         specifier: workspace:*
         version: link:../env
       date-fns:
@@ -453,16 +392,16 @@ importers:
         specifier: ^3.25.51
         version: 3.25.51
     devDependencies:
-      '@spolka-z-l-o/eslint-config':
+      '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
-      '@spolka-z-l-o/prettier-config':
+      '@repo/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
-      '@spolka-z-l-o/tailwind-config':
+      '@repo/tailwind-config':
         specifier: workspace:*
         version: link:../../tooling/tailwind
-      '@spolka-z-l-o/tsconfig':
+      '@repo/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
       '@types/node':
@@ -496,13 +435,13 @@ importers:
         specifier: 'catalog:'
         version: 3.25.29
     devDependencies:
-      '@spolka-z-l-o/eslint-config':
+      '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
-      '@spolka-z-l-o/prettier-config':
+      '@repo/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
-      '@spolka-z-l-o/tsconfig':
+      '@repo/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
       '@types/node':
@@ -536,13 +475,13 @@ importers:
         specifier: ^5.0.5
         version: 5.0.5(@types/react@19.1.5)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
     devDependencies:
-      '@spolka-z-l-o/eslint-config':
+      '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
-      '@spolka-z-l-o/prettier-config':
+      '@repo/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
-      '@spolka-z-l-o/tsconfig':
+      '@repo/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
       '@types/node':
@@ -614,9 +553,6 @@ importers:
       next-themes:
         specifier: ^0.2.1
         version: 0.2.1(next@15.3.3(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      react-calendar:
-        specifier: ^6.0.0
-        version: 6.0.0(@types/react@19.1.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-day-picker:
         specifier: ^9.7.0
         version: 9.7.0(react@19.1.0)
@@ -636,16 +572,16 @@ importers:
         specifier: ^0.4.1
         version: 0.4.4(preact@10.24.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     devDependencies:
-      '@spolka-z-l-o/eslint-config':
+      '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
-      '@spolka-z-l-o/prettier-config':
+      '@repo/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
-      '@spolka-z-l-o/tailwind-config':
+      '@repo/tailwind-config':
         specifier: workspace:*
         version: link:../../tooling/tailwind
-      '@spolka-z-l-o/tsconfig':
+      '@repo/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
       '@types/react':
@@ -681,7 +617,7 @@ importers:
 
   packages/validators:
     dependencies:
-      '@spolka-z-l-o/discord':
+      '@repo/discord':
         specifier: workspace:*
         version: link:../discord
       discord-api-types:
@@ -718,10 +654,10 @@ importers:
         specifier: ^8.3.0
         version: 8.32.1(eslint@9.27.0(jiti@2.4.2)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.8.3)
     devDependencies:
-      '@spolka-z-l-o/prettier-config':
+      '@repo/prettier-config':
         specifier: workspace:*
         version: link:../prettier
-      '@spolka-z-l-o/tsconfig':
+      '@repo/tsconfig':
         specifier: workspace:*
         version: link:../typescript
       eslint:
@@ -746,13 +682,13 @@ importers:
         specifier: 'catalog:'
         version: 3.25.29
     devDependencies:
-      '@spolka-z-l-o/eslint-config':
+      '@repo/eslint-config':
         specifier: workspace:*
         version: link:../eslint
-      '@spolka-z-l-o/prettier-config':
+      '@repo/prettier-config':
         specifier: workspace:*
         version: link:../prettier
-      '@spolka-z-l-o/tsconfig':
+      '@repo/tsconfig':
         specifier: workspace:*
         version: link:../typescript
       eslint:
@@ -777,7 +713,7 @@ importers:
         specifier: ^0.6.6
         version: 0.6.11(@ianvs/prettier-plugin-sort-imports@4.4.1(prettier@3.5.3)(supports-color@8.1.1))(prettier@3.5.3)
     devDependencies:
-      '@spolka-z-l-o/tsconfig':
+      '@repo/tsconfig':
         specifier: workspace:*
         version: link:../typescript
       typescript:
@@ -796,13 +732,13 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@22.15.21)(typescript@5.8.3)))
     devDependencies:
-      '@spolka-z-l-o/eslint-config':
+      '@repo/eslint-config':
         specifier: workspace:*
         version: link:../eslint
-      '@spolka-z-l-o/prettier-config':
+      '@repo/prettier-config':
         specifier: workspace:*
         version: link:../prettier
-      '@spolka-z-l-o/tsconfig':
+      '@repo/tsconfig':
         specifier: workspace:*
         version: link:../typescript
       eslint:
@@ -962,10 +898,6 @@ packages:
     resolution: {integrity: sha512-SVb428OMd3WO1paV3rm6tSjM4wC+Kecaa1EUGX7vc6/fddvw/6lg90z4QtCqm21zvVe92vMMDt9+DkIvjXImQQ==}
     engines: {node: '>=16.11.0'}
 
-  '@discordjs/collection@2.1.1':
-    resolution: {integrity: sha512-LiSusze9Tc7qF03sLCujF5iZp7K+vRNEDBZ86FT9aQAv3vxMLihUvKvpsCWiQ2DJq1tVckopKm1rxomgNUc9hg==}
-    engines: {node: '>=18'}
-
   '@discordjs/core@0.3.0':
     resolution: {integrity: sha512-yp3H+NnaZ/sg0Z4PIVgfH4Ab88MwkXxnzwG5lNxjYiwp7+8qkYjb726qf3OxZOhFXQFt7gYaAaBevHgmPz9vjA==}
     engines: {node: '>=16.9.0'}
@@ -986,10 +918,6 @@ packages:
     resolution: {integrity: sha512-Ofa9UqT0U45G/eX86cURQnX7gzOJLG2oC28VhIk/G6IliYgQF7jFByBJEykPSHE4MxPhqCleYvmsrtfKh1nYmQ==}
     engines: {node: '>=16.9.0'}
 
-  '@discordjs/rest@2.6.0':
-    resolution: {integrity: sha512-RDYrhmpB7mTvmCKcpj+pc5k7POKszS4E2O9TYc+U+Y4iaCP+r910QdO43qmpOja8LRr1RJ0b3U+CqVsnPqzf4w==}
-    engines: {node: '>=18'}
-
   '@discordjs/util@0.1.0':
     resolution: {integrity: sha512-e7d+PaTLVQav6rOc2tojh2y6FE8S7REkqLldq1XF4soCx74XB/DIjbVbVLtBemf0nLW77ntz0v+o5DytKwFNLQ==}
     engines: {node: '>=16.9.0'}
@@ -1005,10 +933,6 @@ packages:
   '@discordjs/ws@0.6.0':
     resolution: {integrity: sha512-CGXmDnskIWyitBejQG07ao6MTkxK5OnFJQLan/cNIoMF61mlbTXpcKGnyrD7dhE7B/q2MEWPKfpuYXtFBog1cg==}
     engines: {node: '>=16.9.0'}
-
-  '@discordjs/ws@1.2.3':
-    resolution: {integrity: sha512-wPlQDxEmlDg5IxhJPuxXr3Vy9AjYq5xCvFWGJyD7w7Np8ZGu+Mc+97LCoEc/+AYCo2IDpKioiH0/c/mj5ZR9Uw==}
-    engines: {node: '>=16.11.0'}
 
   '@dnd-kit/accessibility@3.1.1':
     resolution: {integrity: sha512-2P+YgaXF+gRsIihwwY1gCsQSYnu9Zyj2py8kY5fFvUM1qm2WA2u639R6YNVfU4GWr+ZM5mqEsfHZZLoRONbemw==}
@@ -2613,9 +2537,6 @@ packages:
   '@webassemblyjs/wast-printer@1.14.1':
     resolution: {integrity: sha512-kPSSXE6De1XOR820C90RIo2ogvZG+c3KiHzqUoO/F34Y2shGzesfqv7o57xrxovZJH/MetF5UjroJ/R/3isoiw==}
 
-  '@wojtekmaj/date-utils@2.0.2':
-    resolution: {integrity: sha512-Do66mSlSNifFFuo3l9gNKfRMSFi26CRuQMsDJuuKO/ekrDWuTTtE4ZQxoFCUOG+NgxnpSeBq/k5TY8ZseEzLpA==}
-
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
 
@@ -3131,10 +3052,6 @@ packages:
   discord-api-types@0.38.26:
     resolution: {integrity: sha512-xpmPviHjIJ6dFu1eNwNDIGQ3N6qmPUUYFVAx/YZ64h7ZgPkTcKjnciD8bZe8Vbeji7yS5uYljyciunpq0J5NSw==}
 
-  discord.js@14.22.1:
-    resolution: {integrity: sha512-3k+Kisd/v570Jr68A1kNs7qVhNehDwDJAPe4DZ2Syt+/zobf9zEcuYFvsfIaAOgCa0BiHMfOOKQY4eYINl0z7w==}
-    engines: {node: '>=18'}
-
   dlv@1.1.3:
     resolution: {integrity: sha512-+HlytyjlPKnIG8XuRG8WvmBP8xs8P71y+SKKS6ZXWoEgLuePxtDoUEiH7WkdePWrQ5JBpE6aoVqfZfJUQkjXwA==}
 
@@ -3535,9 +3452,6 @@ packages:
   get-uri@6.0.4:
     resolution: {integrity: sha512-E1b1lFFLvLgak2whF2xDBcOy6NLVGZBqqjJjsIhvopKfWWEi64pLVTWWehV8KlLerZkfNTA95sTe2OdJKm1OzQ==}
     engines: {node: '>= 14'}
-
-  get-user-locale@3.0.0:
-    resolution: {integrity: sha512-iJfHSmdYV39UUBw7Jq6GJzeJxUr4U+S03qdhVuDsR9gCEnfbqLy9gYDJFBJQL1riqolFUKQvx36mEkp2iGgJ3g==}
 
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
@@ -4015,9 +3929,6 @@ packages:
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
 
-  lodash.snakecase@4.1.1:
-    resolution: {integrity: sha512-QZ1d4xoBHYUeuouhEq3lk3Uq7ldgyFXGBhg04+oRLnIz8o9T65Eh+8YdroUwn846zchkA9yDsDl5CVVaV2nqYw==}
-
   lodash.sortby@4.7.0:
     resolution: {integrity: sha512-HDWXG8isMntAyRF5vZ7xKuEvOhT4AhlRt/3czTSjvGUxjYCBVRQY48ViDHyfYz9VIoBkW4TMGQNapx+l3RUwdA==}
 
@@ -4061,9 +3972,6 @@ packages:
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
 
-  magic-bytes.js@1.12.1:
-    resolution: {integrity: sha512-ThQLOhN86ZkJ7qemtVRGYM+gRgR8GEXNli9H/PMvpnZsE44Xfh3wx9kGJaldg314v85m+bFW6WBMaVHJc/c3zA==}
-
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
 
@@ -4073,10 +3981,6 @@ packages:
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
     engines: {node: '>= 0.4'}
-
-  memoize@10.1.0:
-    resolution: {integrity: sha512-MMbFhJzh4Jlg/poq1si90XRlTZRDHVqdlz2mPyGJ6kqMpyHUyVpDd5gpFAvVehW64+RA1eKE9Yt8aSLY7w2Kgg==}
-    engines: {node: '>=18'}
 
   memory-pager@1.5.0:
     resolution: {integrity: sha512-ZS4Bp4r/Zoeq6+NLJpP+0Zzm0pR8whtGPf1XExKLJBAczGMnSi3It14OiNCStjQjM6NU1okjQGSxgEZN8eBYKg==}
@@ -4275,10 +4179,6 @@ packages:
 
   no-case@2.3.2:
     resolution: {integrity: sha512-rmTZ9kz+f3rCvK2TD1Ue/oZlns7OGoIWP4fc3llxxRXlOkHKoWPPWJOfFYpITabSow43QJbRIoHQXtt10VldyQ==}
-
-  node-cron@4.0.7:
-    resolution: {integrity: sha512-A37UUDpxRT/kWanELr/oMayCWQFk9Zx9BEUoXrAKuKwKzH4XuAX+vMixMBPkgZBkADgJwXv91w5cMRTNSVP/mA==}
-    engines: {node: '>=6.0.0'}
 
   node-loader@2.1.0:
     resolution: {integrity: sha512-OwjPkyh8+7jW8DMd/iq71uU1Sspufr/C2+c3t0p08J3CrM9ApZ4U53xuisNrDXOHyGi5OYHgtfmmh+aK9zJA6g==}
@@ -4662,16 +4562,6 @@ packages:
   rc@1.2.8:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
     hasBin: true
-
-  react-calendar@6.0.0:
-    resolution: {integrity: sha512-6wqaki3Us0DNDjZDr0DYIzhSFprNoy4FdPT9Pjy5aD2hJJVjtJwmdMT9VmrTUo949nlk35BOxehThxX62RkuRQ==}
-    peerDependencies:
-      '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
 
   react-day-picker@9.7.0:
     resolution: {integrity: sha512-urlK4C9XJZVpQ81tmVgd2O7lZ0VQldZeHzNejbwLWZSkzHH498KnArT0EHNfKBOWwKc935iMLGZdxXPRISzUxQ==}
@@ -5401,10 +5291,6 @@ packages:
     resolution: {integrity: sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==}
     engines: {node: '>=14.0'}
 
-  undici@6.21.3:
-    resolution: {integrity: sha512-gBLkYIlEnSp8pFbT64yFgGE6UIB9tAkhukC23PmMDCe5Nd+cRqKxSjw5y54MK2AZMgZfJWMaNE4nYUHgi1XEOw==}
-    engines: {node: '>=18.17'}
-
   universalify@2.0.1:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
     engines: {node: '>= 10.0.0'}
@@ -5464,9 +5350,6 @@ packages:
 
   walk-up-path@3.0.1:
     resolution: {integrity: sha512-9YlCL/ynK3CTlrSRrDxZvUauLzAswPCrsaCgilqFevUYpeEW0/3ScEjaa3kbW/T0ghhkEr7mv+fpjqn1Y1YuTA==}
-
-  warning@4.0.3:
-    resolution: {integrity: sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==}
 
   watchpack@2.4.4:
     resolution: {integrity: sha512-c5EGNOiyxxV5qmTtAB7rbiXxi1ooX1pQKMLX/MIabJjRA0SJBQOjKF+KSVfHkr9U1cADPon0mRiVe/riyaiDUA==}
@@ -5802,8 +5685,6 @@ snapshots:
 
   '@discordjs/collection@1.5.3': {}
 
-  '@discordjs/collection@2.1.1': {}
-
   '@discordjs/core@0.3.0':
     dependencies:
       '@discordjs/rest': 1.7.1
@@ -5847,18 +5728,6 @@ snapshots:
       tslib: 2.8.1
       undici: 5.29.0
 
-  '@discordjs/rest@2.6.0':
-    dependencies:
-      '@discordjs/collection': 2.1.1
-      '@discordjs/util': 1.1.1
-      '@sapphire/async-queue': 1.5.5
-      '@sapphire/snowflake': 3.5.3
-      '@vladfrangu/async_event_emitter': 2.4.6
-      discord-api-types: 0.38.26
-      magic-bytes.js: 1.12.1
-      tslib: 2.8.1
-      undici: 6.21.3
-
   '@discordjs/util@0.1.0': {}
 
   '@discordjs/util@0.3.1': {}
@@ -5874,21 +5743,6 @@ snapshots:
       '@types/ws': 8.18.1
       '@vladfrangu/async_event_emitter': 2.4.6
       discord-api-types: 0.37.120
-      tslib: 2.8.1
-      ws: 8.18.2
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  '@discordjs/ws@1.2.3':
-    dependencies:
-      '@discordjs/collection': 2.1.1
-      '@discordjs/rest': 2.6.0
-      '@discordjs/util': 1.1.1
-      '@sapphire/async-queue': 1.5.5
-      '@types/ws': 8.18.1
-      '@vladfrangu/async_event_emitter': 2.4.6
-      discord-api-types: 0.38.26
       tslib: 2.8.1
       ws: 8.18.2
     transitivePeerDependencies:
@@ -7336,8 +7190,6 @@ snapshots:
       '@webassemblyjs/ast': 1.14.1
       '@xtuc/long': 4.2.2
 
-  '@wojtekmaj/date-utils@2.0.2': {}
-
   '@xtuc/ieee754@1.2.0': {}
 
   '@xtuc/long@4.2.2': {}
@@ -7866,25 +7718,6 @@ snapshots:
   discord-api-types@0.38.10: {}
 
   discord-api-types@0.38.26: {}
-
-  discord.js@14.22.1:
-    dependencies:
-      '@discordjs/builders': 1.11.2
-      '@discordjs/collection': 1.5.3
-      '@discordjs/formatters': 0.6.1
-      '@discordjs/rest': 2.6.0
-      '@discordjs/util': 1.1.1
-      '@discordjs/ws': 1.2.3
-      '@sapphire/snowflake': 3.5.3
-      discord-api-types: 0.38.26
-      fast-deep-equal: 3.1.3
-      lodash.snakecase: 4.1.1
-      magic-bytes.js: 1.12.1
-      tslib: 2.8.1
-      undici: 6.21.3
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
 
   dlv@1.1.3: {}
 
@@ -8460,10 +8293,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  get-user-locale@3.0.0:
-    dependencies:
-      memoize: 10.1.0
-
   glob-parent@5.1.2:
     dependencies:
       is-glob: 4.0.3
@@ -8977,8 +8806,6 @@ snapshots:
 
   lodash.merge@4.6.2: {}
 
-  lodash.snakecase@4.1.1: {}
-
   lodash.sortby@4.7.0: {}
 
   lodash@4.17.21: {}
@@ -9022,8 +8849,6 @@ snapshots:
     dependencies:
       react: 19.1.0
 
-  magic-bytes.js@1.12.1: {}
-
   magic-string@0.30.17:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
@@ -9031,10 +8856,6 @@ snapshots:
   make-error@1.3.6: {}
 
   math-intrinsics@1.1.0: {}
-
-  memoize@10.1.0:
-    dependencies:
-      mimic-function: 5.0.1
 
   memory-pager@1.5.0: {}
 
@@ -9213,8 +9034,6 @@ snapshots:
   no-case@2.3.2:
     dependencies:
       lower-case: 1.1.4
-
-  node-cron@4.0.7: {}
 
   node-loader@2.1.0(webpack@5.99.9):
     dependencies:
@@ -9584,17 +9403,6 @@ snapshots:
       ini: 1.3.8
       minimist: 1.2.8
       strip-json-comments: 2.0.1
-
-  react-calendar@6.0.0(@types/react@19.1.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
-    dependencies:
-      '@wojtekmaj/date-utils': 2.0.2
-      clsx: 2.1.1
-      get-user-locale: 3.0.0
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-      warning: 4.0.3
-    optionalDependencies:
-      '@types/react': 19.1.5
 
   react-day-picker@9.7.0(react@19.1.0):
     dependencies:
@@ -10450,8 +10258,6 @@ snapshots:
     dependencies:
       '@fastify/busboy': 2.1.1
 
-  undici@6.21.3: {}
-
   universalify@2.0.1: {}
 
   update-browserslist-db@1.1.3(browserslist@4.24.5):
@@ -10501,10 +10307,6 @@ snapshots:
   validate-npm-package-name@5.0.1: {}
 
   walk-up-path@3.0.1: {}
-
-  warning@4.0.3:
-    dependencies:
-      loose-envify: 1.4.0
 
   watchpack@2.4.4:
     dependencies:

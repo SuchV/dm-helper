@@ -1,6 +1,6 @@
 "use client";
 
-import { TabsContent } from "@spolka-z-l-o/ui/tabs";
+import { TabsContent } from "@repo/ui/tabs";
 
 import {
   Command,
@@ -9,7 +9,7 @@ import {
   CommandList,
   CommandEmpty,
   CommandInput,
-} from "@spolka-z-l-o/ui/command";
+} from "@repo/ui/command";
 import type { Bingo } from "@prisma/client";
 import Link from "next/link";
 import {
@@ -18,7 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogDescription,
-} from "@spolka-z-l-o/ui/dialog";
+} from "@repo/ui/dialog";
 import { BingoForm } from "./_components/BingoForm";
 import { NewBingoEntry } from "./_components/NewBingoEntry";
 

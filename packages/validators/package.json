@@ -1,5 +1,5 @@
 {
-  "name": "@spolka-z-l-o/validators",
+  "name": "@repo/validators",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@spolka-z-l-o/discord": "workspace:*",
+    "@repo/discord": "workspace:*",
     "discord-api-types": "^0.38.10",
     "zod": "^3.25.51"
   },

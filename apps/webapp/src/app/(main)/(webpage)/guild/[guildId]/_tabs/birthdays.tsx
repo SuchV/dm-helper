@@ -1,10 +1,10 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@spolka-z-l-o/ui/avatar";
-import { Skeleton } from "@spolka-z-l-o/ui/skeleton";
-import { TabsContent } from "@spolka-z-l-o/ui/tabs";
-import type { DiscordGuildMemberWithBirthday } from "@spolka-z-l-o/validators";
+import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
+import { Skeleton } from "@repo/ui/skeleton";
+import { TabsContent } from "@repo/ui/tabs";
+import type { DiscordGuildMemberWithBirthday } from "@repo/validators";
 import MemberCommandBox from "~/app/_components/main/MemberCommandBox";
 import { api } from "~/trpc/server";
-import { CellCalendar } from "@spolka-z-l-o/ui/cell-calendar";
+import { CellCalendar } from "@repo/ui/cell-calendar";
 
 interface BirthdaysTabProps {
   guildId: string;

@@ -1,5 +1,5 @@
 {
-  "name": "@spolka-z-l-o/ui",
+  "name": "@repo/ui",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -61,10 +61,10 @@
     "timescape": "^0.4.1"
   },
   "devDependencies": {
-    "@spolka-z-l-o/eslint-config": "workspace:*",
-    "@spolka-z-l-o/prettier-config": "workspace:*",
-    "@spolka-z-l-o/tailwind-config": "workspace:*",
-    "@spolka-z-l-o/tsconfig": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/tailwind-config": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
     "@types/react": "catalog:react",
     "@types/react-dom": "catalog:react",
     "eslint": "catalog:",
@@ -82,5 +82,5 @@
     "react-dom": "catalog:react",
     "zod": "catalog:"
   },
-  "prettier": "@spolka-z-l-o/prettier-config"
+  "prettier": "@repo/prettier-config"
 }

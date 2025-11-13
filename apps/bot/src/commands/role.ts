@@ -8,7 +8,7 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import { withPermission } from "../helpers/with-permissions";
-import { RoleGroup } from "@spolka-z-l-o/db/models/RoleGroup";
+import { RoleGroup } from "@spolka-z-l-o/db/models/bot/RoleGroup";
 
 export const data = new SlashCommandBuilder()
   .setName("role")

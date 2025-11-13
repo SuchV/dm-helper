@@ -1,4 +1,4 @@
-import { Verification } from "../../models/Verification";
+import { Verification } from "@spolka-z-l-o/db/models/bot/Verification";
 
 const seedData = [
   {

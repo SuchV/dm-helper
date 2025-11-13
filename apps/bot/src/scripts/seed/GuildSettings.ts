@@ -1,4 +1,4 @@
-import { GuildSettings } from "../../models/GuildSettings";
+import { GuildSettings } from "@spolka-z-l-o/db/models/bot/GuildSettings";
 
 const seedData = [
   {

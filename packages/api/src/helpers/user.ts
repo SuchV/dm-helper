@@ -1,9 +1,9 @@
 import { prisma } from "@spolka-z-l-o/db";
-import { DiscordAPIClient } from "@spolka-z-l-o/discord";
+import { discord, mock } from "@spolka-z-l-o/discord";
 import { CDNRoutes, ImageFormat, RouteBases } from "@spolka-z-l-o/validators";
 
 export const upsertUser = async (
-  ctx: { discord: DiscordAPIClient },
+  ctx: { discord: discord.DiscordAPIClient | mock.DiscordAPIClientMock },
   guildId: string,
   providerAccountId: string,
 ) => {

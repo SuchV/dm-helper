@@ -5,6 +5,6 @@
     "rootDir": ".",
     "jsx": "react-jsx"
   },
-  "include": ["src", "../discord/src/mocks"],
+  "include": ["src"],
   "exclude": ["node_modules"]
 }

@@ -5,7 +5,7 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import { BirthdayGetMethodType } from "../../../validators/birthdate";
-import { Birthday } from "@spolka-z-l-o/db/models/Birthday";
+import { Birthday } from "@spolka-z-l-o/db/models/bot/Birthday";
 
 export const getBirthday = async (
   interaction: ChatInputCommandInteraction<CacheType>

@@ -4,6 +4,7 @@ import { TabsContent } from "@spolka-z-l-o/ui/tabs";
 import type { DiscordGuildMemberWithBirthday } from "@spolka-z-l-o/validators";
 import MemberCommandBox from "~/app/_components/main/MemberCommandBox";
 import { api } from "~/trpc/server";
+import { CellCalendar } from "@spolka-z-l-o/ui/cell-calendar";
 
 interface BirthdaysTabProps {
   guildId: string;
@@ -49,6 +50,7 @@ const BirthdaysTab = ({
           />
         </div>
         <div>
+          <CellCalendar />
           <h2 className="mt-4">Recent birthdays:</h2>
           {pastBirthdays.length > 0 ? (
             <div>

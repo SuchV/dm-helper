@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -26,8 +26,6 @@ model Account {
   scope String?
   id_token  String?
   session_state String?
-
-  birthday Birthday?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -52,7 +50,6 @@ model User {
 
   accounts Account[]
   sessions Session[]
-  bingoEntries BingoEntry[]
 }
 
 model VerificationToken {
@@ -64,54 +61,5 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model Birthday {
-  id String @id @default(cuid()) @map("_id")
-  providerAccountId String @unique
-  birthday_date DateTime
-  guildId String
-  last_year_mentioned Int @default(0)
 
-  account Account @relation(fields: [providerAccountId], references: [providerAccountId], onDelete: Cascade)
-
-  @@unique([providerAccountId, guildId])
-}
-
-model GuildSettings {
-  id String @id @default(cuid()) @map("_id")
-  guildId String
-  languageCode String
-  birthdayChannelId String?
-  birthdayRoleId String?
-
-  @@unique([guildId])
-}
-
-model BingoEntry {
-  id String @id @default(cuid()) @map("_id")
-  bingoId String
-  userId String?
-  entry String
-
-  bingo Bingo @relation(fields: [bingoId], references: [id], onDelete: Cascade)
-  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// Only square bingo is supported for now
-model Bingo {
-  id String @id @default(cuid()) @map("_id")
-  guildId String
-  channelId String
-  messageId String
-  name String
-  dimension Int
-  bingoEntries BingoEntry[]
-
-  @@unique([guildId, channelId, messageId])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
 

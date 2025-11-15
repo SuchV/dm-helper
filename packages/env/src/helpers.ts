@@ -26,6 +26,8 @@ export const envSchema = {
     DISCORD_CLIENT_ID: z.string().min(1),
     DISCORD_CLIENT_SECRET: z.string().min(1),
     DISCORD_CLIENT_TOKEN: z.string().min(1),
+    GOOGLE_CLIENT_ID: z.string().min(1),
+    GOOGLE_CLIENT_SECRET: z.string().min(1),
     NEXTAUTH_SECRET: z.string().min(1).default("xoxo-secret-xoxo"),
     DEV_GUILD_ID: z.string().min(1).optional(),
     NEXTAUTH_URL: z.string().url(),

@@ -1,4 +1,4 @@
-import { DiscordAPIClient } from "@repo/discord/src/discord";
+import { DiscordAPIClient } from "@repo/discord/discord";
 
 import type { APIGuildMember } from "discord-api-types/v10";
 

@@ -14,9 +14,6 @@ const Navigation = () => {
       <BasicPageNavItem href="/" isActive={!segment}>
         Home
       </BasicPageNavItem>
-      <BasicPageNavItem href="/guild" isActive={segment === "guild"}>
-        Guilds
-      </BasicPageNavItem>
     </BasicPageNav>
   );
 };

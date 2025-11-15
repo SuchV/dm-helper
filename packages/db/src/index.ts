@@ -22,5 +22,3 @@ const prisma =
   });
 if (env.NODE_ENV === "development") global.prisma = prisma;
 export { prisma };
-export * from "./models/auth";
-export * from "./models/bot";

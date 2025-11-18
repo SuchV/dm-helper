@@ -49,8 +49,7 @@ export const createTRPCContext = async (opts: {
 
   const db = prisma;
 
-  const session =
-    env.ENVIRONMENT === "local" ? await getSession() : await auth();
+  const session = await auth();
 
   // const session = await auth();
 

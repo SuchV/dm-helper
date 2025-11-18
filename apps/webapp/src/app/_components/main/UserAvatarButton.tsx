@@ -25,6 +25,7 @@ const UserAvatarButton = () => {
   if (error || !user?.user) {
     return <UserLoginButton />;
   }
+  
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>

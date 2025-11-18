@@ -15,11 +15,11 @@ import "@total-typescript/ts-reset";
 export const metadata: Metadata = {
   metadataBase: new URL(
     env.VERCEL_ENV === "production"
-      ? "https://boring.tonik.com"
+      ? "https://dm-helper.com"
       : "http://localhost:3000",
   ),
-  title: "Boring stack",
-  description: "The most boring stack you'll ever need",
+  title: "DM Helper",
+  description: "The only tool you need to run your TTRPG sessions.",
 };
 
 export const viewport: Viewport = {

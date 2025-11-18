@@ -13,6 +13,7 @@ import UserLoginButton from "~/app/_components/main/UserLoginButton";
 import { useState } from "react";
 import { ChevronDown, Trash } from "lucide-react";
 import { Separator } from "@repo/ui/separator";
+import { signOut } from "@repo/auth/react";
 
 const UserAvatarButton = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -43,7 +44,10 @@ const UserAvatarButton = () => {
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem className="text-destructive-foreground">
+        <DropdownMenuItem
+          className="text-destructive-foreground"
+          onClick={() => signOut({ callbackUrl: "/" })}
+        >
           <Trash className="mr-2 h-4 w-4" />
           Logout
         </DropdownMenuItem>

@@ -50,6 +50,7 @@ model User {
 
   accounts Account[]
   sessions Session[]
+  gameClockState GameClockState?
 }
 
 model VerificationToken {
@@ -59,6 +60,17 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model GameClockState {
+  id        String   @id @default(cuid()) @map("_id")
+  userId    String   @unique
+  gameTime  String   @default("00:00:00")
+  gameDate  String   @default("0000-01-01")
+  weekDay   String   @default("Monday")
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 

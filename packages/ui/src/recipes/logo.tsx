@@ -14,7 +14,7 @@ function Logo({ className, variant = "default", href = "/" }: LogoProps) {
     variant === "default" ? (
       <div className="flex items-center gap-2">
         <LogoIcon />
-        <span className="font-semibold">Spolka Bot</span>
+        <span className="font-semibold">DM Dashboard</span>
       </div>
     ) : (
       <LogoIcon />
@@ -34,7 +34,7 @@ function LogoIcon({ className }: { className?: string }) {
   return (
     <Image
       src="/logo.png"
-      alt="Spolka Bot Logo"
+      alt="DM Dashboard Logo"
       width={32}
       height={32}
       className={cn("rounded-full", className)}

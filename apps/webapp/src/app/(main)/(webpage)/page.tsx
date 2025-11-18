@@ -18,7 +18,10 @@ const HomePage = async () => {
   return (
     <div className="flex flex-col">
       <UserLoginForm />
+<<<<<<< HEAD
       
+=======
+>>>>>>> 635f8d3ed6da2ebfb6b355a57ca7898775b8034e
     </div>
   );
 };

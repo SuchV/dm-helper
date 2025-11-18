@@ -14,8 +14,6 @@ import { ZodError } from "zod";
 import { auth } from "@repo/auth";
 import { getSession } from "@repo/auth/credentials";
 import { prisma } from "@repo/db";
-import { DiscordAPIClient } from "@repo/discord/discord";
-import { DiscordAPIClientMock } from "@repo/discord/mock";
 import { env } from "@repo/env/next-env";
 
 interface DiscordConfig {
@@ -47,9 +45,7 @@ export const createTRPCContext = async (opts: {
   const source = opts.headers?.get("x-trpc-source") ?? opts.source ?? "unknown";
 
   const dc =
-    env.ENVIRONMENT !== "local"
-      ? new DiscordAPIClient(opts.discord.discordToken)
-      : new DiscordAPIClientMock(opts.discord.discordToken);
+    env.ENVIRONMENT !== "local";
 
   const db = prisma;
 

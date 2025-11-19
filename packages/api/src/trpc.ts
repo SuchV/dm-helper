@@ -16,12 +16,6 @@ import { getSession } from "@repo/auth/credentials";
 import { prisma } from "@repo/db";
 import { env } from "@repo/env/next-env";
 
-interface DiscordConfig {
-  discordId: string;
-  discordSecret: string;
-  discordToken: string;
-}
-
 /**
  * 1. CONTEXT
  *
@@ -39,7 +33,6 @@ export const createTRPCContext = async (opts: {
   cookieStore?: Awaited<ReturnType<typeof cookies>>;
   source?: string;
   logLevel?: "trace" | "debug" | "info" | "warn" | "error" | "fatal";
-  discord: DiscordConfig;
   db: typeof prisma;
 }) => {
   const source = opts.headers?.get("x-trpc-source") ?? opts.source ?? "unknown";
@@ -66,7 +59,6 @@ export const createTRPCContext = async (opts: {
       opts.headers?.get("host") ??
       "http://localhost:3000",
     session: session,
-    discord: dc,
     db,
   };
 };

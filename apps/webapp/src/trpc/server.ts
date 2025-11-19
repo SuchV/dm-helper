@@ -3,6 +3,7 @@ import { cookies, headers } from "next/headers";
 
 import { createCaller, createTRPCContext } from "@repo/api";
 import { env } from "@repo/env/next-env";
+import { prisma } from "@repo/db";
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
@@ -17,11 +18,7 @@ const createContext = cache(async () => {
   return createTRPCContext({
     headers: heads,
     cookieStore,
-    discord: {
-      discordId: env.DISCORD_CLIENT_ID,
-      discordSecret: env.DISCORD_CLIENT_SECRET,
-      discordToken: env.DISCORD_CLIENT_TOKEN,
-    },
+    db: prisma,
   });
 });
 

@@ -50,7 +50,8 @@ model User {
 
   accounts Account[]
   sessions Session[]
-  gameClockState GameClockState?
+  gameClockStates GameClockState[]
+  widgets WidgetInstance[]
 }
 
 model VerificationToken {
@@ -64,13 +65,31 @@ model VerificationToken {
 
 model GameClockState {
   id        String   @id @default(cuid()) @map("_id")
-  userId    String   @unique
+  userId    String
   gameTime  String   @default("00:00:00")
   gameDate  String   @default("0000-01-01")
   weekDay   String   @default("Monday")
   updatedAt DateTime @updatedAt
+  widgetId  String  @unique
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  widget WidgetInstance @relation(fields: [widgetId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, widgetId])
+}
+
+model WidgetInstance {
+  id        String   @id @default(cuid()) @map("_id")
+  userId    String
+  type      String
+  collapsed Boolean  @default(false)
+  position  Int      @default(0)
+  config    Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gameClockState GameClockState?
 }
 
 

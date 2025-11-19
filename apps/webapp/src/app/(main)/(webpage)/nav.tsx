@@ -1,6 +1,8 @@
 "use client";
 
-import { useSelectedLayoutSegment } from "next/navigation";
+import { useRouter, useSelectedLayoutSegment } from "next/navigation";
+
+import { toast } from "@repo/ui/toast";
 
 import { BasicPageNav, BasicPageNavItem } from "@repo/ui/recipes/basic-page";
 
@@ -12,9 +14,24 @@ import {
 } from "@repo/ui/dropdown-menu";
 
 import { Button } from "@repo/ui/button";
+import { api } from "~/trpc/react";
 
 const Navigation = () => {
   const segment = useSelectedLayoutSegment();
+  const router = useRouter();
+  const addWidgetMutation = api.widget.add.useMutation({
+    onSuccess: () => {
+      router.refresh();
+      toast.success("Widget added to your dashboard");
+    },
+    onError: (error) => {
+      toast.error(error.message ?? "Unable to add widget");
+    },
+  });
+
+  const handleAddWidget = (type: "game-clock") => {
+    addWidgetMutation.mutate({ type });
+  };
   return (
     <BasicPageNav className="w-full max-w-xl">
       <BasicPageNavItem href="/" isActive={!segment}>
@@ -29,9 +46,13 @@ const Navigation = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="center">
-            <DropdownMenuItem disabled>Widget 1 (coming soon)</DropdownMenuItem>
-            <DropdownMenuItem disabled>Widget 2 (coming soon)</DropdownMenuItem>
-            <DropdownMenuItem disabled>Widget 3 (coming soon)</DropdownMenuItem>
+            <DropdownMenuItem
+              disabled={addWidgetMutation.isPending}
+              onClick={() => handleAddWidget("game-clock")}
+            >
+              Game Clock
+            </DropdownMenuItem>
+            <DropdownMenuItem disabled>More widgets coming soon</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

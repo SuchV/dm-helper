@@ -10,7 +10,11 @@ const DEFAULT_STATE: GameClockState = {
   weekDay: "Monday",
 };
 
-const GameClockPanel = () => {
+interface GameClockPanelProps {
+  widgetId: string;
+}
+
+const GameClockPanel = ({ widgetId }: GameClockPanelProps) => {
   const [hasMounted, setHasMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -18,13 +22,14 @@ const GameClockPanel = () => {
   }, []);
 
   const utils = api.useUtils();
-  const { data, isLoading } = api.gameClock.getState.useQuery(undefined, {
+  const queryInput = React.useMemo(() => ({ widgetId }), [widgetId]);
+  const { data, isLoading } = api.gameClock.getState.useQuery(queryInput, {
     staleTime: 1000 * 30,
   });
 
   const saveMutation = api.gameClock.saveState.useMutation({
     onSuccess: (saved) => {
-      utils.gameClock.getState.setData(undefined, saved);
+      utils.gameClock.getState.setData(queryInput, saved);
     },
   });
 
@@ -38,7 +43,7 @@ const GameClockPanel = () => {
 
   const handlePersist = (next: GameClockState) => {
     setState(next);
-    saveMutation.mutate(next);
+    saveMutation.mutate({ ...next, widgetId });
   };
 
   if (!hasMounted) {

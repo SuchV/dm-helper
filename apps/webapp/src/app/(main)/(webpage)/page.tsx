@@ -1,23 +1,23 @@
-import Link from "next/link";
-// import { SiGithub as Github } from "@icons-pack/react-simple-icons";
-import { ArrowRight, Check, Clock, Rocket, Terminal } from "lucide-react";
-
-import { Button } from "@repo/ui/button";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@repo/ui/tabs";
-import UserLoginButton from "~/app/_components/main/UserLoginButton";
 import { auth } from "@repo/auth";
-import prisma from "@repo/db";
+
+import GameClockPanel from "~/app/_components/main/GameClockPanel";
 import UserLoginForm from "~/app/_components/main/UserLoginForm";
 
 const HomePage = async () => {
+  const session = await auth();
+
+  if (!session?.user) {
+    return (
+      <div className="flex flex-col">
+        <UserLoginForm />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col">
-      <UserLoginForm />
+    <div className="flex flex-col gap-6">
+      <h1 className="text-2xl font-semibold">Game Clock</h1>
+      <GameClockPanel />
     </div>
   );
 };

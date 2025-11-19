@@ -1,9 +1,7 @@
 "use client";
 
 import * as React from "react";
-
 import { GameClock, type GameClockState } from "@repo/ui/game-clock";
-
 import { api } from "~/trpc/react";
 
 const DEFAULT_STATE: GameClockState = {
@@ -13,6 +11,12 @@ const DEFAULT_STATE: GameClockState = {
 };
 
 const GameClockPanel = () => {
+  const [hasMounted, setHasMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
   const utils = api.useUtils();
   const { data, isLoading } = api.gameClock.getState.useQuery(undefined, {
     staleTime: 1000 * 30,
@@ -36,6 +40,11 @@ const GameClockPanel = () => {
     setState(next);
     saveMutation.mutate(next);
   };
+
+  if (!hasMounted) {
+    // Optional: return a skeleton or nothing to avoid SSR/CSR mismatch
+    return null;
+  }
 
   return (
     <GameClock

@@ -59,8 +59,17 @@ const WidgetShell: React.FC<WidgetShellProps> = ({
   }
 
   return (
-    <section className="rounded-lg border bg-card shadow-sm">
-      <header className="flex items-center justify-between gap-4 border-b px-4 py-2">
+    <section
+      className={
+        "self-start rounded-lg border bg-card shadow-sm " + (collapsed ? "border-t-0" : "")
+      }
+    >
+      <header
+        className={
+          "flex items-center justify-between gap-4 px-4 py-2 " + (collapsed ? "border-b-0" : "border-b")
+        }
+        aria-expanded={!collapsed}
+      >
         <div className="flex flex-col">
           <h2 className="text-base font-semibold leading-tight">{title}</h2>
           {description ? (
@@ -92,7 +101,16 @@ const WidgetShell: React.FC<WidgetShellProps> = ({
           </Button>
         </div>
       </header>
-      {!collapsed ? <div className="p-4">{children}</div> : null}
+      <div
+        className={
+          "overflow-hidden transition-all duration-200 " +
+          (collapsed
+            ? "max-h-0 p-0"
+            : "max-h-[2000px] p-4")
+        }
+      >
+        {children}
+      </div>
     </section>
   );
 };

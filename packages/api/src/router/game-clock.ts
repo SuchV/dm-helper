@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { getUserId } from "./_helpers/get-user-id";
 
 const stateSchema = z.object({
   gameTime: z
@@ -21,24 +22,6 @@ const DEFAULT_STATE = {
   gameDate: "0000-01-01",
   weekDay: "Monday",
 } as const;
-
-type SessionCtx = {
-  session: {
-    user?: {
-      id?: string;
-    };
-  } | null;
-};
-
-const getUserId = (ctx: SessionCtx) => {
-  const userId = ctx.session?.user?.id;
-
-  if (!userId) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-
-  return userId;
-};
 
 export const gameClockRouter = createTRPCRouter({
   getState: protectedProcedure

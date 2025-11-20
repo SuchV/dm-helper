@@ -2,7 +2,10 @@
 
 import * as React from "react";
 import { GameClock, type GameClockState } from "@repo/ui/game-clock";
+import { toast } from "@repo/ui/toast";
+
 import { api } from "~/trpc/react";
+import { useGameClockWidgetState } from "~/app/_components/widgets/WidgetStateProvider";
 
 const DEFAULT_STATE: GameClockState = {
   gameTime: "00:00:00",
@@ -16,30 +19,27 @@ interface GameClockPanelProps {
 
 const GameClockPanel = ({ widgetId }: GameClockPanelProps) => {
   const [hasMounted, setHasMounted] = React.useState(false);
+  const [storedState, setStoredState] = useGameClockWidgetState(widgetId);
+  const [state, setState] = React.useState<GameClockState>(storedState ?? DEFAULT_STATE);
 
   React.useEffect(() => {
     setHasMounted(true);
   }, []);
 
-  const utils = api.useUtils();
-  const queryInput = React.useMemo(() => ({ widgetId }), [widgetId]);
-  const { data, isLoading } = api.gameClock.getState.useQuery(queryInput, {
-    staleTime: 1000 * 30,
-  });
-
   const saveMutation = api.gameClock.saveState.useMutation({
     onSuccess: (saved) => {
-      utils.gameClock.getState.setData(queryInput, saved);
+      setStoredState(saved);
+      setState(saved);
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("Failed to save game clock state");
     },
   });
 
-  const [state, setState] = React.useState<GameClockState>(DEFAULT_STATE);
-
   React.useEffect(() => {
-    if (data) {
-      setState(data);
-    }
-  }, [data]);
+    setState(storedState ?? DEFAULT_STATE);
+  }, [storedState?.gameTime, storedState?.gameDate, storedState?.weekDay, storedState]);
 
   const handlePersist = (next: GameClockState) => {
     setState(next);
@@ -54,7 +54,7 @@ const GameClockPanel = ({ widgetId }: GameClockPanelProps) => {
   return (
     <GameClock
       initialState={state}
-      loading={isLoading}
+      loading={false}
       saving={saveMutation.isPending}
       onQuickAdjust={handlePersist}
       onSave={handlePersist}

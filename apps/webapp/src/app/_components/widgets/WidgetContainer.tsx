@@ -3,21 +3,20 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 
-import type { RouterOutputs } from "@repo/api";
 import { toast } from "@repo/ui/toast";
 
 import { api } from "~/trpc/react";
 import GameClockPanel from "~/app/_components/main/GameClockPanel";
 
+import type { WidgetInstanceWithState } from "./widget-types";
+
 import WidgetShell from "./WidgetShell";
 
-type WidgetItem = RouterOutputs["widget"]["list"][number];
-
 type WidgetMeta = {
-  [Type in WidgetItem["type"]]: {
+  [Type in WidgetInstanceWithState["type"]]: {
     title: string;
     description?: string;
-    render: (options: { widget: WidgetItem }) => React.ReactNode;
+    render: (options: { widget: WidgetInstanceWithState }) => React.ReactNode;
   };
 };
 
@@ -33,7 +32,7 @@ const WidgetContainer = ({
   widget,
   instanceNumber,
 }: {
-  widget: WidgetItem;
+  widget: WidgetInstanceWithState;
   instanceNumber?: number;
 }) => {
   const router = useRouter();

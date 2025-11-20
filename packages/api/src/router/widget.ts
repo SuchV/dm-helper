@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { getUserId } from "./_helpers/get-user-id";
 
 const widgetTypeSchema = z.enum(["game-clock"]);
 
@@ -11,21 +12,14 @@ const widgetSelect = {
   collapsed: true,
   position: true,
   config: true,
+  gameClockState: {
+    select: {
+      gameTime: true,
+      gameDate: true,
+      weekDay: true,
+    },
+  },
 } as const;
-
-const getUserId = (ctx: {
-  session: {
-    user?: {
-      id?: string;
-    };
-  } | null;
-}) => {
-  const userId = ctx.session?.user?.id;
-  if (!userId) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-  return userId;
-};
 
 export const widgetRouter = createTRPCRouter({
   list: protectedProcedure.query(async ({ ctx }) => {

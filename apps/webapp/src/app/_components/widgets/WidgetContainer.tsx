@@ -7,6 +7,7 @@ import { toast } from "@repo/ui/toast";
 
 import { api } from "~/trpc/react";
 import GameClockPanel from "~/app/_components/main/GameClockPanel";
+import NotesWidget from "~/app/_components/widgets/notes/NotesWidget";
 
 import type { WidgetInstanceWithState } from "./widget-types";
 
@@ -17,6 +18,7 @@ type WidgetMeta = {
     title: string;
     description?: string;
     render: (options: { widget: WidgetInstanceWithState }) => React.ReactNode;
+    showInstanceNumber?: boolean;
   };
 };
 
@@ -25,6 +27,12 @@ const widgetMeta: WidgetMeta = {
     title: "Game Clock",
     description: "Manage the in-game time and calendar.",
     render: ({ widget }) => <GameClockPanel widgetId={widget.id} />,
+  },
+  notes: {
+    title: "Notes",
+    description: "Organize sticky notes for quick reference.",
+    render: ({ widget }) => <NotesWidget widgetId={widget.id} />,
+    showInstanceNumber: false,
   },
 };
 
@@ -63,7 +71,8 @@ const WidgetContainer = ({
     updateMutation.mutate({ id: widget.id, collapsed });
   };
 
-  const title = instanceNumber ? `${metadata.title} ${instanceNumber}` : metadata.title;
+  const shouldShowNumber = metadata.showInstanceNumber ?? true;
+  const title = instanceNumber && shouldShowNumber ? `${metadata.title} ${instanceNumber}` : metadata.title;
 
   return (
     <WidgetShell

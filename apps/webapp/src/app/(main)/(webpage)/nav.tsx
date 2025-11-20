@@ -29,7 +29,7 @@ const Navigation = () => {
     },
   });
 
-  const handleAddWidget = (type: "game-clock") => {
+  const handleAddWidget = (type: "game-clock" | "notes") => {
     addWidgetMutation.mutate({ type });
   };
   return (
@@ -51,6 +51,12 @@ const Navigation = () => {
               onClick={() => handleAddWidget("game-clock")}
             >
               Game Clock
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              disabled={addWidgetMutation.isPending}
+              onClick={() => handleAddWidget("notes")}
+            >
+              Notes
             </DropdownMenuItem>
             <DropdownMenuItem disabled>More widgets coming soon</DropdownMenuItem>
           </DropdownMenuContent>

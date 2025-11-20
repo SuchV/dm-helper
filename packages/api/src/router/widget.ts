@@ -4,7 +4,7 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { getUserId } from "./_helpers/get-user-id";
 
-const widgetTypeSchema = z.enum(["game-clock"]);
+const widgetTypeSchema = z.enum(["game-clock", "notes"]);
 
 const widgetSelect = {
   id: true,
@@ -17,6 +17,20 @@ const widgetSelect = {
       gameTime: true,
       gameDate: true,
       weekDay: true,
+    },
+  },
+  notes: {
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      position: true,
+      createdAt: true,
+      updatedAt: true,
+      widgetId: true,
+    },
+    orderBy: {
+      position: "asc",
     },
   },
 } as const;
@@ -35,6 +49,21 @@ export const widgetRouter = createTRPCRouter({
     .input(z.object({ type: widgetTypeSchema }))
     .mutation(async ({ ctx, input }) => {
       const userId = getUserId(ctx);
+
+      if (input.type === "notes") {
+        const existingNotesWidget = await ctx.db.widgetInstance.findFirst({
+          where: { userId, type: "notes" },
+          select: { id: true },
+        });
+
+        if (existingNotesWidget) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "You can only add one Notes widget",
+          });
+        }
+      }
+
       const lastWidget = await ctx.db.widgetInstance.findFirst({
         where: { userId },
         orderBy: { position: "desc" },
@@ -68,6 +97,13 @@ export const widgetRouter = createTRPCRouter({
       await ctx.db.widgetInstance.delete({ where: { id: widget.id } });
 
       await ctx.db.gameClockState.deleteMany({
+        where: {
+          userId,
+          widgetId: widget.id,
+        },
+      });
+
+      await ctx.db.gameNote.deleteMany({
         where: {
           userId,
           widgetId: widget.id,

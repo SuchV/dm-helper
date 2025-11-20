@@ -12,7 +12,7 @@
     "db:migrate": "pnpm with-env prisma migrate",
     "test": "echo \"Error: no test specified\" && exit 1",
     "with-env": "dotenv -e ../../.env --",
-    "dev": "pnpm with-env prisma studio",
+    "dev": "echo \"@repo/db: no dev server (run 'pnpm --filter @repo/db run db:studio' to open Prisma Studio)\"",
     "db:seed": "pnpm with-env prisma db seed",
     "typecheck": "tsc --noEmit"
   },

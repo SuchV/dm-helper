@@ -5,6 +5,7 @@ import { api } from "~/trpc/react";
 
 import type {
   GameClockWidgetState,
+  NotesWidgetState,
   WidgetIdsByType,
   WidgetStateBundle,
 } from "./widget-types";
@@ -12,6 +13,7 @@ import type {
 const WidgetStateContext = React.createContext<{
   state: WidgetStateBundle;
   setGameClockState: (widgetId: string, next: GameClockWidgetState) => void;
+  setNotesState: (widgetId: string, updater: (prev: NotesWidgetState) => NotesWidgetState) => void;
 } | null>(null);
 
 const useWidgetStateContext = () => {
@@ -35,7 +37,7 @@ const WidgetStateProvider = ({
   initialData,
   widgetIdsByType,
 }: WidgetStateProviderProps) => {
-  const hasAnyWidgets = widgetIdsByType["game-clock"].length > 0;
+  const hasAnyWidgets = Object.values(widgetIdsByType).some((ids) => ids.length > 0);
 
   const queryInput = React.useMemo(() => ({ widgetIdsByType }), [widgetIdsByType]);
 
@@ -63,12 +65,26 @@ const WidgetStateProvider = ({
     }));
   }, []);
 
+  const setNotesState = React.useCallback(
+    (widgetId: string, updater: (prev: NotesWidgetState) => NotesWidgetState) => {
+      setState((prev) => ({
+        ...prev,
+        notes: {
+          ...prev.notes,
+          [widgetId]: updater(prev.notes[widgetId] ?? { notes: [] }),
+        },
+      }));
+    },
+    [],
+  );
+
   const value = React.useMemo(
     () => ({
       state,
       setGameClockState,
+      setNotesState,
     }),
-    [state, setGameClockState],
+    [state, setGameClockState, setNotesState],
   );
 
   return <WidgetStateContext.Provider value={value}>{children}</WidgetStateContext.Provider>;
@@ -83,6 +99,20 @@ export const useGameClockWidgetState = (widgetId: string) => {
       setGameClockState(widgetId, next);
     },
     [setGameClockState, widgetId],
+  );
+
+  return [storedState, updateState] as const;
+};
+
+export const useNotesWidgetState = (widgetId: string) => {
+  const { state, setNotesState } = useWidgetStateContext();
+  const storedState = state.notes[widgetId];
+
+  const updateState = React.useCallback(
+    (updater: (prev: NotesWidgetState) => NotesWidgetState) => {
+      setNotesState(widgetId, updater);
+    },
+    [setNotesState, widgetId],
   );
 
   return [storedState, updateState] as const;

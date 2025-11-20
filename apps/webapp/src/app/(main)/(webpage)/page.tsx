@@ -22,14 +22,15 @@ const HomePage = async () => {
     );
   }
 
-  const widgets = await prisma.widgetInstance.findMany({
+  const widgets = (await prisma.widgetInstance.findMany({
     where: { userId: session.user.id },
     orderBy: { position: "asc" },
     select: widgetSelect,
-  });
+  })) as WidgetInstanceWithState[];
 
   const widgetIdsByType: WidgetIdsByType = {
     "game-clock": [],
+    notes: [],
   };
 
   const initialStateBundle = createEmptyWidgetStateBundle();
@@ -41,6 +42,21 @@ const HomePage = async () => {
       if (widget.gameClockState) {
         initialStateBundle["game-clock"][widget.id] = widget.gameClockState;
       }
+    }
+
+    if (widget.type === "notes") {
+      widgetIdsByType.notes.push(widget.id);
+
+      initialStateBundle.notes[widget.id] = {
+        notes: widget.notes.map((note: WidgetInstanceWithState["notes"][number]) => ({
+          id: note.id,
+          title: note.title,
+          content: note.content,
+          position: note.position,
+          createdAt: note.createdAt.toISOString(),
+          updatedAt: note.updatedAt.toISOString(),
+        })),
+      };
     }
   });
 
@@ -63,7 +79,7 @@ const HomePage = async () => {
               return (
                 <WidgetContainer
                   key={widget.id}
-                  widget={widget as WidgetInstanceWithState}
+                  widget={widget}
                   instanceNumber={counters[widget.type]}
                 />
               );

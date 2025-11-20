@@ -7,8 +7,14 @@ import { Button } from "@repo/ui/button";
 import { Badge } from "@repo/ui/badge";
 import { Input } from "@repo/ui/input";
 import { Textarea } from "@repo/ui/textarea";
-import { Separator } from "@repo/ui/separator";
 import { toast } from "@repo/ui/toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/ui/dialog";
 
 import { api } from "~/trpc/react";
 
@@ -37,10 +43,12 @@ const NotesWidget = ({ widgetId }: NotesWidgetProps) => {
   const safeState: NotesWidgetState = notesState ?? { notes: [] };
   const notes = safeState.notes;
   const [activeNoteId, setActiveNoteId] = React.useState<string | null>(notes[0]?.id ?? null);
+  const [isEditorOpen, setIsEditorOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (notes.length === 0) {
       setActiveNoteId(null);
+      setIsEditorOpen(false);
       return;
     }
 
@@ -120,6 +128,7 @@ const NotesWidget = ({ widgetId }: NotesWidgetProps) => {
         notes: [...prev.notes, normalized],
       }));
       setActiveNoteId(normalized.id);
+      setIsEditorOpen(true);
     },
   });
 
@@ -146,6 +155,9 @@ const NotesWidget = ({ widgetId }: NotesWidgetProps) => {
         }
         return current;
       });
+      if (!fallbackId) {
+        setIsEditorOpen(false);
+      }
     },
   });
 
@@ -187,6 +199,11 @@ const NotesWidget = ({ widgetId }: NotesWidgetProps) => {
     deleteNoteMutation.mutate({ noteId });
   };
 
+  const handleCardSelect = (noteId: string) => {
+    setActiveNoteId(noteId);
+    setIsEditorOpen(true);
+  };
+
   const emptyState = notes.length === 0;
 
   const editorStats = React.useMemo(() => {
@@ -210,7 +227,7 @@ const NotesWidget = ({ widgetId }: NotesWidgetProps) => {
 
       <div className="grid auto-rows-[minmax(140px,_auto)] grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-3">
         {notes.map((note) => {
-          const isActive = note.id === activeNoteId;
+          const isActive = isEditorOpen && note.id === activeNoteId;
           const previewTitle = note.title.trim() || "Untitled note";
           const previewBody = note.content.trim() || "No content yet";
 
@@ -218,7 +235,7 @@ const NotesWidget = ({ widgetId }: NotesWidgetProps) => {
             <button
               key={note.id}
               type="button"
-              onClick={() => setActiveNoteId(note.id)}
+              onClick={() => handleCardSelect(note.id)}
               aria-pressed={isActive}
               className={`flex h-full min-h-[150px] flex-col rounded-xl border bg-muted/40 p-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70 ${
                 isActive
@@ -249,58 +266,79 @@ const NotesWidget = ({ widgetId }: NotesWidgetProps) => {
         </button>
       </div>
 
-      <Separator />
-
-      {activeNote ? (
-        <div className="space-y-4 rounded-2xl border bg-background/80 p-5 shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p className="text-sm font-semibold text-muted-foreground">Currently editing</p>
-              <p className="text-lg font-medium text-foreground">
-                {activeNote.title.trim() || "Untitled note"}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary">Auto-save on</Badge>
-              <Button
-                type="button"
-                size="sm"
-                variant="ghost"
-                className="text-destructive"
-                onClick={() => handleDelete(activeNote.id)}
-                disabled={deleteNoteMutation.isPending}
-              >
-                <Trash2 className="mr-1 h-4 w-4" /> Delete
-              </Button>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <span>Updated {editorStats.updatedLabel}</span>
-            <span>•</span>
-            <span>{editorStats.words} words</span>
-            <span>•</span>
-            <span>{editorStats.characters} characters</span>
-          </div>
-          <Input
-            className="text-base font-medium"
-            value={activeNote.title}
-            onChange={(event) => handleTitleChange(activeNote.id, event.target.value)}
-            placeholder="Note title"
-          />
-          <Textarea
-            value={activeNote.content}
-            onChange={(event) => handleBodyChange(activeNote.id, event.target.value)}
-            placeholder="Write your note..."
-            className="min-h-[220px]"
-          />
-          <p className="text-xs text-muted-foreground">All edits sync automatically in the background.</p>
-        </div>
-      ) : (
+      {emptyState ? (
         <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-          {emptyState ? "Create your first note to get started." : "Select a note card to begin editing."}
+          Create your first note to get started.
         </div>
-      )}
+      ) : null}
+
+      <Dialog
+        open={isEditorOpen && Boolean(activeNote)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsEditorOpen(false);
+          } else if (activeNote) {
+            setIsEditorOpen(true);
+          }
+        }}
+      >
+        {activeNote ? (
+          <DialogContent
+            className="max-w-3xl overflow-hidden rounded-3xl border border-border/70 bg-card p-0 shadow-2xl"
+            aria-describedby={undefined}
+          >
+            <div className="border-b border-border/60 bg-gradient-to-r from-muted/50 via-card to-muted/40 px-6 py-4">
+              <DialogHeader className="gap-1 text-left">
+                <DialogTitle className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  Editing note
+                </DialogTitle>
+                <DialogDescription className="text-2xl font-semibold text-foreground">
+                  {activeNote.title.trim() || "Untitled note"}
+                </DialogDescription>
+              </DialogHeader>
+            </div>
+
+            <div className="space-y-5 px-6 py-5">
+              <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                <Badge variant="secondary" className="bg-muted/60">
+                  Auto-save on
+                </Badge>
+                <span>•</span>
+                <span>Updated {editorStats.updatedLabel}</span>
+                <span>•</span>
+                <span>{editorStats.words} words</span>
+                <span>•</span>
+                <span>{editorStats.characters} characters</span>
+              </div>
+
+              <Input
+                className="text-base font-medium"
+                value={activeNote.title}
+                onChange={(event) => handleTitleChange(activeNote.id, event.target.value)}
+                placeholder="Note title"
+              />
+              <Textarea
+                value={activeNote.content}
+                onChange={(event) => handleBodyChange(activeNote.id, event.target.value)}
+                placeholder="Write your note..."
+                className="min-h-[260px]"
+              />
+              <div className="flex items-center justify-end gap-3 text-sm text-muted-foreground">
+                <span>All changes sync in the background</span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="text-destructive"
+                  onClick={() => handleDelete(activeNote.id)}
+                  disabled={deleteNoteMutation.isPending}
+                >
+                  <Trash2 className="mr-1 h-4 w-4" /> Delete note
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        ) : null}
+      </Dialog>
     </div>
   );
 };

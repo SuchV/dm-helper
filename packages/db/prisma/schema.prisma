@@ -101,6 +101,8 @@ model GameNote {
   title     String   @default("Untitled note")
   content   String   @default("")
   position  Int      @default(0)
+  pinned    Boolean  @default(false)
+  pinnedAt  DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -108,6 +110,7 @@ model GameNote {
   widget WidgetInstance @relation(fields: [widgetId], references: [id], onDelete: Cascade)
 
   @@index([widgetId])
+  @@index([widgetId, pinned, pinnedAt])
 }
 
 

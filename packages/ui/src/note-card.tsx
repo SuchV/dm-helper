@@ -17,28 +17,46 @@ const NoteGrid = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
 );
 NoteGrid.displayName = "NoteGrid";
 
-interface NoteCardProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface NoteCardProps extends React.HTMLAttributes<HTMLDivElement> {
   active?: boolean;
 }
 
-const NoteCard = React.forwardRef<HTMLButtonElement, NoteCardProps>(
-  ({ className, active, children, ...props }, ref) => (
-    <button
-      ref={ref}
-      type="button"
-      className={cn(
-        "flex h-full min-h-[150px] flex-col rounded-xl border bg-muted/40 p-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70",
-        active
-          ? "border-primary bg-background shadow-sm"
-          : "hover:border-muted-foreground/60 hover:bg-muted",
-        className,
-      )}
-      aria-pressed={active}
-      {...props}
-    >
-      {children}
-    </button>
-  ),
+const NoteCard = React.forwardRef<HTMLDivElement, NoteCardProps>(
+  ({ className, active, children, onClick, onKeyDown, ...props }, ref) => {
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+      onKeyDown?.(event);
+
+      if (!onClick) {
+        return;
+      }
+
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onClick(event as unknown as React.MouseEvent<HTMLDivElement>);
+      }
+    };
+
+    return (
+      <div
+        ref={ref}
+        role={onClick ? "button" : undefined}
+        tabIndex={onClick ? 0 : undefined}
+        className={cn(
+          "flex h-full min-h-[150px] flex-col rounded-xl border bg-muted/40 p-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70",
+          active
+            ? "border-primary bg-background shadow-sm"
+            : "hover:border-muted-foreground/60 hover:bg-muted",
+          className,
+        )}
+        aria-pressed={onClick ? active : undefined}
+        onClick={onClick}
+        onKeyDown={handleKeyDown}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  },
 );
 NoteCard.displayName = "NoteCard";
 

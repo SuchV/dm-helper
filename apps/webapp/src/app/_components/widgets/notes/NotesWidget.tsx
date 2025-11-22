@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Trash2 } from "lucide-react";
+import { Pin, PinOff, Trash2 } from "lucide-react";
 
 import { Button } from "@repo/ui/button";
 import { Badge } from "@repo/ui/badge";
@@ -38,15 +38,38 @@ interface NotesWidgetProps {
 const toIso = (value: string | Date) => new Date(value).toISOString();
 
 const normalizeNote = (
-  note: Omit<NotesWidgetNote, "createdAt" | "updatedAt"> & {
+  note: Omit<NotesWidgetNote, "createdAt" | "updatedAt" | "pinnedAt"> & {
     createdAt: string | Date;
     updatedAt: string | Date;
+    pinnedAt: string | Date | null;
   },
 ): NotesWidgetNote => ({
   ...note,
+  pinnedAt: note.pinnedAt ? toIso(note.pinnedAt) : null,
   createdAt: toIso(note.createdAt),
   updatedAt: toIso(note.updatedAt),
 });
+
+const sortNotes = (entries: NotesWidgetNote[]): NotesWidgetNote[] => {
+  const getPinnedAtValue = (value: string | null) => (value ? new Date(value).getTime() : -Infinity);
+
+  return [...entries].sort((a, b) => {
+    if (a.pinned !== b.pinned) {
+      return a.pinned ? -1 : 1;
+    }
+
+    const pinnedAtDiff = getPinnedAtValue(b.pinnedAt) - getPinnedAtValue(a.pinnedAt);
+    if (pinnedAtDiff !== 0) {
+      return pinnedAtDiff;
+    }
+
+    if (a.position !== b.position) {
+      return a.position - b.position;
+    }
+
+    return a.createdAt.localeCompare(b.createdAt);
+  });
+};
 
 const NotesWidget = ({ widgetId }: NotesWidgetProps) => {
   const [notesState, updateNotesState] = useNotesWidgetState(widgetId);
@@ -93,7 +116,7 @@ const NotesWidget = ({ widgetId }: NotesWidgetProps) => {
     onSuccess: (note) => {
       const normalized = normalizeNote(note);
       updateNotesState((prev) => ({
-        notes: prev.notes.map((entry) => (entry.id === normalized.id ? normalized : entry)),
+        notes: sortNotes(prev.notes.map((entry) => (entry.id === normalized.id ? normalized : entry))),
       }));
     },
   });
@@ -135,10 +158,19 @@ const NotesWidget = ({ widgetId }: NotesWidgetProps) => {
     onSuccess: (note) => {
       const normalized = normalizeNote(note);
       updateNotesState((prev) => ({
-        notes: [...prev.notes, normalized],
+        notes: sortNotes([...prev.notes, normalized]),
       }));
       setActiveNoteId(normalized.id);
       setIsEditorOpen(true);
+    },
+  });
+
+  const pinNoteMutation = api.note.pin.useMutation({
+    onSuccess: (note) => {
+      const normalized = normalizeNote(note);
+      updateNotesState((prev) => ({
+        notes: sortNotes(prev.notes.map((entry) => (entry.id === normalized.id ? normalized : entry))),
+      }));
     },
   });
 
@@ -209,6 +241,55 @@ const NotesWidget = ({ widgetId }: NotesWidgetProps) => {
     deleteNoteMutation.mutate({ noteId });
   };
 
+  const handleTogglePin = (noteId: string, nextPinned: boolean) => {
+    const previousNote = notes.find((note) => note.id === noteId);
+    const previousSnapshot = previousNote
+      ? { pinned: previousNote.pinned, pinnedAt: previousNote.pinnedAt }
+      : null;
+
+    updateNotesState((prev) => {
+      const nowIso = new Date().toISOString();
+      const updated = prev.notes.map((note) =>
+        note.id === noteId
+          ? {
+              ...note,
+              pinned: nextPinned,
+              pinnedAt: nextPinned ? nowIso : null,
+            }
+          : note,
+      );
+
+      return { notes: sortNotes(updated) };
+    });
+
+    pinNoteMutation.mutate(
+      { noteId, pinned: nextPinned },
+      {
+        onError: (error) => {
+          console.error(error);
+          toast.error(error.message ?? "Unable to update pin state");
+          if (!previousSnapshot) {
+            return;
+          }
+
+          updateNotesState((prev) => ({
+            notes: sortNotes(
+              prev.notes.map((note) =>
+                note.id === noteId
+                  ? {
+                      ...note,
+                      pinned: previousSnapshot.pinned,
+                      pinnedAt: previousSnapshot.pinnedAt,
+                    }
+                  : note,
+              ),
+            ),
+          }));
+        },
+      },
+    );
+  };
+
   const handleCardSelect = (noteId: string) => {
     setActiveNoteId(noteId);
     setIsEditorOpen(true);
@@ -249,7 +330,25 @@ const NotesWidget = ({ widgetId }: NotesWidgetProps) => {
             >
               <NoteCardHeader>
                 <NoteCardTitle>{previewTitle}</NoteCardTitle>
-                {isActive ? <NoteCardStatus>Editing</NoteCardStatus> : null}
+                <div className="flex items-center gap-2">
+                  {note.pinned ? <NoteCardStatus>Pinned</NoteCardStatus> : null}
+                  {isActive ? <NoteCardStatus>Editing</NoteCardStatus> : null}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className={note.pinned ? "text-amber-500" : "text-muted-foreground"}
+                    aria-pressed={note.pinned}
+                    aria-label={note.pinned ? "Unpin note" : "Pin note"}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleTogglePin(note.id, !note.pinned);
+                    }}
+                    disabled={pinNoteMutation.isPending}
+                  >
+                    {note.pinned ? <Pin className="h-4 w-4" aria-hidden /> : <PinOff className="h-4 w-4" aria-hidden />}
+                  </Button>
+                </div>
               </NoteCardHeader>
               <NoteCardPreview>{previewBody}</NoteCardPreview>
               <NoteCardMeta>

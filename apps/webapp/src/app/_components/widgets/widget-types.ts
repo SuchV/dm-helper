@@ -20,14 +20,18 @@ export const widgetSelect = {
       title: true,
       content: true,
       position: true,
+      pinned: true,
+      pinnedAt: true,
       createdAt: true,
       updatedAt: true,
     },
-    orderBy: {
-      position: "asc",
-    },
+    orderBy: [
+      { pinned: "desc" as const },
+      { pinnedAt: "desc" as const },
+      { position: "asc" as const },
+    ],
   },
-} satisfies Prisma.WidgetInstanceSelect;
+};
 
 export type WidgetInstanceWithState = Prisma.WidgetInstanceGetPayload<{
   select: typeof widgetSelect;
@@ -38,6 +42,8 @@ export type WidgetIdsByType = {
   notes: string[];
 };
 
+export type WidgetNoteRecord = WidgetInstanceWithState["notes"][number];
+
 export type GameClockWidgetState = Pick<GameClockState, "gameTime" | "gameDate" | "weekDay">;
 
 export type NotesWidgetNote = {
@@ -45,6 +51,8 @@ export type NotesWidgetNote = {
   title: string;
   content: string;
   position: number;
+  pinned: boolean;
+  pinnedAt: string | null;
   createdAt: string;
   updatedAt: string;
 };

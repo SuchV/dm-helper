@@ -25,25 +25,29 @@ const widgetSelect = {
       title: true,
       content: true,
       position: true,
+      pinned: true,
+      pinnedAt: true,
       createdAt: true,
       updatedAt: true,
       widgetId: true,
     },
-    orderBy: {
-      position: "asc",
-    },
+    orderBy: [
+      { pinned: "desc" },
+      { pinnedAt: "desc" },
+      { position: "asc" },
+    ],
   },
-} as const;
+};
 
 export const widgetRouter = createTRPCRouter({
   list: protectedProcedure.query(async ({ ctx }) => {
     const userId = getUserId(ctx);
 
-    return ctx.db.widgetInstance.findMany({
-      where: { userId },
-      orderBy: { position: "asc" },
-      select: widgetSelect,
-    });
+      return ctx.db.widgetInstance.findMany({
+        where: { userId },
+        orderBy: { position: "asc" },
+        select: widgetSelect as never,
+      });
   }),
   add: protectedProcedure
     .input(z.object({ type: widgetTypeSchema }))
@@ -78,7 +82,7 @@ export const widgetRouter = createTRPCRouter({
           type: input.type,
           position: nextPosition,
         },
-        select: widgetSelect,
+        select: widgetSelect as never,
       });
     }),
   remove: protectedProcedure
@@ -154,7 +158,7 @@ export const widgetRouter = createTRPCRouter({
           position: input.position ?? undefined,
           config: input.config ?? undefined,
         },
-        select: widgetSelect,
+        select: widgetSelect as never,
       });
     }),
 });

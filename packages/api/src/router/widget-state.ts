@@ -27,6 +27,8 @@ const emptyResponse = {
         title: string;
         content: string;
         position: number;
+        pinned: boolean;
+        pinnedAt: string | null;
         createdAt: string;
         updatedAt: string;
       }>;
@@ -74,22 +76,38 @@ export const widgetStateRouter = createTRPCRouter({
         response.notes[widgetId] = { notes: [] };
       }
 
-      const notes = await ctx.db.gameNote.findMany({
+      const notes = ((await ctx.db.gameNote.findMany({
         where: {
           userId,
           widgetId: { in: notesWidgetIds },
         },
-        orderBy: { position: "asc" },
+        orderBy: [
+          { pinned: "desc" },
+          { pinnedAt: "desc" },
+          { position: "asc" },
+        ],
         select: {
           id: true,
           widgetId: true,
           title: true,
           content: true,
           position: true,
+          pinned: true,
+          pinnedAt: true,
           createdAt: true,
           updatedAt: true,
         },
-      });
+      })) as Array<{
+        id: string;
+        widgetId: string;
+        title: string;
+        content: string;
+        position: number;
+        pinned: boolean;
+        pinnedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+      }>)
 
       for (const note of notes) {
         if (!note.widgetId) continue;
@@ -101,6 +119,8 @@ export const widgetStateRouter = createTRPCRouter({
           title: note.title,
           content: note.content,
           position: note.position,
+          pinned: note.pinned,
+          pinnedAt: note.pinnedAt?.toISOString() ?? null,
           createdAt: note.createdAt.toISOString(),
           updatedAt: note.updatedAt.toISOString(),
         });

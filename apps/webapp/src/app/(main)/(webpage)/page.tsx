@@ -53,6 +53,8 @@ const HomePage = async () => {
           title: note.title,
           content: note.content,
           position: note.position,
+          pinned: note.pinned,
+          pinnedAt: note.pinnedAt ? note.pinnedAt.toISOString() : null,
           createdAt: note.createdAt.toISOString(),
           updatedAt: note.updatedAt.toISOString(),
         })),

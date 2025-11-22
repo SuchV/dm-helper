@@ -10,6 +10,8 @@ const noteSelect = {
   title: true,
   content: true,
   position: true,
+  pinned: true,
+  pinnedAt: true,
   createdAt: true,
   updatedAt: true,
 } as const;
@@ -99,6 +101,36 @@ export const noteRouter = createTRPCRouter({
         data: {
           title: normalizeTitle(input.title),
           content: input.content ?? undefined,
+        },
+        select: noteSelect,
+      });
+
+      return updated;
+    }),
+  pin: protectedProcedure
+    .input(
+      z.object({
+        noteId: z.string().cuid(),
+        pinned: z.boolean(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = getUserId(ctx);
+
+      const note = await ctx.db.gameNote.findFirst({
+        where: { id: input.noteId, userId },
+        select: { id: true },
+      });
+
+      if (!note) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      const updated = await ctx.db.gameNote.update({
+        where: { id: note.id },
+        data: {
+          pinned: input.pinned,
+          pinnedAt: input.pinned ? new Date() : null,
         },
         select: noteSelect,
       });

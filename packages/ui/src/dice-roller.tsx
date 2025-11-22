@@ -149,7 +149,7 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({
     <WidgetSurface className={cn("w-full max-w-xl", className)}>
       <WidgetHeader>
         <div>
-          <WidgetTitle>Dice thrower</WidgetTitle>
+          <WidgetTitle></WidgetTitle>
           <WidgetDescription>Pick dice, build a pool, add modifiers, and roll.</WidgetDescription>
         </div>
       </WidgetHeader>

@@ -4,6 +4,7 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
 import { appRouter, createTRPCContext } from "@repo/api";
 import { env } from "@repo/env/next-env";
+import { prisma } from "@repo/db";
 
 export const runtime = "nodejs";
 
@@ -36,13 +37,9 @@ const handler = async (req: NextRequest) => {
   // eslint-disable-next-line @typescript-eslint/await-thenable
   const context = await createTRPCContext({
     cookieStore,
-    discord: {
-      discordId: env.DISCORD_CLIENT_ID,
-      discordSecret: env.DISCORD_CLIENT_SECRET,
-      discordToken: env.DISCORD_CLIENT_TOKEN,
-    },
     headers: req.headers,
     logLevel: env.LOG_LEVEL,
+    db: prisma,
   });
 
   const response = await fetchRequestHandler({

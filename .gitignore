@@ -57,4 +57,7 @@ dist/
 # turbo
 .turbo
 
+# github
+.github/
+
 snowflake.log

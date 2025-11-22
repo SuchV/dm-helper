@@ -4,7 +4,7 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { getUserId } from "./_helpers/get-user-id";
 
-const widgetTypeSchema = z.enum(["game-clock", "notes"]);
+const widgetTypeSchema = z.enum(["game-clock", "notes", "dice-roller"]);
 
 const widgetSelect = {
   id: true,

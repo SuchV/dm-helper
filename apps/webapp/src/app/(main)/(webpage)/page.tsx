@@ -31,6 +31,7 @@ const HomePage = async () => {
   const widgetIdsByType: WidgetIdsByType = {
     "game-clock": [],
     notes: [],
+    "dice-roller": [],
   };
 
   const initialStateBundle = createEmptyWidgetStateBundle();
@@ -59,6 +60,11 @@ const HomePage = async () => {
           updatedAt: note.updatedAt.toISOString(),
         })),
       };
+    }
+
+    if (widget.type === "dice-roller") {
+      widgetIdsByType["dice-roller"].push(widget.id);
+      initialStateBundle["dice-roller"][widget.id] = { logs: [] };
     }
   });
 

@@ -6,6 +6,7 @@ import { api } from "~/trpc/react";
 import type {
   GameClockWidgetState,
   NotesWidgetState,
+  DiceRollerWidgetState,
   WidgetIdsByType,
   WidgetStateBundle,
 } from "./widget-types";
@@ -14,6 +15,10 @@ const WidgetStateContext = React.createContext<{
   state: WidgetStateBundle;
   setGameClockState: (widgetId: string, next: GameClockWidgetState) => void;
   setNotesState: (widgetId: string, updater: (prev: NotesWidgetState) => NotesWidgetState) => void;
+  setDiceRollerState: (
+    widgetId: string,
+    updater: (prev: DiceRollerWidgetState) => DiceRollerWidgetState,
+  ) => void;
 } | null>(null);
 
 const useWidgetStateContext = () => {
@@ -78,13 +83,27 @@ const WidgetStateProvider = ({
     [],
   );
 
+  const setDiceRollerState = React.useCallback(
+    (widgetId: string, updater: (prev: DiceRollerWidgetState) => DiceRollerWidgetState) => {
+      setState((prev) => ({
+        ...prev,
+        "dice-roller": {
+          ...prev["dice-roller"],
+          [widgetId]: updater(prev["dice-roller"][widgetId] ?? { logs: [] }),
+        },
+      }));
+    },
+    [],
+  );
+
   const value = React.useMemo(
     () => ({
       state,
       setGameClockState,
       setNotesState,
+      setDiceRollerState,
     }),
-    [state, setGameClockState, setNotesState],
+    [state, setGameClockState, setNotesState, setDiceRollerState],
   );
 
   return <WidgetStateContext.Provider value={value}>{children}</WidgetStateContext.Provider>;
@@ -113,6 +132,20 @@ export const useNotesWidgetState = (widgetId: string) => {
       setNotesState(widgetId, updater);
     },
     [setNotesState, widgetId],
+  );
+
+  return [storedState, updateState] as const;
+};
+
+export const useDiceRollerWidgetState = (widgetId: string) => {
+  const { state, setDiceRollerState } = useWidgetStateContext();
+  const storedState = state["dice-roller"][widgetId];
+
+  const updateState = React.useCallback(
+    (updater: (prev: DiceRollerWidgetState) => DiceRollerWidgetState) => {
+      setDiceRollerState(widgetId, updater);
+    },
+    [setDiceRollerState, widgetId],
   );
 
   return [storedState, updateState] as const;

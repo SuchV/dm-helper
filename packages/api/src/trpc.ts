@@ -37,9 +37,6 @@ export const createTRPCContext = async (opts: {
 }) => {
   const source = opts.headers?.get("x-trpc-source") ?? opts.source ?? "unknown";
 
-  const dc =
-    env.ENVIRONMENT !== "local";
-
   const db = prisma;
 
   const session =

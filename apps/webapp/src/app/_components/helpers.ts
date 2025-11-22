@@ -16,7 +16,3 @@ export const getNameShort = (name: string) => {
   }
   return "??";
 };
-
-export const getBotInviteLink = () => {
-  return env.NEXT_PUBLIC_DISCORD_INVITE_URL;
-};

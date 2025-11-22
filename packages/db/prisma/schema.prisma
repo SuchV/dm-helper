@@ -53,6 +53,7 @@ model User {
   gameClockStates GameClockState[]
   widgets WidgetInstance[]
   notes GameNote[]
+  diceRollLogs DiceRollLog[]
 }
 
 model VerificationToken {
@@ -92,6 +93,7 @@ model WidgetInstance {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   gameClockState GameClockState?
   notes GameNote[]
+  diceRollLogs DiceRollLog[]
 }
 
 model GameNote {
@@ -111,6 +113,21 @@ model GameNote {
 
   @@index([widgetId])
   @@index([widgetId, pinned, pinnedAt])
+}
+
+model DiceRollLog {
+  id        String   @id @default(cuid()) @map("_id")
+  userId    String
+  widgetId  String
+  total     Int
+  modifier  Int
+  results   Json
+  createdAt DateTime @default(now())
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  widget WidgetInstance @relation(fields: [widgetId], references: [id], onDelete: Cascade)
+
+  @@index([widgetId, createdAt])
 }
 
 

@@ -8,6 +8,7 @@ import { toast } from "@repo/ui/toast";
 import { api } from "~/trpc/react";
 import GameClockPanel from "~/app/_components/main/GameClockPanel";
 import NotesWidget from "~/app/_components/widgets/notes/NotesWidget";
+import DiceRollerWidget from "~/app/_components/widgets/dice/DiceRollerWidget";
 
 import type { WidgetInstanceWithState } from "./widget-types";
 
@@ -32,6 +33,12 @@ const widgetMeta: WidgetMeta = {
     title: "Notes",
     description: "Organize sticky notes for quick reference.",
     render: ({ widget }) => <NotesWidget widgetId={widget.id} />,
+    showInstanceNumber: false,
+  },
+  "dice-roller": {
+    title: "Dice Roller",
+    description: "Build a dice pool and roll with modifiers.",
+    render: ({ widget }) => <DiceRollerWidget widgetId={widget.id} />,
     showInstanceNumber: false,
   },
 };

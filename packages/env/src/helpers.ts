@@ -7,7 +7,6 @@ export const envSchema = {
       .default("development"),
     VERCEL_ENV: z.enum(["development", "preview", "production"]).optional(),
     PORT: z.union([z.number(), z.string()]).default(3000),
-    NEXT_PUBLIC_DISCORD_INVITE_URL: z.string().url().min(1),
   },
   /**
    * Specify your server-side environment variables schema here.
@@ -23,13 +22,9 @@ export const envSchema = {
 
     DATABASE_URL: z.string().min(1),
     PREFIX: z.string().min(1).max(1),
-    DISCORD_CLIENT_ID: z.string().min(1),
-    DISCORD_CLIENT_SECRET: z.string().min(1),
-    DISCORD_CLIENT_TOKEN: z.string().min(1),
     GOOGLE_CLIENT_ID: z.string().min(1),
     GOOGLE_CLIENT_SECRET: z.string().min(1),
     NEXTAUTH_SECRET: z.string().min(1).default("xoxo-secret-xoxo"),
-    DEV_GUILD_ID: z.string().min(1).optional(),
     NEXTAUTH_URL: z.string().url(),
     ENVIRONMENT: z.string().optional().default("local"),
   },
@@ -46,8 +41,7 @@ export const envSchema = {
     NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
     NEXT_PUBLIC_VERCEL_BRANCH_URL: process.env.NEXT_PUBLIC_VERCEL_BRANCH_URL,
     NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL:
-      process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL,
-    NEXT_PUBLIC_DISCORD_INVITE_URL: process.env.NEXT_PUBLIC_DISCORD_INVITE_URL,
+    process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL,
     VERCEL_ENV: process.env.VERCEL_ENV,
     NODE_ENV: process.env.NODE_ENV,
     ENVIRONMENT: process.env.ENVIRONMENT,

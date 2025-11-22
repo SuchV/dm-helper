@@ -29,7 +29,7 @@ const Navigation = () => {
     },
   });
 
-  const handleAddWidget = (type: "game-clock" | "notes") => {
+  const handleAddWidget = (type: "game-clock" | "notes" | "dice-roller") => {
     addWidgetMutation.mutate({ type });
   };
   return (
@@ -55,6 +55,12 @@ const Navigation = () => {
               onClick={() => handleAddWidget("notes")}
             >
               Notes
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              disabled={addWidgetMutation.isPending}
+              onClick={() => handleAddWidget("dice-roller")}
+            >
+              Dice Roller
             </DropdownMenuItem>
             <DropdownMenuItem disabled>More widgets coming soon</DropdownMenuItem>
           </DropdownMenuContent>

@@ -7,6 +7,7 @@ const widgetStateInput = z.object({
   widgetIdsByType: z.object({
     "game-clock": z.array(z.string().cuid()).optional(),
     notes: z.array(z.string().cuid()).optional(),
+    "dice-roller": z.array(z.string().cuid()).optional(),
   }),
 });
 
@@ -34,6 +35,18 @@ const emptyResponse = {
       }>;
     }
   >,
+  "dice-roller": {} as Record<
+    string,
+    {
+      logs: Array<{
+        id: string;
+        modifier: number;
+        total: number;
+        results: Array<{ sides: number; value: number }>;
+        createdAt: string;
+      }>;
+    }
+  >,
 };
 
 export const widgetStateRouter = createTRPCRouter({
@@ -42,10 +55,12 @@ export const widgetStateRouter = createTRPCRouter({
     const response = {
       "game-clock": { ...emptyResponse["game-clock"] },
       notes: { ...emptyResponse["notes"] },
+      "dice-roller": { ...emptyResponse["dice-roller"] },
     };
 
     const gameClockIds = input.widgetIdsByType["game-clock"] ?? [];
     const notesWidgetIds = input.widgetIdsByType.notes ?? [];
+    const diceRollerIds = input.widgetIdsByType["dice-roller"] ?? [];
 
     if (gameClockIds.length > 0) {
       const states = await ctx.db.gameClockState.findMany({
@@ -123,6 +138,41 @@ export const widgetStateRouter = createTRPCRouter({
           pinnedAt: note.pinnedAt?.toISOString() ?? null,
           createdAt: note.createdAt.toISOString(),
           updatedAt: note.updatedAt.toISOString(),
+        });
+      }
+    }
+
+    if (diceRollerIds.length > 0) {
+      for (const widgetId of diceRollerIds) {
+        response["dice-roller"][widgetId] = { logs: [] };
+      }
+
+      const logs = await ctx.db.diceRollLog.findMany({
+        where: {
+          userId,
+          widgetId: { in: diceRollerIds },
+        },
+        orderBy: { createdAt: "asc" },
+        select: {
+          id: true,
+          widgetId: true,
+          modifier: true,
+          total: true,
+          results: true,
+          createdAt: true,
+        },
+      });
+
+      for (const log of logs) {
+        const bucket =
+          response["dice-roller"][log.widgetId] ??
+          (response["dice-roller"][log.widgetId] = { logs: [] });
+        bucket.logs.push({
+          id: log.id,
+          modifier: log.modifier,
+          total: log.total,
+          results: (log.results as { sides: number; value: number }[]) ?? [],
+          createdAt: log.createdAt.toISOString(),
         });
       }
     }

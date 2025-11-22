@@ -4,8 +4,8 @@ import { Separator } from "@repo/ui/separator";
 import UserLoginButton from "./UserLoginButton";
 import { auth } from "@repo/auth";
 
-const UserLoginForm = () => {
-  const session = auth();
+const UserLoginForm = async () => {
+  const session = await auth();
 
   if (session) {
     return null;

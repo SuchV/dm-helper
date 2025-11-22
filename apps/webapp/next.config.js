@@ -15,7 +15,6 @@ const nextConfig = {
   transpilePackages: [
     "@repo/api",
     "@repo/auth",
-    "@repo/discord",
     "@repo/env/next-env",
     "@repo/supabase",
     "@repo/ui",

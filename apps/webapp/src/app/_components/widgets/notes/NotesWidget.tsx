@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 import { Button } from "@repo/ui/button";
 import { Badge } from "@repo/ui/badge";
@@ -15,6 +15,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@repo/ui/dialog";
+import {
+  NoteCard,
+  NoteCardHeader,
+  NoteCardMeta,
+  NoteCardPreview,
+  NoteCardStatus,
+  NoteCardTitle,
+  NoteCreateCard,
+  NoteGrid,
+} from "@repo/ui/note-card";
 
 import { api } from "~/trpc/react";
 
@@ -225,46 +235,34 @@ const NotesWidget = ({ widgetId }: NotesWidgetProps) => {
         <p>Click a card to jump into edit mode. Notes stay lightweight until you open them.</p>
       </div>
 
-      <div className="grid auto-rows-[minmax(140px,_auto)] grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-3">
+      <NoteGrid>
         {notes.map((note) => {
           const isActive = isEditorOpen && note.id === activeNoteId;
           const previewTitle = note.title.trim() || "Untitled note";
           const previewBody = note.content.trim() || "No content yet";
 
           return (
-            <button
+            <NoteCard
               key={note.id}
-              type="button"
+              active={isActive}
               onClick={() => handleCardSelect(note.id)}
-              aria-pressed={isActive}
-              className={`flex h-full min-h-[150px] flex-col rounded-xl border bg-muted/40 p-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70 ${
-                isActive
-                  ? "border-primary bg-background shadow-sm"
-                  : "hover:border-muted-foreground/60 hover:bg-muted"
-              }`}
             >
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-sm font-medium text-foreground">{previewTitle}</p>
-                {isActive ? <Badge variant="outline">Editing</Badge> : null}
-              </div>
-              <p className="mt-2 line-clamp-5 whitespace-pre-line text-xs text-muted-foreground">{previewBody}</p>
-              <p className="mt-3 text-[11px] uppercase tracking-wide text-muted-foreground/80">
+              <NoteCardHeader>
+                <NoteCardTitle>{previewTitle}</NoteCardTitle>
+                {isActive ? <NoteCardStatus>Editing</NoteCardStatus> : null}
+              </NoteCardHeader>
+              <NoteCardPreview>{previewBody}</NoteCardPreview>
+              <NoteCardMeta>
                 {new Date(note.updatedAt).toLocaleDateString()}
-              </p>
-            </button>
+              </NoteCardMeta>
+            </NoteCard>
           );
         })}
 
-        <button
-          type="button"
-          onClick={handleCreateNote}
-          disabled={createNoteMutation.isPending}
-          className="flex min-h-[150px] flex-col items-center justify-center rounded-xl border border-dashed border-muted-foreground/60 bg-muted/30 text-sm text-muted-foreground transition hover:border-muted-foreground"
-        >
-          <Plus className="mb-1 h-5 w-5" />
+        <NoteCreateCard onClick={handleCreateNote} disabled={createNoteMutation.isPending}>
           New note
-        </button>
-      </div>
+        </NoteCreateCard>
+      </NoteGrid>
 
       {emptyState ? (
         <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">

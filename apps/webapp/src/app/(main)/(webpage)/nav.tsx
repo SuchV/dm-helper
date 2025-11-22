@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui/dropdown-menu";
 
-import { Button } from "@repo/ui/button";
+import { NavActionButton } from "@repo/ui/nav-action-button";
 import { api } from "~/trpc/react";
 
 const Navigation = () => {
@@ -41,9 +41,7 @@ const Navigation = () => {
       <div className="flex flex-1 justify-center">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button size="icon" className="rounded-full" variant="outline">
-              +
-            </Button>
+            <NavActionButton>+</NavActionButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="center">
             <DropdownMenuItem

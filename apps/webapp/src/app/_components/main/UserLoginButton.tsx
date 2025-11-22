@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@repo/ui/button";
+import { AuthButton } from "@repo/ui/auth/auth-button";
 import { type Session } from "@repo/auth";
 import { api } from "~/trpc/react";
 import { login } from "~/app/actions";
@@ -42,20 +42,16 @@ const UserLoginButton = () => {
 
   if (session?.user) {
     return (
-      <Button
-        type="button"
-        className="text-white hover:bg-red-600 bg-destructive"
-        onClick={handleLogout}
-      >
+      <AuthButton type="button" intent="logout" onClick={handleLogout}>
         Sign out, {session.user.name}
-      </Button>
+      </AuthButton>
     );
   }
 
   return (
-    <Button type="button" onClick={handleLogin}>
+    <AuthButton type="button" intent="login" onClick={handleLogin}>
       Login to Dashboard
-    </Button>
+    </AuthButton>
   );
 };
 

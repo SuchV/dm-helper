@@ -44,7 +44,7 @@ const WidgetShell: React.FC<WidgetShellProps> = ({
 }) => {
   const isControlled = collapsedProp !== undefined;
   const [internalCollapsed, setInternalCollapsed] = React.useState(defaultCollapsed);
-  const collapsed = isControlled ? (collapsedProp as boolean) : internalCollapsed;
+  const collapsed = isControlled ? collapsedProp : internalCollapsed;
   const [visible, setVisible] = React.useState(true);
   const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
   const [isRemoving, setIsRemoving] = React.useState(false);

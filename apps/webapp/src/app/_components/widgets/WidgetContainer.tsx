@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Clock3, Dice6, StickyNote } from "lucide-react";
+import { Clock3, Dice6, FileText, StickyNote } from "lucide-react";
 
 import { toast } from "@repo/ui/toast";
 
@@ -15,15 +15,16 @@ import type { WidgetInstanceWithState } from "./widget-types";
 
 import WidgetShell from "./WidgetShell";
 
-type WidgetMeta = {
-  [Type in WidgetInstanceWithState["type"]]: {
+type WidgetMeta = Record<
+  WidgetInstanceWithState["type"],
+  {
     title: string;
     description?: string;
     render: (options: { widget: WidgetInstanceWithState }) => React.ReactNode;
     showInstanceNumber?: boolean;
     icon: React.ReactNode;
-  };
-};
+  }
+>;
 
 const widgetMeta: WidgetMeta = {
   "game-clock": {
@@ -66,13 +67,13 @@ const WidgetContainer = ({
   const removeMutation = api.widget.remove.useMutation({
     onSuccess: () => router.refresh(),
     onError: (error) => {
-      toast.error(error.message ?? "Failed to remove widget");
+      toast.error(error.message || "Failed to remove widget");
     },
   });
 
   const updateMutation = api.widget.update.useMutation({
     onError: (error) => {
-      toast.error(error.message ?? "Failed to update widget");
+      toast.error(error.message || "Failed to update widget");
     },
   });
 

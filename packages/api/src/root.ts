@@ -1,6 +1,7 @@
 import { diceRollerRouter } from "./router/dice-roller";
 import { gameClockRouter } from "./router/game-clock";
 import { noteRouter } from "./router/note";
+import { pdfViewerRouter } from "./router/pdf-viewer";
 import { userRouter } from "./router/user";
 import { widgetRouter } from "./router/widget";
 import { widgetStateRouter } from "./router/widget-state";
@@ -10,6 +11,7 @@ export const appRouter = createTRPCRouter({
   user: userRouter,
   gameClock: gameClockRouter,
   diceRoller: diceRollerRouter,
+  pdfViewer: pdfViewerRouter,
   note: noteRouter,
   widget: widgetRouter,
   widgetState: widgetStateRouter,

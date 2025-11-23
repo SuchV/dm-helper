@@ -6,10 +6,11 @@ import WidgetStateProvider from "~/app/_components/widgets/WidgetStateProvider";
 import WidgetMasonryBoard from "~/app/_components/widgets/WidgetMasonryBoard";
 import {
   createEmptyWidgetStateBundle,
-  widgetSelect,
-  type WidgetIdsByType,
-  type WidgetInstanceWithState,
+  widgetSelect
+  
+  
 } from "~/app/_components/widgets/widget-types";
+import type {WidgetIdsByType, WidgetInstanceWithState} from "~/app/_components/widgets/widget-types";
 
 const HomePage = async () => {
   const session = await auth();
@@ -32,6 +33,7 @@ const HomePage = async () => {
     "game-clock": [],
     notes: [],
     "dice-roller": [],
+    "pdf-viewer": [],
   };
 
   const initialStateBundle = createEmptyWidgetStateBundle();

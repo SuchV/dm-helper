@@ -4,7 +4,7 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { getUserId } from "./_helpers/get-user-id";
 
-const widgetTypeSchema = z.enum(["game-clock", "notes", "dice-roller"]);
+const widgetTypeSchema = z.enum(["game-clock", "notes", "dice-roller", "pdf-viewer"]);
 
 const widgetSelect = {
   id: true,
@@ -35,6 +35,36 @@ const widgetSelect = {
       { pinned: "desc" },
       { pinnedAt: "desc" },
       { position: "asc" },
+    ],
+  },
+  pdfTabs: {
+    select: {
+      id: true,
+      title: true,
+      storageKey: true,
+      pinned: true,
+      pinnedAt: true,
+      isOpen: true,
+      isActive: true,
+      lastOpenedAt: true,
+      currentPage: true,
+      totalPages: true,
+      createdAt: true,
+      updatedAt: true,
+      bookmarks: {
+        select: {
+          id: true,
+          label: true,
+          pageNumber: true,
+          createdAt: true,
+        },
+        orderBy: { pageNumber: "asc" },
+      },
+    },
+    orderBy: [
+      { pinned: "desc" },
+      { isOpen: "desc" },
+      { lastOpenedAt: "desc" },
     ],
   },
 };
@@ -108,6 +138,22 @@ export const widgetRouter = createTRPCRouter({
       });
 
       await ctx.db.gameNote.deleteMany({
+        where: {
+          userId,
+          widgetId: widget.id,
+        },
+      });
+
+      await ctx.db.pdfBookmark.deleteMany({
+        where: {
+          userId,
+          tab: {
+            widgetId: widget.id,
+          },
+        },
+      });
+
+      await ctx.db.pdfDocumentTab.deleteMany({
         where: {
           userId,
           widgetId: widget.id,

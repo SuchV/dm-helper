@@ -31,6 +31,36 @@ export const widgetSelect = {
       { position: "asc" as const },
     ],
   },
+  pdfTabs: {
+    select: {
+      id: true,
+      title: true,
+      storageKey: true,
+      pinned: true,
+      pinnedAt: true,
+      isOpen: true,
+      isActive: true,
+      lastOpenedAt: true,
+      currentPage: true,
+      totalPages: true,
+      createdAt: true,
+      updatedAt: true,
+      bookmarks: {
+        select: {
+          id: true,
+          label: true,
+          pageNumber: true,
+          createdAt: true,
+        },
+        orderBy: { pageNumber: "asc" as const },
+      },
+    },
+    orderBy: [
+      { pinned: "desc" as const },
+      { isOpen: "desc" as const },
+      { lastOpenedAt: "desc" as const },
+    ],
+  },
 };
 
 export type WidgetInstanceWithState = Prisma.WidgetInstanceGetPayload<{
@@ -41,6 +71,7 @@ export interface WidgetIdsByType {
   "game-clock": string[];
   notes: string[];
   "dice-roller": string[];
+  "pdf-viewer": string[];
 }
 
 export type WidgetNoteRecord = WidgetInstanceWithState["notes"][number];
@@ -74,14 +105,42 @@ export interface DiceRollerWidgetState {
   logs: DiceRollLogEntry[];
 }
 
+export interface PdfViewerBookmarkState {
+  id: string;
+  label: string;
+  pageNumber: number;
+  createdAt: string;
+}
+
+export interface PdfViewerTabState {
+  id: string;
+  title: string;
+  storageKey: string;
+  pinned: boolean;
+  pinnedAt: string | null;
+  isOpen: boolean;
+  isActive: boolean;
+  lastOpenedAt: string;
+  currentPage: number;
+  totalPages: number | null;
+  bookmarks: PdfViewerBookmarkState[];
+}
+
+export interface PdfViewerWidgetState {
+  tabs: PdfViewerTabState[];
+  activeTabId: string | null;
+}
+
 export interface WidgetStateBundle {
   "game-clock": Record<string, GameClockWidgetState>;
   notes: Record<string, NotesWidgetState>;
   "dice-roller": Record<string, DiceRollerWidgetState>;
+  "pdf-viewer": Record<string, PdfViewerWidgetState>;
 }
 
 export const createEmptyWidgetStateBundle = (): WidgetStateBundle => ({
   "game-clock": {},
   notes: {},
   "dice-roller": {},
+  "pdf-viewer": {},
 });

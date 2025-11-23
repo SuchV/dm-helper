@@ -42,7 +42,7 @@ const WidgetStateProvider = ({
   initialData,
   widgetIdsByType,
 }: WidgetStateProviderProps) => {
-  const hasAnyWidgets = Object.values(widgetIdsByType).some((ids) => ids.length > 0);
+  const hasAnyWidgets = Object.values(widgetIdsByType).some((ids) => Array.isArray(ids) && ids.length > 0);
 
   const queryInput = React.useMemo(() => ({ widgetIdsByType }), [widgetIdsByType]);
 
@@ -52,12 +52,10 @@ const WidgetStateProvider = ({
     staleTime: 1000 * 30,
   });
 
-  const [state, setState] = React.useState<WidgetStateBundle>(data ?? initialData);
+  const [state, setState] = React.useState<WidgetStateBundle>(data);
 
   React.useEffect(() => {
-    if (data) {
-      setState(data);
-    }
+    setState(data);
   }, [data]);
 
   const setGameClockState = React.useCallback((widgetId: string, next: GameClockWidgetState) => {

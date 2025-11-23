@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/preserve-manual-memoization */
 "use client";
 
 import * as React from "react";
@@ -7,11 +8,12 @@ import {
   PointerSensor,
   closestCenter,
   useSensor,
-  useSensors,
-  type DragCancelEvent,
-  type DragEndEvent,
-  type DragStartEvent,
+  useSensors
+  
+  
+  
 } from "@dnd-kit/core";
+import type {DragCancelEvent, DragEndEvent, DragStartEvent} from "@dnd-kit/core";
 import {
   SortableContext,
   arrayMove,
@@ -39,7 +41,7 @@ interface WidgetMasonryBoardProps {
   widgets: WidgetInstanceWithState[];
 }
 
-type WidgetDimensions = { width: number; height: number };
+interface WidgetDimensions { width: number; height: number }
 
 const arraysEqual = (a: string[], b: string[]) => {
   if (a.length !== b.length) return false;

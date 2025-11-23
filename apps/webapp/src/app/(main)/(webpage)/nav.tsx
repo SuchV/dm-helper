@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSelectedLayoutSegment } from "next/navigation";
-import { Clock3, Dice6, StickyNote } from "lucide-react";
+import { Clock3, Dice6, FileText, StickyNote } from "lucide-react";
 
 import { toast } from "@repo/ui/toast";
 
@@ -30,7 +30,9 @@ const Navigation = () => {
     },
   });
 
-  const handleAddWidget = (type: "game-clock" | "notes" | "dice-roller") => {
+  const handleAddWidget = (
+    type: "game-clock" | "notes" | "dice-roller" | "pdf-viewer",
+  ) => {
     addWidgetMutation.mutate({ type });
   };
   return (
@@ -65,6 +67,13 @@ const Navigation = () => {
             >
               <Dice6 className="mr-2 h-4 w-4 text-muted-foreground" />
               Dice Roller
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              disabled={addWidgetMutation.isPending}
+              onClick={() => handleAddWidget("pdf-viewer")}
+            >
+              <FileText className="mr-2 h-4 w-4 text-muted-foreground" />
+              PDF Viewer
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

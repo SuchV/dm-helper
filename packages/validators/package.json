@@ -11,8 +11,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@repo/discord": "workspace:*",
-    "discord-api-types": "^0.38.10",
     "zod": "^3.25.51"
   },
   "devDependencies": {

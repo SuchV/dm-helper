@@ -1,10 +1,13 @@
 "use server";
 
-import { signIn, signOut } from "@repo/auth";
+import { signIn } from "@repo/auth";
 import { env } from "@repo/env/next-env";
 
 export const login = async () => {
-  env.ENVIRONMENT === "local"
-    ? await signIn("credentials")
-    : await signIn("google");
+  if (env.ENVIRONMENT === "local") {
+    await signIn("credentials");
+    return;
+  }
+
+  await signIn("google");
 };

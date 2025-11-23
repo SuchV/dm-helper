@@ -17,6 +17,7 @@ interface WidgetShellProps {
   title: string;
   children: React.ReactNode;
   defaultCollapsed?: boolean;
+  collapsed?: boolean;
   description?: string;
   onCollapsedChange?: (collapsed: boolean) => void;
   onRemove?: () => Promise<void> | void;
@@ -26,23 +27,28 @@ const WidgetShell: React.FC<WidgetShellProps> = ({
   title,
   children,
   defaultCollapsed = false,
+  collapsed: collapsedProp,
   description,
   onCollapsedChange,
   onRemove,
 }) => {
-  const [collapsed, setCollapsed] = React.useState(defaultCollapsed);
+  const isControlled = collapsedProp !== undefined;
+  const [internalCollapsed, setInternalCollapsed] = React.useState(defaultCollapsed);
+  const collapsed = isControlled ? (collapsedProp as boolean) : internalCollapsed;
   const [visible, setVisible] = React.useState(true);
 
   React.useEffect(() => {
-    setCollapsed(defaultCollapsed);
-  }, [defaultCollapsed]);
+    if (!isControlled) {
+      setInternalCollapsed(defaultCollapsed);
+    }
+  }, [defaultCollapsed, isControlled]);
 
   const handleToggle = () => {
-    setCollapsed((prev) => {
-      const next = !prev;
-      onCollapsedChange?.(next);
-      return next;
-    });
+    const next = !collapsed;
+    if (!isControlled) {
+      setInternalCollapsed(next);
+    }
+    onCollapsedChange?.(next);
   };
 
   const handleRemove = async () => {

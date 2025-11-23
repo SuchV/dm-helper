@@ -43,13 +43,19 @@ const widgetMeta: WidgetMeta = {
   },
 };
 
+interface WidgetContainerProps {
+  widget: WidgetInstanceWithState;
+  instanceNumber?: number;
+  collapsedOverride?: boolean;
+  onCollapsedOverride?: (collapsed: boolean) => void;
+}
+
 const WidgetContainer = ({
   widget,
   instanceNumber,
-}: {
-  widget: WidgetInstanceWithState;
-  instanceNumber?: number;
-}) => {
+  collapsedOverride,
+  onCollapsedOverride,
+}: WidgetContainerProps) => {
   const router = useRouter();
   const removeMutation = api.widget.remove.useMutation({
     onSuccess: () => router.refresh(),
@@ -75,6 +81,7 @@ const WidgetContainer = ({
   };
 
   const handleCollapsedChange = (collapsed: boolean) => {
+    onCollapsedOverride?.(collapsed);
     updateMutation.mutate({ id: widget.id, collapsed });
   };
 
@@ -86,6 +93,7 @@ const WidgetContainer = ({
       title={title}
       description={metadata.description}
       defaultCollapsed={widget.collapsed}
+      collapsed={collapsedOverride}
       onCollapsedChange={handleCollapsedChange}
       onRemove={handleRemove}
     >

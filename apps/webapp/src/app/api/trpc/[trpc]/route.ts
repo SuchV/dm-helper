@@ -34,7 +34,6 @@ export const OPTIONS = () => {
 
 const handler = async (req: NextRequest) => {
   const cookieStore = await cookies();
-  // eslint-disable-next-line @typescript-eslint/await-thenable
   const context = await createTRPCContext({
     cookieStore,
     headers: req.headers,

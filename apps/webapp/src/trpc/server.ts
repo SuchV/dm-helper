@@ -2,7 +2,6 @@ import { cache } from "react";
 import { cookies, headers } from "next/headers";
 
 import { createCaller, createTRPCContext } from "@repo/api";
-import { env } from "@repo/env/next-env";
 import { prisma } from "@repo/db";
 
 /**

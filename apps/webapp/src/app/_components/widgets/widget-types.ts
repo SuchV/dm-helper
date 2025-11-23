@@ -37,17 +37,17 @@ export type WidgetInstanceWithState = Prisma.WidgetInstanceGetPayload<{
   select: typeof widgetSelect;
 }>;
 
-export type WidgetIdsByType = {
+export interface WidgetIdsByType {
   "game-clock": string[];
   notes: string[];
   "dice-roller": string[];
-};
+}
 
 export type WidgetNoteRecord = WidgetInstanceWithState["notes"][number];
 
 export type GameClockWidgetState = Pick<GameClockState, "gameTime" | "gameDate" | "weekDay">;
 
-export type NotesWidgetNote = {
+export interface NotesWidgetNote {
   id: string;
   title: string;
   content: string;
@@ -56,29 +56,29 @@ export type NotesWidgetNote = {
   pinnedAt: string | null;
   createdAt: string;
   updatedAt: string;
-};
+}
 
-export type NotesWidgetState = {
+export interface NotesWidgetState {
   notes: NotesWidgetNote[];
-};
+}
 
-export type DiceRollLogEntry = {
+export interface DiceRollLogEntry {
   id: string;
   modifier: number;
   total: number;
   results: { sides: number; value: number }[];
   createdAt: string;
-};
+}
 
-export type DiceRollerWidgetState = {
+export interface DiceRollerWidgetState {
   logs: DiceRollLogEntry[];
-};
+}
 
-export type WidgetStateBundle = {
+export interface WidgetStateBundle {
   "game-clock": Record<string, GameClockWidgetState>;
   notes: Record<string, NotesWidgetState>;
   "dice-roller": Record<string, DiceRollerWidgetState>;
-};
+}
 
 export const createEmptyWidgetStateBundle = (): WidgetStateBundle => ({
   "game-clock": {},

@@ -27,8 +27,8 @@ import { api } from "~/trpc/react";
 import WidgetContainer from "./WidgetContainer";
 import type { WidgetInstanceWithState } from "./widget-types";
 
-const ROW_HEIGHT_PX = 12;
-const ROW_GAP_PX = 24;
+const ROW_HEIGHT_PX = 14;
+const ROW_GAP_PX = 12;
 
 const computeRowSpan = (height: number) => {
   const total = ROW_HEIGHT_PX + ROW_GAP_PX;
@@ -38,6 +38,8 @@ const computeRowSpan = (height: number) => {
 interface WidgetMasonryBoardProps {
   widgets: WidgetInstanceWithState[];
 }
+
+type WidgetDimensions = { width: number; height: number };
 
 const arraysEqual = (a: string[], b: string[]) => {
   if (a.length !== b.length) return false;
@@ -51,8 +53,10 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
   const router = useRouter();
   const updateWidgetMutation = api.widget.update.useMutation();
   const [activeId, setActiveId] = React.useState<string | null>(null);
+  const [overlaySize, setOverlaySize] = React.useState<WidgetDimensions | null>(null);
   const [isMounted, setIsMounted] = React.useState(false);
   const [_, startTransition] = React.useTransition();
+  const widgetMeasurementsRef = React.useRef<Map<string, WidgetDimensions>>(new Map());
 
   const sortedWidgets = React.useMemo(() => {
     return [...widgets].sort((a, b) => a.position - b.position);
@@ -148,7 +152,9 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
   );
 
   const handleDragStart = React.useCallback((event: DragStartEvent) => {
-    setActiveId(event.active.id as string);
+    const id = event.active.id as string;
+    setActiveId(id);
+    setOverlaySize(widgetMeasurementsRef.current.get(id) ?? null);
   }, []);
 
   const handleDragEnd = React.useCallback(
@@ -156,6 +162,7 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
       const { active, over } = event;
       if (!over || active.id === over.id) {
         setActiveId(null);
+        setOverlaySize(null);
         return;
       }
 
@@ -164,6 +171,7 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
       const newIndex = currentOrder.indexOf(over.id as string);
       if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) {
         setActiveId(null);
+        setOverlaySize(null);
         return;
       }
 
@@ -172,13 +180,22 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
       orderedIdsRef.current = nextOrder;
       persistOrder(nextOrder);
       setActiveId(null);
+      setOverlaySize(null);
     },
     [persistOrder],
   );
 
   const handleDragCancel = React.useCallback((_: DragCancelEvent) => {
     setActiveId(null);
+    setOverlaySize(null);
   }, []);
+  const handleItemMeasure = React.useCallback((id: string, size: WidgetDimensions) => {
+    widgetMeasurementsRef.current.set(id, size);
+    if (activeId === id) {
+      setOverlaySize(size);
+    }
+  }, [activeId]);
+
 
   const instanceNumberById = React.useMemo(() => {
     const counters: Record<string, number> = {};
@@ -211,15 +228,18 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
     >
       <SortableContext items={orderedIds} strategy={rectSortingStrategy}>
         <div
-          className="grid grid-flow-row-dense md:grid-cols-2 xl:grid-cols-3"
+          className="grid grid-flow-row-dense items-start md:grid-cols-2 xl:grid-cols-3"
           style={{
             gridAutoRows: `${ROW_HEIGHT_PX}px`,
-            rowGap: `${ROW_GAP_PX}px`,
-            columnGap: `${ROW_GAP_PX}px`,
+            gap: `${ROW_GAP_PX}px`,
           }}
         >
           {orderedWidgets.map((widget) => (
-            <SortableMasonryItem key={widget.id} widgetId={widget.id}>
+            <SortableMasonryItem
+              key={widget.id}
+              widgetId={widget.id}
+              onDimensionChange={handleItemMeasure}
+            >
               <WidgetContainer
                 widget={widget}
                 instanceNumber={instanceNumberById.get(widget.id) ?? undefined}
@@ -232,7 +252,10 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
       </SortableContext>
       <DragOverlay dropAnimation={{ duration: 180, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }}>
         {activeWidget ? (
-          <div className="pointer-events-none w-[min(420px,calc(100vw-2rem))] max-w-xl">
+          <div
+            className="pointer-events-none"
+            style={overlaySize ? { width: overlaySize.width, maxWidth: "100%" } : undefined}
+          >
             <WidgetContainer
               widget={activeWidget}
               instanceNumber={instanceNumberById.get(activeWidget.id) ?? undefined}
@@ -249,35 +272,49 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
 interface SortableMasonryItemProps {
   widgetId: string;
   children: React.ReactNode;
+  onDimensionChange?: (id: string, size: WidgetDimensions) => void;
 }
 
-const SortableMasonryItem: React.FC<SortableMasonryItemProps> = ({ widgetId, children }) => {
+const SortableMasonryItem: React.FC<SortableMasonryItemProps> = ({ widgetId, children, onDimensionChange }) => {
   const [rowSpan, setRowSpan] = React.useState(1);
-  const [observedNode, setObservedNode] = React.useState<HTMLDivElement | null>(null);
+  const [measuredNode, setMeasuredNode] = React.useState<HTMLDivElement | null>(null);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: widgetId });
 
   const composedRef = React.useCallback(
     (node: HTMLDivElement | null) => {
       setNodeRef(node);
-      setObservedNode(node);
     },
     [setNodeRef],
   );
 
+  const measureRef = React.useCallback((node: HTMLDivElement | null) => {
+    setMeasuredNode(node);
+  }, []);
+
   React.useEffect(() => {
-    if (!observedNode) return;
+    if (!measuredNode) return;
+
+    const handleMeasurement = (rect: DOMRectReadOnly) => {
+      setRowSpan((prev) => {
+        const next = computeRowSpan(rect.height);
+        return prev === next ? prev : next;
+      });
+      onDimensionChange?.(widgetId, { width: rect.width, height: rect.height });
+    };
+
+    handleMeasurement(measuredNode.getBoundingClientRect());
 
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        const nextSpan = computeRowSpan(entry.contentRect.height);
-        setRowSpan(nextSpan);
+        if (entry.target !== measuredNode) continue;
+        handleMeasurement(entry.contentRect);
       }
     });
 
-    observer.observe(observedNode);
+    observer.observe(measuredNode);
     return () => observer.disconnect();
-  }, [observedNode]);
+  }, [measuredNode, onDimensionChange, widgetId]);
 
   const style: React.CSSProperties = {
     gridRowEnd: `span ${rowSpan}`,
@@ -291,13 +328,15 @@ const SortableMasonryItem: React.FC<SortableMasonryItemProps> = ({ widgetId, chi
       ref={composedRef}
       style={style}
       className={cn(
-        "rounded-2xl",
+        "self-start rounded-2xl",
         isDragging ? "z-20 cursor-grabbing opacity-90" : "cursor-grab",
       )}
       {...attributes}
       {...listeners}
     >
-      <div ref={setObservedNode}>{children}</div>
+      <div ref={measureRef}>
+          {children}
+        </div>
     </div>
   );
 };

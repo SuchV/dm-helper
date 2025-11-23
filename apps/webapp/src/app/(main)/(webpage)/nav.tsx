@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useSelectedLayoutSegment } from "next/navigation";
+import { Clock3, Dice6, StickyNote } from "lucide-react";
 
 import { toast } from "@repo/ui/toast";
 
@@ -35,7 +36,7 @@ const Navigation = () => {
   return (
     <BasicPageNav className="w-full max-w-xl">
       <BasicPageNavItem href="/" isActive={!segment}>
-        Home
+        
       </BasicPageNavItem>
 
       <div className="flex flex-1 justify-center">
@@ -48,21 +49,23 @@ const Navigation = () => {
               disabled={addWidgetMutation.isPending}
               onClick={() => handleAddWidget("game-clock")}
             >
+              <Clock3 className="mr-2 h-4 w-4 text-muted-foreground" />
               Game Clock
             </DropdownMenuItem>
             <DropdownMenuItem
               disabled={addWidgetMutation.isPending}
               onClick={() => handleAddWidget("notes")}
             >
+              <StickyNote className="mr-2 h-4 w-4 text-muted-foreground" />
               Notes
             </DropdownMenuItem>
             <DropdownMenuItem
               disabled={addWidgetMutation.isPending}
               onClick={() => handleAddWidget("dice-roller")}
             >
+              <Dice6 className="mr-2 h-4 w-4 text-muted-foreground" />
               Dice Roller
             </DropdownMenuItem>
-            <DropdownMenuItem disabled>More widgets coming soon</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

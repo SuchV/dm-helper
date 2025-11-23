@@ -23,6 +23,7 @@ import {
 
 interface WidgetShellProps {
   title: string;
+  icon?: React.ReactNode;
   children: React.ReactNode;
   defaultCollapsed?: boolean;
   collapsed?: boolean;
@@ -33,6 +34,7 @@ interface WidgetShellProps {
 
 const WidgetShell: React.FC<WidgetShellProps> = ({
   title,
+  icon,
   children,
   defaultCollapsed = false,
   collapsed: collapsedProp,
@@ -85,7 +87,10 @@ const WidgetShell: React.FC<WidgetShellProps> = ({
       <WidgetSurface collapsed={collapsed}>
         <WidgetHeader collapsed={collapsed} aria-expanded={!collapsed}>
           <div className="flex flex-col gap-0.5">
-            <WidgetTitle>{title}</WidgetTitle>
+            <div className="flex items-center gap-2">
+              {icon ? <span className="text-muted-foreground">{icon}</span> : null}
+              <WidgetTitle>{title}</WidgetTitle>
+            </div>
             {description ? <WidgetDescription>{description}</WidgetDescription> : null}
           </div>
           <WidgetToolbar>

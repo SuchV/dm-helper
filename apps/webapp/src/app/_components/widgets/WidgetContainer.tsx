@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
+import { Clock3, Dice6, StickyNote } from "lucide-react";
 
 import { toast } from "@repo/ui/toast";
 
@@ -20,6 +21,7 @@ type WidgetMeta = {
     description?: string;
     render: (options: { widget: WidgetInstanceWithState }) => React.ReactNode;
     showInstanceNumber?: boolean;
+    icon: React.ReactNode;
   };
 };
 
@@ -28,17 +30,20 @@ const widgetMeta: WidgetMeta = {
     title: "Game Clock",
     description: "Manage the in-game time and calendar.",
     render: ({ widget }) => <GameClockPanel widgetId={widget.id} />,
+    icon: <Clock3 className="h-4 w-4" aria-hidden />,
   },
   notes: {
     title: "Notes",
     description: "Organize sticky notes for quick reference.",
     render: ({ widget }) => <NotesWidget widgetId={widget.id} />,
     showInstanceNumber: false,
+    icon: <StickyNote className="h-4 w-4" aria-hidden />,
   },
   "dice-roller": {
     title: "Dice Roller",
     description: "Build a dice pool and roll with modifiers.",
     render: ({ widget }) => <DiceRollerWidget widgetId={widget.id} />,
+    icon: <Dice6 className="h-4 w-4" aria-hidden />,
   },
 };
 
@@ -96,6 +101,7 @@ const WidgetContainer = ({
   return (
     <WidgetShell
       title={title}
+      icon={metadata.icon}
       description={metadata.description}
       defaultCollapsed={widget.collapsed}
       collapsed={collapsedOverride}

@@ -208,6 +208,14 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
     return map;
   }, [orderedWidgets]);
 
+  const instanceCountByType = React.useMemo(() => {
+    const counts: Record<string, number> = {};
+    orderedWidgets.forEach((widget) => {
+      counts[widget.type] = (counts[widget.type] ?? 0) + 1;
+    });
+    return counts;
+  }, [orderedWidgets]);
+
   const activeWidget = activeId ? itemsById.get(activeId) ?? null : null;
 
   const handleLocalCollapsedChange = React.useCallback((id: string, collapsed: boolean) => {
@@ -243,6 +251,7 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
               <WidgetContainer
                 widget={widget}
                 instanceNumber={instanceNumberById.get(widget.id) ?? undefined}
+                totalInstancesOfType={instanceCountByType[widget.type] ?? 0}
                 collapsedOverride={collapsedState[widget.id] ?? widget.collapsed}
                 onCollapsedOverride={(next) => handleLocalCollapsedChange(widget.id, next)}
               />

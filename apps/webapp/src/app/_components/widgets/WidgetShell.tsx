@@ -5,6 +5,14 @@ import { ChevronDown, Minus, Trash2 } from "lucide-react";
 
 import { Button } from "@repo/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/ui/dialog";
+import {
   WidgetBody,
   WidgetDescription,
   WidgetHeader,
@@ -36,6 +44,8 @@ const WidgetShell: React.FC<WidgetShellProps> = ({
   const [internalCollapsed, setInternalCollapsed] = React.useState(defaultCollapsed);
   const collapsed = isControlled ? (collapsedProp as boolean) : internalCollapsed;
   const [visible, setVisible] = React.useState(true);
+  const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
+  const [isRemoving, setIsRemoving] = React.useState(false);
 
   React.useEffect(() => {
     if (!isControlled) {
@@ -51,20 +61,18 @@ const WidgetShell: React.FC<WidgetShellProps> = ({
     onCollapsedChange?.(next);
   };
 
-  const handleRemove = async () => {
-    const confirmed = window.confirm(
-      `Remove the "${title}" widget from your dashboard?`,
-    );
-
-    if (!confirmed) {
-      return;
-    }
+  const handleRemoveConfirm = async () => {
+    if (isRemoving) return;
+    setIsRemoving(true);
 
     try {
       await onRemove?.();
+      setIsConfirmOpen(false);
       setVisible(false);
     } catch (error) {
       console.error("Failed to remove widget", error);
+    } finally {
+      setIsRemoving(false);
     }
   };
 
@@ -73,39 +81,67 @@ const WidgetShell: React.FC<WidgetShellProps> = ({
   }
 
   return (
-    <WidgetSurface collapsed={collapsed}>
-      <WidgetHeader collapsed={collapsed} aria-expanded={!collapsed}>
-        <div className="flex flex-col gap-0.5">
-          <WidgetTitle>{title}</WidgetTitle>
-          {description ? <WidgetDescription>{description}</WidgetDescription> : null}
-        </div>
-        <WidgetToolbar>
-          <Button
-            type="button"
-            size="icon"
-            variant="ghost"
-            aria-label={collapsed ? "Expand widget" : "Minimize widget"}
-            onClick={handleToggle}
-          >
-            {collapsed ? (
-              <ChevronDown className="h-4 w-4" />
-            ) : (
-              <Minus className="h-4 w-4" />
-            )}
-          </Button>
-          <Button
-            type="button"
-            size="icon"
-            variant="ghost"
-            aria-label="Remove widget"
-            onClick={handleRemove}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </WidgetToolbar>
-      </WidgetHeader>
-      <WidgetBody collapsed={collapsed}>{children}</WidgetBody>
-    </WidgetSurface>
+    <>
+      <WidgetSurface collapsed={collapsed}>
+        <WidgetHeader collapsed={collapsed} aria-expanded={!collapsed}>
+          <div className="flex flex-col gap-0.5">
+            <WidgetTitle>{title}</WidgetTitle>
+            {description ? <WidgetDescription>{description}</WidgetDescription> : null}
+          </div>
+          <WidgetToolbar>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              aria-label={collapsed ? "Expand widget" : "Minimize widget"}
+              onClick={handleToggle}
+            >
+              {collapsed ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <Minus className="h-4 w-4" />
+              )}
+            </Button>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              aria-label="Remove widget"
+              onClick={() => setIsConfirmOpen(true)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </WidgetToolbar>
+        </WidgetHeader>
+        <WidgetBody collapsed={collapsed}>{children}</WidgetBody>
+      </WidgetSurface>
+
+      <Dialog
+        open={isConfirmOpen}
+        onOpenChange={(open) => {
+          if (isRemoving) return;
+          setIsConfirmOpen(open);
+        }}
+      >
+        <DialogContent aria-describedby="remove-widget-description">
+          <DialogHeader>
+            <DialogTitle>Remove {title}?</DialogTitle>
+            <DialogDescription id="remove-widget-description">
+              This widget and its data will disappear from your dashboard. You can add it again later, but any
+              unsaved state will be lost.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" variant="ghost" disabled={isRemoving} onClick={() => setIsConfirmOpen(false)}>
+              Keep widget
+            </Button>
+            <Button type="button" variant="destructive" disabled={isRemoving} onClick={handleRemoveConfirm}>
+              {isRemoving ? "Removing..." : "Remove widget"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

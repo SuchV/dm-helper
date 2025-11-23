@@ -130,6 +130,8 @@ export const GameClock: React.FC<GameClockProps> = ({
     { label: "+1d", amount: 24 * 60 * 60 * 1000 },
   ];
 
+  const tabPanelClass = "mt-3 min-h-[200px]";
+
   return (
     <Card className={cn("w-full max-w-md", className)}>
       <CardHeader>
@@ -142,7 +144,7 @@ export const GameClock: React.FC<GameClockProps> = ({
             <TabsTrigger value="edit">Edit</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="view" className="mt-3">
+          <TabsContent value="view" className={tabPanelClass}>
             <div className="space-y-4">
               <div className="space-y-1">
                 <div className="text-xs uppercase text-muted-foreground">
@@ -175,7 +177,7 @@ export const GameClock: React.FC<GameClockProps> = ({
             </div>
           </TabsContent>
 
-          <TabsContent value="edit" className="mt-3">
+          <TabsContent value="edit" className={tabPanelClass}>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">

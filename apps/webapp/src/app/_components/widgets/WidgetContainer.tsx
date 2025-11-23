@@ -39,13 +39,13 @@ const widgetMeta: WidgetMeta = {
     title: "Dice Roller",
     description: "Build a dice pool and roll with modifiers.",
     render: ({ widget }) => <DiceRollerWidget widgetId={widget.id} />,
-    showInstanceNumber: false,
   },
 };
 
 interface WidgetContainerProps {
   widget: WidgetInstanceWithState;
   instanceNumber?: number;
+  totalInstancesOfType?: number;
   collapsedOverride?: boolean;
   onCollapsedOverride?: (collapsed: boolean) => void;
 }
@@ -53,6 +53,7 @@ interface WidgetContainerProps {
 const WidgetContainer = ({
   widget,
   instanceNumber,
+  totalInstancesOfType,
   collapsedOverride,
   onCollapsedOverride,
 }: WidgetContainerProps) => {
@@ -85,8 +86,12 @@ const WidgetContainer = ({
     updateMutation.mutate({ id: widget.id, collapsed });
   };
 
-  const shouldShowNumber = metadata.showInstanceNumber ?? true;
-  const title = instanceNumber && shouldShowNumber ? `${metadata.title} ${instanceNumber}` : metadata.title;
+  const shouldShowNumber = Boolean(
+    instanceNumber &&
+      (metadata.showInstanceNumber ?? true) &&
+      (totalInstancesOfType ?? 0) > 1,
+  );
+  const title = shouldShowNumber ? `${metadata.title} ${instanceNumber}` : metadata.title;
 
   return (
     <WidgetShell

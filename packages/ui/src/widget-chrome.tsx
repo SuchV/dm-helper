@@ -33,7 +33,7 @@ const WidgetHeader = React.forwardRef<
     ref={ref}
     className={cn(
       "flex flex-wrap items-start justify-between gap-3 px-4 py-3 text-left",
-      collapsed ? "border-b border-border/50" : "border-b border-border/60",
+      collapsed ? "border-b-0" : "border-b border-border/60",
       className,
     )}
     {...props}

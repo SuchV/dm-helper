@@ -37,8 +37,8 @@ const BasicPageHeader = ({ children, className }: BasicPageHeaderProps) => {
         className,
       )}
     >
-      <div className="container flex h-16 items-center">
-        <div className="flex flex-1 items-center">{children}</div>
+      <div className="flex h-16 w-full items-center px-4 sm:px-6 lg:px-10">
+        <div className="flex w-full items-center gap-4">{children}</div>
       </div>
     </header>
   );
@@ -51,7 +51,12 @@ interface BasicPageNavProps {
 
 const BasicPageNav = ({ children, className }: BasicPageNavProps) => {
   return (
-    <nav className={cn("mx-auto flex items-center gap-6 px-6", className)}>
+    <nav
+      className={cn(
+        "flex w-full items-center justify-center gap-4 px-4 sm:px-6 lg:px-10",
+        className,
+      )}
+    >
       {children}
     </nav>
   );
@@ -91,7 +96,11 @@ interface BasicPageContentProps {
 
 const BasicPageContent = ({ children, className }: BasicPageContentProps) => {
   return (
-    <main className={cn("container flex-1 py-6", className)}>{children}</main>
+    <main
+      className={cn("flex-1 w-full px-4 py-6 sm:px-6 lg:px-10", className)}
+    >
+      {children}
+    </main>
   );
 };
 
@@ -176,7 +185,7 @@ interface BasicPageFooterProps {
 const BasicPageFooter = ({ children, className }: BasicPageFooterProps) => {
   return (
     <footer className={cn("border-t bg-background py-6", className)}>
-      <div className="container">{children}</div>
+      <div className="w-full px-4 sm:px-6 lg:px-10">{children}</div>
     </footer>
   );
 };

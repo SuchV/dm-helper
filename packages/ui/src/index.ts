@@ -5,3 +5,6 @@ import { twMerge } from "tailwind-merge";
 const cn = (...inputs: CxOptions) => twMerge(cx(inputs));
 
 export { cn };
+
+// Export iframe PDF viewer
+export * from "./pdf-viewer-iframe";

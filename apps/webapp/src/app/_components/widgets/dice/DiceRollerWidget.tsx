@@ -4,7 +4,7 @@ import { DiceRoller } from "@repo/ui/dice-roller";
 import { toast } from "@repo/ui/toast";
 
 import { api } from "~/trpc/react";
-import { useDiceRollerWidgetState } from "../WidgetStateProvider";
+import { useDiceRollerWidgetState } from "../useWidgetStateHooks";
 
 interface DiceRollerWidgetProps {
   widgetId: string;

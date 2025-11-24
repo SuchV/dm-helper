@@ -4,32 +4,14 @@ import * as React from "react";
 import { api } from "~/trpc/react";
 
 import type {
+  DiceRollerWidgetState,
   GameClockWidgetState,
   NotesWidgetState,
-  DiceRollerWidgetState,
+  PdfViewerWidgetState,
   WidgetIdsByType,
   WidgetStateBundle,
 } from "./widget-types";
-
-const WidgetStateContext = React.createContext<{
-  state: WidgetStateBundle;
-  setGameClockState: (widgetId: string, next: GameClockWidgetState) => void;
-  setNotesState: (widgetId: string, updater: (prev: NotesWidgetState) => NotesWidgetState) => void;
-  setDiceRollerState: (
-    widgetId: string,
-    updater: (prev: DiceRollerWidgetState) => DiceRollerWidgetState,
-  ) => void;
-} | null>(null);
-
-const useWidgetStateContext = () => {
-  const context = React.useContext(WidgetStateContext);
-
-  if (!context) {
-    throw new Error("Widget state context is unavailable");
-  }
-
-  return context;
-};
+import { WidgetStateContext } from "./widget-state-context";
 
 interface WidgetStateProviderProps {
   children: React.ReactNode;
@@ -37,26 +19,27 @@ interface WidgetStateProviderProps {
   widgetIdsByType: WidgetIdsByType;
 }
 
-const WidgetStateProvider = ({
-  children,
-  initialData,
-  widgetIdsByType,
-}: WidgetStateProviderProps) => {
-  const hasAnyWidgets = Object.values(widgetIdsByType).some((ids) => Array.isArray(ids) && ids.length > 0);
+const WidgetStateProvider = ({ children, initialData, widgetIdsByType }: WidgetStateProviderProps) => {
+  const hasAnyWidgets = React.useMemo(
+    () => Object.values(widgetIdsByType).some((ids) => Array.isArray(ids) && ids.length > 0),
+    [widgetIdsByType],
+  );
 
   const queryInput = React.useMemo(() => ({ widgetIdsByType }), [widgetIdsByType]);
 
-  const { data } = api.widgetState.bulk.useQuery(queryInput, {
+  const queryResult = api.widgetState.bulk.useQuery(queryInput, {
     enabled: hasAnyWidgets,
-    initialData,
+    initialData: hasAnyWidgets ? initialData : undefined,
     staleTime: 1000 * 30,
   });
 
-  const [state, setState] = React.useState<WidgetStateBundle>(data);
+  const queryData = hasAnyWidgets ? queryResult.data : undefined;
+  const [state, setState] = React.useState<WidgetStateBundle>(initialData);
 
   React.useEffect(() => {
-    setState(data);
-  }, [data]);
+    if (!queryData) return;
+    setState(queryData);
+  }, [queryData]);
 
   const setGameClockState = React.useCallback((widgetId: string, next: GameClockWidgetState) => {
     setState((prev) => ({
@@ -94,59 +77,31 @@ const WidgetStateProvider = ({
     [],
   );
 
+  const setPdfViewerState = React.useCallback(
+    (widgetId: string, updater: (prev: PdfViewerWidgetState) => PdfViewerWidgetState) => {
+      setState((prev) => ({
+        ...prev,
+        "pdf-viewer": {
+          ...prev["pdf-viewer"],
+          [widgetId]: updater(prev["pdf-viewer"][widgetId] ?? { tabs: [], activeTabId: null }),
+        },
+      }));
+    },
+    [],
+  );
+
   const value = React.useMemo(
     () => ({
       state,
       setGameClockState,
       setNotesState,
       setDiceRollerState,
+      setPdfViewerState,
     }),
-    [state, setGameClockState, setNotesState, setDiceRollerState],
+    [state, setGameClockState, setNotesState, setDiceRollerState, setPdfViewerState],
   );
 
   return <WidgetStateContext.Provider value={value}>{children}</WidgetStateContext.Provider>;
-};
-
-export const useGameClockWidgetState = (widgetId: string) => {
-  const { state, setGameClockState } = useWidgetStateContext();
-  const storedState = state["game-clock"][widgetId];
-
-  const updateState = React.useCallback(
-    (next: GameClockWidgetState) => {
-      setGameClockState(widgetId, next);
-    },
-    [setGameClockState, widgetId],
-  );
-
-  return [storedState, updateState] as const;
-};
-
-export const useNotesWidgetState = (widgetId: string) => {
-  const { state, setNotesState } = useWidgetStateContext();
-  const storedState = state.notes[widgetId];
-
-  const updateState = React.useCallback(
-    (updater: (prev: NotesWidgetState) => NotesWidgetState) => {
-      setNotesState(widgetId, updater);
-    },
-    [setNotesState, widgetId],
-  );
-
-  return [storedState, updateState] as const;
-};
-
-export const useDiceRollerWidgetState = (widgetId: string) => {
-  const { state, setDiceRollerState } = useWidgetStateContext();
-  const storedState = state["dice-roller"][widgetId];
-
-  const updateState = React.useCallback(
-    (updater: (prev: DiceRollerWidgetState) => DiceRollerWidgetState) => {
-      setDiceRollerState(widgetId, updater);
-    },
-    [setDiceRollerState, widgetId],
-  );
-
-  return [storedState, updateState] as const;
 };
 
 export default WidgetStateProvider;

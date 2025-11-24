@@ -213,6 +213,7 @@ export const widgetStateRouter = createTRPCRouter({
         where: {
           userId,
           widgetId: { in: pdfViewerIds },
+          isOpen: true,
         },
         orderBy: [
           { pinned: "desc" },

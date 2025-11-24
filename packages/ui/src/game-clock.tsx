@@ -133,7 +133,7 @@ export const GameClock: React.FC<GameClockProps> = ({
   const tabPanelClass = "mt-3 min-h-[200px]";
 
   return (
-    <Card className={cn("w-full max-w-md", className)}>
+    <Card className={cn("w-full min-w-0", className)}>
       <CardHeader>
         <CardTitle>Clock</CardTitle>
       </CardHeader>

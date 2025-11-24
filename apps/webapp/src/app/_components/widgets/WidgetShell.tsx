@@ -30,6 +30,7 @@ interface WidgetShellProps {
   description?: string;
   onCollapsedChange?: (collapsed: boolean) => void;
   onRemove?: () => Promise<void> | void;
+  bodyClassName?: string;
 }
 
 const WidgetShell: React.FC<WidgetShellProps> = ({
@@ -41,6 +42,7 @@ const WidgetShell: React.FC<WidgetShellProps> = ({
   description,
   onCollapsedChange,
   onRemove,
+  bodyClassName,
 }) => {
   const isControlled = collapsedProp !== undefined;
   const [internalCollapsed, setInternalCollapsed] = React.useState(defaultCollapsed);
@@ -118,7 +120,9 @@ const WidgetShell: React.FC<WidgetShellProps> = ({
             </Button>
           </WidgetToolbar>
         </WidgetHeader>
-        <WidgetBody collapsed={collapsed}>{children}</WidgetBody>
+        <WidgetBody collapsed={collapsed} className={bodyClassName}>
+          {children}
+        </WidgetBody>
       </WidgetSurface>
 
       <Dialog

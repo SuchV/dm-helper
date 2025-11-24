@@ -36,7 +36,7 @@ const Navigation = () => {
     addWidgetMutation.mutate({ type });
   };
   return (
-    <BasicPageNav className="w-full max-w-xl">
+    <BasicPageNav className="w-full px-0">
       <BasicPageNavItem href="/" isActive={!segment}>
         
       </BasicPageNavItem>

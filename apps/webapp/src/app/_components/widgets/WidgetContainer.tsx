@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { Clock3, Dice6, FileText, StickyNote } from "lucide-react";
 
@@ -14,6 +15,19 @@ import DiceRollerWidget from "~/app/_components/widgets/dice/DiceRollerWidget";
 import type { WidgetInstanceWithState } from "./widget-types";
 
 import WidgetShell from "./WidgetShell";
+
+// Lazy load PDF viewer to avoid SSR issues with pdfjs-dist
+const PdfViewerWidget = dynamic(
+  () => import("~/app/_components/widgets/pdf/PdfViewerWidget"),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-sm text-muted-foreground">Loading PDF viewer...</div>
+      </div>
+    ),
+  }
+);
 
 type WidgetMeta = Record<
   WidgetInstanceWithState["type"],
@@ -46,6 +60,12 @@ const widgetMeta: WidgetMeta = {
     render: ({ widget }) => <DiceRollerWidget widgetId={widget.id} />,
     icon: <Dice6 className="h-4 w-4" aria-hidden />,
   },
+  "pdf-viewer": {
+    title: "PDF Viewer",
+    description: "Import rulebooks or references and bookmark key pages.",
+    render: ({ widget }) => <PdfViewerWidget widgetId={widget.id} />,
+    icon: <FileText className="h-4 w-4" aria-hidden />,
+  },
 };
 
 interface WidgetContainerProps {
@@ -54,6 +74,7 @@ interface WidgetContainerProps {
   totalInstancesOfType?: number;
   collapsedOverride?: boolean;
   onCollapsedOverride?: (collapsed: boolean) => void;
+  isDragging?: boolean;
 }
 
 const WidgetContainer = ({
@@ -62,6 +83,7 @@ const WidgetContainer = ({
   totalInstancesOfType,
   collapsedOverride,
   onCollapsedOverride,
+  isDragging = false,
 }: WidgetContainerProps) => {
   const router = useRouter();
   const removeMutation = api.widget.remove.useMutation({
@@ -98,6 +120,9 @@ const WidgetContainer = ({
       (totalInstancesOfType ?? 0) > 1,
   );
   const title = shouldShowNumber ? `${metadata.title} ${instanceNumber}` : metadata.title;
+  const bodyClassName = widget.type === "pdf-viewer"
+    ? "flex min-h-[65vh] flex-col p-0"
+    : undefined;
 
   return (
     <WidgetShell
@@ -108,8 +133,15 @@ const WidgetContainer = ({
       collapsed={collapsedOverride}
       onCollapsedChange={handleCollapsedChange}
       onRemove={handleRemove}
+      bodyClassName={bodyClassName}
     >
-      {metadata.render({ widget })}
+      {isDragging && widget.type === "pdf-viewer" ? (
+        <div className="flex items-center justify-center p-8 text-sm text-muted-foreground">
+          PDF Viewer
+        </div>
+      ) : (
+        metadata.render({ widget })
+      )}
     </WidgetShell>
   );
 };

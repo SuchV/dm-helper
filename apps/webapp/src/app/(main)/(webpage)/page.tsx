@@ -6,11 +6,12 @@ import WidgetStateProvider from "~/app/_components/widgets/WidgetStateProvider";
 import WidgetMasonryBoard from "~/app/_components/widgets/WidgetMasonryBoard";
 import {
   createEmptyWidgetStateBundle,
-  widgetSelect
-  
-  
+  widgetSelect,
 } from "~/app/_components/widgets/widget-types";
-import type {WidgetIdsByType, WidgetInstanceWithState} from "~/app/_components/widgets/widget-types";
+import type {
+  WidgetIdsByType,
+  WidgetInstanceWithState,
+} from "~/app/_components/widgets/widget-types";
 
 const HomePage = async () => {
   const session = await auth();
@@ -67,6 +68,37 @@ const HomePage = async () => {
     if (widget.type === "dice-roller") {
       widgetIdsByType["dice-roller"].push(widget.id);
       initialStateBundle["dice-roller"][widget.id] = { logs: [] };
+    }
+
+    if (widget.type === "pdf-viewer") {
+      widgetIdsByType["pdf-viewer"].push(widget.id);
+
+      const tabs = widget.pdfTabs.map((tab) => ({
+        id: tab.id,
+        title: tab.title,
+        storageKey: tab.storageKey,
+        pinned: tab.pinned,
+        pinnedAt: tab.pinnedAt ? tab.pinnedAt.toISOString() : null,
+        isOpen: tab.isOpen,
+        isActive: tab.isActive,
+        lastOpenedAt: tab.lastOpenedAt.toISOString(),
+        currentPage: tab.currentPage,
+        totalPages: tab.totalPages,
+        bookmarks: tab.bookmarks.map((bookmark) => ({
+          id: bookmark.id,
+          label: bookmark.label,
+          pageNumber: bookmark.pageNumber,
+          createdAt: bookmark.createdAt.toISOString(),
+        })),
+      }));
+
+      initialStateBundle["pdf-viewer"][widget.id] = {
+        tabs,
+        activeTabId:
+          tabs.find((tab) => tab.isActive)?.id ??
+          tabs.find((tab) => tab.isOpen)?.id ??
+          null,
+      };
     }
   });
 

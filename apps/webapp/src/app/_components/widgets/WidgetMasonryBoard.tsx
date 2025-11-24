@@ -5,13 +5,11 @@ import * as React from "react";
 import {
   DndContext,
   DragOverlay,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   closestCenter,
   useSensor,
-  useSensors
-  
-  
-  
+  useSensors,
 } from "@dnd-kit/core";
 import type {DragCancelEvent, DragEndEvent, DragStartEvent} from "@dnd-kit/core";
 import {
@@ -60,13 +58,18 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
   const [_, startTransition] = React.useTransition();
   const widgetMeasurementsRef = React.useRef<Map<string, WidgetDimensions>>(new Map());
 
-  const sortedWidgets = React.useMemo(() => {
-    return [...widgets].sort((a, b) => a.position - b.position);
+  // Guard against invalid widgets prop
+  const safeWidgets = React.useMemo(() => {
+    return Array.isArray(widgets) ? widgets : [];
   }, [widgets]);
+
+  const sortedWidgets = React.useMemo(() => {
+    return [...safeWidgets].sort((a, b) => a.position - b.position);
+  }, [safeWidgets]);
 
   const initialOrder = React.useMemo(() => sortedWidgets.map((widget) => widget.id), [sortedWidgets]);
 
-  const [orderedIds, setOrderedIds] = React.useState<string[]>(initialOrder);
+  const [orderedIds, setOrderedIds] = React.useState<string[]>(() => initialOrder);
   const orderedIdsRef = React.useRef<string[]>(initialOrder);
   const pendingOrderRef = React.useRef<string[] | null>(null);
   const lastSyncedIdsRef = React.useRef<string[]>(initialOrder);
@@ -103,6 +106,7 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
     setIsMounted(true);
     return () => {
       pendingOrderRef.current = null;
+      setIsMounted(false);
     };
   }, []);
 
@@ -117,8 +121,11 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
   }, [itemsById, orderedIds]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
+    useSensor(MouseSensor, {
       activationConstraint: { distance: 8 },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 250, tolerance: 5 },
     }),
   );
 
@@ -225,7 +232,27 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
   }, []);
 
   if (!isMounted) {
-    return null;
+    return (
+      <div
+        className="grid grid-flow-row-dense items-start md:grid-cols-2 xl:grid-cols-3"
+        style={{
+          gridAutoRows: `${ROW_HEIGHT_PX}px`,
+          gap: `${ROW_GAP_PX}px`,
+        }}
+      >
+        {sortedWidgets.map((widget) => (
+          <div key={widget.id}>
+            <WidgetContainer
+              widget={widget}
+              instanceNumber={1}
+              totalInstancesOfType={1}
+              collapsedOverride={widget.collapsed}
+              onCollapsedOverride={undefined}
+            />
+          </div>
+        ))}
+      </div>
+    );
   }
 
   return (
@@ -272,6 +299,7 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
               instanceNumber={instanceNumberById.get(activeWidget.id) ?? undefined}
               collapsedOverride={collapsedState[activeWidget.id] ?? activeWidget.collapsed}
               onCollapsedOverride={(next) => handleLocalCollapsedChange(activeWidget.id, next)}
+              isDragging={true}
             />
           </div>
         ) : null}

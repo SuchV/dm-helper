@@ -80,8 +80,8 @@ const WidgetBody = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "overflow-hidden transition-all duration-200",
-      collapsed ? "max-h-0 p-0" : "max-h-[2000px] p-4",
+      "transition-all duration-200",
+      collapsed ? "max-h-0 overflow-hidden p-0" : "max-h-[2000px] p-4",
       className,
     )}
     {...props}

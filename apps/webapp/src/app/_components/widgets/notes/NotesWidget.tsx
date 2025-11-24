@@ -28,7 +28,7 @@ import {
 
 import { api } from "~/trpc/react";
 
-import { useNotesWidgetState } from "../WidgetStateProvider";
+import { useNotesWidgetState } from "../useWidgetStateHooks";
 import type { NotesWidgetNote, NotesWidgetState } from "../widget-types";
 
 interface NotesWidgetProps {

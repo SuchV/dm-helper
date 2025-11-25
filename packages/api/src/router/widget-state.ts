@@ -66,6 +66,8 @@ const emptyResponse = {
           id: string;
           label: string;
           pageNumber: number;
+          note: string | null;
+          chapterLabel: string | null;
           createdAt: string;
         }>;
       }>;
@@ -237,6 +239,8 @@ export const widgetStateRouter = createTRPCRouter({
               id: true,
               label: true,
               pageNumber: true,
+              note: true,
+              chapterLabel: true,
               createdAt: true,
             },
             orderBy: { pageNumber: "asc" },
@@ -262,6 +266,8 @@ export const widgetStateRouter = createTRPCRouter({
             id: bookmark.id,
             label: bookmark.label,
             pageNumber: bookmark.pageNumber,
+            note: bookmark.note,
+            chapterLabel: bookmark.chapterLabel,
             createdAt: bookmark.createdAt.toISOString(),
           })),
         };

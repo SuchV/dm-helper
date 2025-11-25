@@ -20,6 +20,8 @@ const tabSelect = {
       id: true,
       label: true,
       pageNumber: true,
+      note: true,
+      chapterLabel: true,
       createdAt: true,
     },
     orderBy: { pageNumber: "asc" as const },
@@ -38,7 +40,14 @@ const mapTab = (
     lastOpenedAt: Date;
     currentPage: number;
     totalPages: number | null;
-    bookmarks: Array<{ id: string; label: string; pageNumber: number; createdAt: Date }>;
+    bookmarks: Array<{
+      id: string;
+      label: string;
+      pageNumber: number;
+      note: string | null;
+      chapterLabel: string | null;
+      createdAt: Date;
+    }>;
   },
 ) => {
   return {
@@ -56,6 +65,8 @@ const mapTab = (
       id: bookmark.id,
       label: bookmark.label,
       pageNumber: bookmark.pageNumber,
+      note: bookmark.note,
+      chapterLabel: bookmark.chapterLabel,
       createdAt: bookmark.createdAt.toISOString(),
     })),
   };
@@ -244,7 +255,13 @@ export const pdfViewerRouter = createTRPCRouter({
       return mapTab(updated);
     }),
   addBookmark: protectedProcedure
-    .input(z.object({ tabId: z.string().cuid(), pageNumber: z.number().int().min(1) }))
+    .input(z.object({
+      tabId: z.string().cuid(),
+      pageNumber: z.number().int().min(1),
+      label: z.string().min(1).max(200).optional(),
+      note: z.string().max(1000).optional(),
+      chapterLabel: z.string().max(200).optional(),
+    }))
     .mutation(async ({ ctx, input }) => {
       const userId = getUserId(ctx);
 
@@ -262,12 +279,16 @@ export const pdfViewerRouter = createTRPCRouter({
           userId,
           tabId: tab.id,
           pageNumber: input.pageNumber,
-          label: `Page ${input.pageNumber}`,
+          label: input.label ?? `Page ${input.pageNumber}`,
+          note: input.note ?? null,
+          chapterLabel: input.chapterLabel ?? null,
         },
         select: {
           id: true,
           label: true,
           pageNumber: true,
+          note: true,
+          chapterLabel: true,
           createdAt: true,
           tabId: true,
         },
@@ -282,6 +303,8 @@ export const pdfViewerRouter = createTRPCRouter({
         id: bookmark.id,
         label: bookmark.label,
         pageNumber: bookmark.pageNumber,
+        note: bookmark.note,
+        chapterLabel: bookmark.chapterLabel,
         createdAt: bookmark.createdAt.toISOString(),
       };
     }),

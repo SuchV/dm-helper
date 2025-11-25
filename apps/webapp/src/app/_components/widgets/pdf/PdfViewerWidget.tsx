@@ -5,6 +5,8 @@ import dynamic from "next/dynamic";
 
 import { toast } from "@repo/ui/toast";
 
+import { env } from "@repo/env/next-env";
+
 import { api } from "~/trpc/react";
 import { usePdfViewerWidgetState } from "../useWidgetStateHooks";
 import { loadPdfFile, persistPdfFile, removePdfFile } from "./storage";
@@ -28,7 +30,13 @@ interface PdfDocument {
   storageKey: string;
   currentPage: number;
   totalPages: number | null;
-  bookmarks: { id: string; label: string; pageNumber: number }[];
+  bookmarks: {
+    id: string;
+    label: string;
+    pageNumber: number;
+    note: string | null;
+    chapterLabel: string | null;
+  }[];
 }
 
 interface PdfViewerWidgetV2Props {
@@ -42,12 +50,18 @@ const createStorageKey = () => {
   return `pdf-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 };
 
+const DEFAULT_PDF_WORKER_SRC = "/pdf.worker.min.mjs";
+
 const PdfViewerWidgetV2 = ({ widgetId }: PdfViewerWidgetV2Props) => {
-  const utils = api.useUtils();
   const [storedState, updateState] = usePdfViewerWidgetState(widgetId);
+  const workerSrc = React.useMemo(
+    () => env.NEXT_PUBLIC_PDF_WORKER_SRC ?? DEFAULT_PDF_WORKER_SRC,
+    [],
+  );
   
   const [activeFile, setActiveFile] = React.useState<Uint8Array | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
+  const lastPageChangeRef = React.useRef<{ docId: string; page: number } | null>(null);
   
   const documents: PdfDocument[] = React.useMemo(() => {
     if (!storedState) return [];
@@ -130,11 +144,7 @@ const PdfViewerWidgetV2 = ({ widgetId }: PdfViewerWidgetV2Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab?.storageKey]);
   
-  const refreshState = () => {
-    void utils.widgetState.bulk.invalidate();
-  };
-  
-  const handleUpload = async (file: File) => {
+  const handleUpload = React.useCallback(async (file: File) => {
     setIsLoading(true);
     const storageKey = createStorageKey();
     
@@ -155,16 +165,15 @@ const PdfViewerWidgetV2 = ({ widgetId }: PdfViewerWidgetV2Props) => {
       }));
       
       setActiveFile(bytes);
-      refreshState();
     } catch {
       removePdfFile(storageKey);
       toast.error("Failed to upload PDF");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [createTabMutation, updateState, widgetId]);
   
-  const handleSelectDocument = async (id: string) => {
+  const handleSelectDocument = React.useCallback(async (id: string) => {
     try {
       await setActiveTabMutation.mutateAsync({ widgetId, tabId: id });
       
@@ -175,14 +184,12 @@ const PdfViewerWidgetV2 = ({ widgetId }: PdfViewerWidgetV2Props) => {
         })),
         activeTabId: id,
       }));
-      
-      refreshState();
     } catch {
       // Error handled by mutation
     }
-  };
+  }, [setActiveTabMutation, updateState, widgetId]);
   
-  const handleRemoveDocument = async (id: string) => {
+  const handleRemoveDocument = React.useCallback(async (id: string) => {
     const tab = storedState?.tabs.find((t) => t.id === id);
     if (!tab) return;
     
@@ -204,42 +211,59 @@ const PdfViewerWidgetV2 = ({ widgetId }: PdfViewerWidgetV2Props) => {
           activeTabId: newActiveId,
         };
       });
-      
-      refreshState();
     } catch {
       toast.error("Failed to remove PDF");
     }
-  };
+  }, [closeTabMutation, storedState?.tabs, updateState]);
   
-  const handlePageChange = async (docId: string, page: number) => {
+  const handlePageChange = React.useCallback(async (docId: string, page: number, total?: number | null) => {
+    // Prevent redundant updates
+    const lastChange = lastPageChangeRef.current;
+    if (lastChange?.docId === docId && lastChange.page === page) {
+      return;
+    }
+    lastPageChangeRef.current = { docId, page };
+
+    const nextTotal =
+      typeof total === "number"
+        ? total
+        : total === null
+          ? null
+          : storedState?.tabs.find((t) => t.id === docId)?.totalPages;
+
     try {
       await updatePageMutation.mutateAsync({
         tabId: docId,
         currentPage: page,
-        totalPages: storedState?.tabs.find((t) => t.id === docId)?.totalPages,
+        totalPages: nextTotal ?? undefined,
       });
       
       updateState((prev) => ({
         ...prev,
         tabs: prev.tabs.map((t) =>
-          t.id === docId ? { ...t, currentPage: page } : t
+          t.id === docId ? { ...t, currentPage: page, totalPages: nextTotal ?? t.totalPages } : t
         ),
       }));
-      
-      refreshState();
     } catch {
       // Error handled by mutation
     }
-  };
+  }, [storedState?.tabs, updatePageMutation, updateState]);
   
   // Note: handleDocumentLoad removed since iframe viewer doesn't provide totalPages automatically
   // Users can manually track pages or we can extract it from PDF metadata if needed later
   
-  const handleAddBookmark = async (docId: string, page: number) => {
+  const handleAddBookmark = React.useCallback(async (
+    docId: string,
+    page: number,
+    payload?: { label?: string; note?: string; chapterLabel?: string },
+  ) => {
     try {
       const bookmark = await addBookmarkMutation.mutateAsync({
         tabId: docId,
         pageNumber: page,
+        label: payload?.label,
+        note: payload?.note,
+        chapterLabel: payload?.chapterLabel,
       });
       
       updateState((prev) => ({
@@ -251,14 +275,13 @@ const PdfViewerWidgetV2 = ({ widgetId }: PdfViewerWidgetV2Props) => {
         ),
       }));
       
-      refreshState();
       toast.success("Bookmark added");
     } catch {
       // Error handled by mutation
     }
-  };
+  }, [addBookmarkMutation, updateState]);
   
-  const handleRemoveBookmark = async (docId: string, bookmarkId: string) => {
+  const handleRemoveBookmark = React.useCallback(async (docId: string, bookmarkId: string) => {
     try {
       await removeBookmarkMutation.mutateAsync({ bookmarkId });
       
@@ -270,16 +293,14 @@ const PdfViewerWidgetV2 = ({ widgetId }: PdfViewerWidgetV2Props) => {
             : t
         ),
       }));
-      
-      refreshState();
     } catch {
       // Error handled by mutation
     }
-  };
+  }, [removeBookmarkMutation, updateState]);
   
-  const handleGoToBookmark = async (docId: string, page: number) => {
+  const handleGoToBookmark = React.useCallback(async (docId: string, page: number) => {
     await handlePageChange(docId, page);
-  };
+  }, [handlePageChange]);
   
   return (
     <IframePdfViewer
@@ -287,6 +308,7 @@ const PdfViewerWidgetV2 = ({ widgetId }: PdfViewerWidgetV2Props) => {
       activeDocumentId={activeDocId}
       activeFile={activeFile}
       isLoading={isLoading}
+      workerSrc={workerSrc}
       onUpload={handleUpload}
       onSelectDocument={handleSelectDocument}
       onRemoveDocument={handleRemoveDocument}

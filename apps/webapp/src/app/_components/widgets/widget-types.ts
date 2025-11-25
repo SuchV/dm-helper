@@ -50,6 +50,8 @@ export const widgetSelect = {
           id: true,
           label: true,
           pageNumber: true,
+          note: true,
+          chapterLabel: true,
           createdAt: true,
         },
         orderBy: { pageNumber: "asc" as const },
@@ -109,6 +111,8 @@ export interface PdfViewerBookmarkState {
   id: string;
   label: string;
   pageNumber: number;
+  note: string | null;
+  chapterLabel: string | null;
   createdAt: string;
 }
 

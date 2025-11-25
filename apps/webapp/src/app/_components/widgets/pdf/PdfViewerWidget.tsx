@@ -298,9 +298,11 @@ const PdfViewerWidgetV2 = ({ widgetId }: PdfViewerWidgetV2Props) => {
     }
   }, [removeBookmarkMutation, updateState]);
   
-  const handleGoToBookmark = React.useCallback(async (docId: string, page: number) => {
-    await handlePageChange(docId, page);
-  }, [handlePageChange]);
+  const handleGoToBookmark = React.useCallback((docId: string, page: number) => {
+    // Navigation + persistence handled within the iframe viewer via onPageChange effect.
+    void docId;
+    void page;
+  }, []);
   
   return (
     <IframePdfViewer

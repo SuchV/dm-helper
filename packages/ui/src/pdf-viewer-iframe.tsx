@@ -432,16 +432,40 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
     closeBookmarkForm();
   };
 
-  const goToPage = (delta: number) => {
-    syncFromServerRef.current = false; // Mark as user-initiated change
-    setPageNumber((prev) => {
-      const nextUnclamped = prev + delta;
-      const next = pdfDoc ? Math.min(Math.max(nextUnclamped, 1), pdfDoc.numPages) : Math.max(1, nextUnclamped);
-      if (activeDocId) {
-        pendingPageRef.current = { docId: activeDocId, page: next };
+  const clampPageNumber = React.useCallback(
+    (next: number) => {
+      if (pdfDoc) {
+        return Math.min(Math.max(next, 1), pdfDoc.numPages);
       }
-      return next;
-    });
+      if (typeof totalPages === "number") {
+        return Math.min(Math.max(next, 1), totalPages);
+      }
+      return Math.max(1, next);
+    },
+    [pdfDoc, totalPages],
+  );
+
+  const setPageFromUserAction = React.useCallback(
+    (next: number) => {
+      syncFromServerRef.current = false; // Mark as user-initiated change
+      const clamped = clampPageNumber(next);
+      if (activeDocId) {
+        pendingPageRef.current = { docId: activeDocId, page: clamped };
+      }
+      setPageNumber(clamped);
+    },
+    [activeDocId, clampPageNumber],
+  );
+
+  const goToPage = (delta: number) => {
+    setPageFromUserAction(pageNumber + delta);
+  };
+
+  const jumpToPage = (page: number) => {
+    setPageFromUserAction(page);
+    if (activeDocId) {
+      onGoToBookmark(activeDocId, clampPageNumber(page));
+    }
   };
 
   React.useEffect(() => {
@@ -658,7 +682,7 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
                     >
                       <button
                         className="flex-1 text-left text-xs"
-                        onClick={() => onGoToBookmark(activeDocForBookmarks.id, bookmark.pageNumber)}
+                        onClick={() => jumpToPage(bookmark.pageNumber)}
                       >
                         <div className="truncate font-medium">{bookmark.label}</div>
                         <div className="text-[10px] text-muted-foreground">p. {bookmark.pageNumber}</div>

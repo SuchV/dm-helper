@@ -1,10 +1,24 @@
 "use client";
 
 import * as React from "react";
-import { BookmarkPlus, ChevronLeft, ChevronRight, Loader2, Trash2, Upload, X } from "lucide-react";
+import {
+  BookmarkPlus,
+  BookMarked,
+  ChevronLeft,
+  ChevronRight,
+  LayoutList,
+  ListFilter,
+  Loader2,
+  Trash2,
+  Upload,
+  X,
+  ZoomIn,
+  ZoomOut,
+} from "lucide-react";
 
 import { Button } from "./button";
 import { cn } from ".";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./dropdown-menu";
 import { Input } from "./input";
 import { Label } from "./label";
 import { Textarea } from "./textarea";
@@ -89,6 +103,12 @@ interface PdfJsModule {
   disableWorker?: boolean;
 }
 
+const THUMBNAIL_ITEM_HEIGHT = 156;
+const THUMBNAIL_BUFFER = 4;
+const MIN_ZOOM = 0.5;
+const MAX_ZOOM = 2.5;
+const ZOOM_STEP = 0.1;
+
 export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
   documents,
   activeDocumentId,
@@ -101,13 +121,19 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
   onPageChange,
   onAddBookmark,
   onRemoveBookmark,
-  onGoToBookmark,
+  onGoToBookmark: _onGoToBookmark,
 }) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const canvasContainerRef = React.useRef<HTMLDivElement>(null);
+  const thumbnailsScrollRef = React.useRef<HTMLDivElement>(null);
+  const resizeObserverRef = React.useRef<ResizeObserver | null>(null);
+  const thumbnailCacheRef = React.useRef<Map<number, string>>(new Map());
+  const thumbnailQueueRef = React.useRef<Set<number>>(new Set());
+  const fitScaleRef = React.useRef(1);
 
-  const [bookmarksOpen, setBookmarksOpen] = React.useState(false);
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [sidebarTab, setSidebarTab] = React.useState<"thumbnails" | "bookmarks">("thumbnails");
   const [pdfjsReady, setPdfjsReady] = React.useState(false);
   const [pdfDoc, setPdfDoc] = React.useState<PdfDocumentProxy | null>(null);
   const [pageNumber, setPageNumber] = React.useState(1);
@@ -120,6 +146,12 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
     chapterLabel: "",
     note: "",
   }));
+  const [pageInputValue, setPageInputValue] = React.useState("1");
+  const [thumbnailImages, setThumbnailImages] = React.useState<Record<number, string>>({});
+  const [thumbnailViewport, setThumbnailViewport] = React.useState({ scrollTop: 0, height: 0 });
+  const [zoomMode, setZoomMode] = React.useState<"auto" | "manual">("auto");
+  const [manualZoom, setManualZoom] = React.useState(1);
+  const [canvasContainerWidth, setCanvasContainerWidth] = React.useState(0);
   const componentId = React.useId();
   const bookmarkLabelId = `${componentId}-bookmark-label`;
   const bookmarkChapterId = `${componentId}-bookmark-chapter`;
@@ -156,7 +188,100 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
   const activeDocCurrentPage = activeDoc?.currentPage ?? 1;
   const activeDocBookmarks = activeDoc?.bookmarks ?? [];
   const hasBookmarks = activeDocBookmarks.length > 0;
-  const activeDocForBookmarks = hasBookmarks ? activeDoc : null;
+  const pageCount = pdfDoc?.numPages ?? activeDoc?.totalPages ?? 0;
+  const canShowSidebar = Boolean(pdfDoc ?? hasBookmarks);
+
+  const thumbnailWindow = React.useMemo(() => {
+    if (!sidebarOpen || sidebarTab !== "thumbnails" || pageCount === 0) {
+      return { startIndex: 0, endIndex: -1, offset: 0, pages: [] as number[] };
+    }
+    const viewHeight = thumbnailViewport.height || THUMBNAIL_ITEM_HEIGHT * 4;
+    const scrollTop = thumbnailViewport.scrollTop;
+    const startIndex = Math.max(0, Math.floor(scrollTop / THUMBNAIL_ITEM_HEIGHT) - THUMBNAIL_BUFFER);
+    const endIndex = Math.min(
+      pageCount - 1,
+      Math.ceil((scrollTop + viewHeight) / THUMBNAIL_ITEM_HEIGHT) + THUMBNAIL_BUFFER,
+    );
+    const pages: number[] = [];
+    for (let index = startIndex; index <= endIndex; index += 1) {
+      pages.push(index + 1);
+    }
+    return {
+      startIndex,
+      endIndex,
+      offset: startIndex * THUMBNAIL_ITEM_HEIGHT,
+      pages,
+    };
+  }, [pageCount, sidebarOpen, sidebarTab, thumbnailViewport]);
+
+  const visibleThumbnailPages = thumbnailWindow.pages;
+  const thumbnailsTotalHeight = pageCount * THUMBNAIL_ITEM_HEIGHT;
+
+  React.useEffect(() => {
+    if (!sidebarOpen || sidebarTab !== "thumbnails") {
+      return undefined;
+    }
+    const node = thumbnailsScrollRef.current;
+    if (!node) {
+      return undefined;
+    }
+
+    const updateViewport = () => {
+      setThumbnailViewport((prev) => {
+        if (prev.scrollTop === node.scrollTop && prev.height === node.clientHeight) {
+          return prev;
+        }
+        return { scrollTop: node.scrollTop, height: node.clientHeight };
+      });
+    };
+
+    updateViewport();
+    node.addEventListener("scroll", updateViewport, { passive: true });
+    if (typeof ResizeObserver !== "undefined") {
+      resizeObserverRef.current = new ResizeObserver(() => updateViewport());
+      resizeObserverRef.current.observe(node);
+    }
+
+    return () => {
+      node.removeEventListener("scroll", updateViewport);
+      resizeObserverRef.current?.disconnect();
+      resizeObserverRef.current = null;
+    };
+  }, [sidebarOpen, sidebarTab]);
+
+  React.useEffect(() => {
+    if (!pdfDoc || sidebarTab !== "thumbnails" || !sidebarOpen) {
+      return;
+    }
+    visibleThumbnailPages.forEach((pageNum) => {
+      if (thumbnailCacheRef.current.has(pageNum) || thumbnailQueueRef.current.has(pageNum)) {
+        return;
+      }
+      thumbnailQueueRef.current.add(pageNum);
+      void (async () => {
+        try {
+          const page = await pdfDoc.getPage(pageNum);
+          const viewport = page.getViewport({ scale: 0.25 });
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d");
+          if (!context) {
+            return;
+          }
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+          const renderTask = page.render({ canvasContext: context, viewport });
+          await renderTask.promise;
+          const dataUrl = canvas.toDataURL("image/png");
+          thumbnailCacheRef.current.set(pageNum, dataUrl);
+          setThumbnailImages((prev) => ({ ...prev, [pageNum]: dataUrl }));
+        } catch (error) {
+          console.error("[PDF Viewer] Failed to render thumbnail", error);
+        } finally {
+          thumbnailQueueRef.current.delete(pageNum);
+        }
+      })();
+    });
+  }, [pdfDoc, sidebarOpen, sidebarTab, visibleThumbnailPages]);
 
   const ensureWorkerConfigured = React.useCallback(
     async (pdfjs: PdfJsModule) => {
@@ -297,6 +422,10 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
     setPageNumber(activeDocCurrentPage);
   }, [activeDocId, activeDocCurrentPage, pageNumber]);
 
+  React.useEffect(() => {
+    setPageInputValue(String(pageNumber));
+  }, [pageNumber]);
+
   // Render current page whenever it changes
   React.useEffect(() => {
     if (!pdfDoc) return;
@@ -329,9 +458,12 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
         const page = await pdfDoc.getPage(safePage);
         if (cancelled) return;
 
-        const containerWidth = canvasContainerRef.current?.clientWidth ?? page.getViewport({ scale: 1 }).width;
-        const scale = Math.max(0.5, Math.min(2.5, containerWidth / page.getViewport({ scale: 1 }).width));
-        const viewport = page.getViewport({ scale });
+        const baseViewport = page.getViewport({ scale: 1 });
+        const containerWidth = canvasContainerRef.current?.clientWidth ?? baseViewport.width;
+        const fitScale = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, containerWidth / baseViewport.width));
+        fitScaleRef.current = fitScale;
+        const targetScale = zoomMode === "auto" ? fitScale : Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, manualZoom));
+        const viewport = page.getViewport({ scale: targetScale });
 
         const canvas = canvasRef.current;
         const context = canvas?.getContext("2d");
@@ -373,7 +505,31 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [pdfDoc, pageNumber]);
+  }, [pdfDoc, pageNumber, zoomMode, manualZoom, canvasContainerWidth]);
+
+  React.useEffect(() => {
+    if (typeof ResizeObserver === "undefined") {
+      return;
+    }
+    const node = canvasContainerRef.current;
+    if (!node) {
+      return;
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) {
+        setCanvasContainerWidth(entry.contentRect.width);
+      }
+    });
+
+    observer.observe(node);
+    setCanvasContainerWidth(node.clientWidth);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   // Notify parent when the user navigates to a different page
   React.useEffect(() => {
@@ -463,15 +619,103 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
 
   const jumpToPage = (page: number) => {
     setPageFromUserAction(page);
-    if (activeDocId) {
-      onGoToBookmark(activeDocId, clampPageNumber(page));
+  };
+
+  const commitPageInput = React.useCallback(() => {
+    const parsed = Number.parseInt(pageInputValue, 10);
+    if (Number.isNaN(parsed)) {
+      setPageInputValue(String(pageNumber));
+      return;
+    }
+    const target = clampPageNumber(parsed);
+    setPageFromUserAction(target);
+  }, [clampPageNumber, pageInputValue, pageNumber, setPageFromUserAction]);
+
+  const handlePageInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPageInputValue(event.target.value.replace(/[^0-9]/g, ""));
+  };
+
+  const handlePageInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      commitPageInput();
     }
   };
 
+  const handlePageInputBlur = () => {
+    commitPageInput();
+  };
+
+  const clampZoom = React.useCallback((value: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value)), []);
+
+  const applyManualZoom = React.useCallback(
+    (value: number) => {
+      setZoomMode("manual");
+      setManualZoom(clampZoom(value));
+    },
+    [clampZoom],
+  );
+
+  const handleZoomStep = React.useCallback(
+    (delta: number) => {
+      const base = zoomMode === "auto" ? fitScaleRef.current : manualZoom;
+      applyManualZoom(base + delta);
+    },
+    [applyManualZoom, manualZoom, zoomMode],
+  );
+
+  const handleZoomPreset = React.useCallback(
+    (value: "auto" | number) => {
+      if (value === "auto") {
+        setZoomMode("auto");
+        return;
+      }
+      applyManualZoom(value);
+    },
+    [applyManualZoom],
+  );
+
+  const zoomLabel = zoomMode === "auto" ? "Auto" : `${Math.round(manualZoom * 100)}%`;
+  const zoomOutDisabled = zoomMode === "manual" && manualZoom <= MIN_ZOOM;
+  const zoomInDisabled = zoomMode === "manual" && manualZoom >= MAX_ZOOM;
+
+  const handleBookmarkRemoval = React.useCallback(
+    (bookmarkId: string) => {
+      if (!activeDoc) return;
+      onRemoveBookmark(activeDoc.id, bookmarkId);
+    },
+    [activeDoc, onRemoveBookmark],
+  );
+
+  const handleSidebarButtonClick = React.useCallback(
+    (tab: "thumbnails" | "bookmarks") => {
+      if (sidebarOpen && sidebarTab === tab) {
+        setSidebarOpen(false);
+        return;
+      }
+      setSidebarTab(tab);
+      setSidebarOpen(true);
+      if (tab === "thumbnails") {
+        requestAnimationFrame(() => {
+          const node = thumbnailsScrollRef.current;
+          if (!node) return;
+          const target = Math.max(0, (pageNumber - 1) * THUMBNAIL_ITEM_HEIGHT - THUMBNAIL_ITEM_HEIGHT);
+          node.scrollTop = target;
+          setThumbnailViewport((prev) => ({ ...prev, scrollTop: target, height: node.clientHeight }));
+        });
+      }
+    },
+    [pageNumber, sidebarOpen, sidebarTab],
+  );
+
   React.useEffect(() => {
-    setBookmarksOpen(false);
     closeBookmarkForm();
     pendingPageRef.current = null;
+    setSidebarOpen(false);
+    setThumbnailViewport({ scrollTop: 0, height: 0 });
+    thumbnailCacheRef.current.clear();
+    thumbnailQueueRef.current.clear();
+    setThumbnailImages({});
   }, [activeDoc?.id, closeBookmarkForm]);
 
   const showEmptyState = !activeDoc || !activeFile;
@@ -490,17 +734,39 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
             Upload
           </Button>
           {activeDoc && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleBookmarkButtonClick}
-              aria-expanded={bookmarkFormOpen}
-              aria-controls={bookmarkFormOpen ? bookmarkFormContainerId : undefined}
-              aria-pressed={bookmarkFormOpen}
-            >
-              <BookmarkPlus className="h-4 w-4 mr-1" />
-              Bookmark
-            </Button>
+            <>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleBookmarkButtonClick}
+                aria-expanded={bookmarkFormOpen}
+                aria-controls={bookmarkFormOpen ? bookmarkFormContainerId : undefined}
+                aria-pressed={bookmarkFormOpen}
+              >
+                <BookmarkPlus className="h-4 w-4 mr-1" />
+                Bookmark
+              </Button>
+              <div className="flex items-center gap-1">
+                <Button
+                  size="sm"
+                  variant={sidebarOpen && sidebarTab === "thumbnails" ? "primary" : "outline"}
+                  onClick={() => handleSidebarButtonClick("thumbnails")}
+                  disabled={!pdfDoc}
+                >
+                  <LayoutList className="h-4 w-4 mr-1" />
+                  Pages
+                </Button>
+                <Button
+                  size="sm"
+                  variant={sidebarOpen && sidebarTab === "bookmarks" ? "primary" : "outline"}
+                  onClick={() => handleSidebarButtonClick("bookmarks")}
+                  disabled={!hasBookmarks}
+                >
+                  <BookMarked className="h-4 w-4 mr-1" />
+                  Marks
+                </Button>
+              </div>
+            </>
           )}
           <input
             ref={fileInputRef}
@@ -612,8 +878,8 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
       ) : (
         <div className="flex flex-1 gap-2 overflow-hidden min-h-0">
           <div className="flex-1 overflow-hidden rounded border border-border min-h-0 bg-background">
-            <div className="flex items-center justify-between border-b border-border px-3 py-2 text-xs text-muted-foreground">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-3 py-2 text-xs text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-2">
                 <Button size="icon" variant="ghost" onClick={() => goToPage(-1)} disabled={pageNumber <= 1}>
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
@@ -625,10 +891,56 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
+                <div className="flex items-center gap-1">
+                  <Input
+                    value={pageInputValue}
+                    onChange={handlePageInputChange}
+                    onKeyDown={handlePageInputKeyDown}
+                    onBlur={handlePageInputBlur}
+                    className="h-7 w-16 text-center"
+                    inputMode="numeric"
+                    aria-label="Current page"
+                  />
+                  <span className="text-muted-foreground">/ {totalPages ?? "?"}</span>
+                </div>
               </div>
-              <div className="font-mono">
-                Page {pageNumber}
-                {totalPages ? ` / ${totalPages}` : ""}
+              <div className="flex items-center gap-2">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => handleZoomStep(-ZOOM_STEP)}
+                  disabled={zoomOutDisabled}
+                  aria-label="Zoom out"
+                >
+                  <ZoomOut className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => handleZoomStep(ZOOM_STEP)}
+                  disabled={zoomInDisabled}
+                  aria-label="Zoom in"
+                >
+                  <ZoomIn className="h-4 w-4" />
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" variant="outline" className="flex items-center gap-1">
+                      <ListFilter className="h-4 w-4" />
+                      {zoomLabel}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-36 text-xs">
+                    <DropdownMenuLabel>Zoom Options</DropdownMenuLabel>
+                    <DropdownMenuItem onSelect={() => handleZoomPreset("auto")}>Automatic</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    {[0.5, 0.75, 1].map((value) => (
+                      <DropdownMenuItem key={value} onSelect={() => handleZoomPreset(value)}>
+                        {Math.round(value * 100)}%
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
             <div ref={canvasContainerRef} className="relative flex h-full w-full items-center justify-center overflow-auto bg-muted/20">
@@ -646,69 +958,113 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
             </div>
           </div>
 
-          {activeDocForBookmarks && (
+          {canShowSidebar && (
             <div
               className={cn(
                 "flex h-full flex-shrink-0 flex-col overflow-hidden rounded border border-border bg-muted/20 transition-[width] duration-200",
-                bookmarksOpen ? "w-56" : "w-[44px]"
+                sidebarOpen ? "w-60" : "w-[44px]"
               )}
             >
               <div
                 className={cn(
                   "flex items-center border-b border-border/60 px-2 py-1",
-                  bookmarksOpen ? "justify-between" : "justify-center"
+                  sidebarOpen ? "justify-between" : "justify-center"
                 )}
               >
-                {bookmarksOpen && (
-                  <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Bookmarks</span>
+                {sidebarOpen && (
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    {sidebarTab === "thumbnails" ? "Pages" : "Bookmarks"}
+                  </span>
                 )}
                 <Button
                   size="icon"
                   variant="ghost"
                   className="h-6 w-6 p-0"
-                  aria-expanded={bookmarksOpen}
-                  aria-label={bookmarksOpen ? "Collapse bookmarks" : "Expand bookmarks"}
-                  onClick={() => setBookmarksOpen((prev) => !prev)}
+                  aria-expanded={sidebarOpen}
+                  aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+                  onClick={() => setSidebarOpen((prev) => !prev)}
                 >
-                  {bookmarksOpen ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                  {sidebarOpen ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
                 </Button>
               </div>
-              {bookmarksOpen ? (
-                <div className="flex-1 space-y-1 overflow-auto px-2 py-2">
-                  {activeDocBookmarks.map((bookmark) => (
-                    <div
-                      key={bookmark.id}
-                      className="group flex items-start justify-between gap-1 rounded p-1.5 transition-colors hover:bg-muted"
-                    >
-                      <button
-                        className="flex-1 text-left text-xs"
-                        onClick={() => jumpToPage(bookmark.pageNumber)}
-                      >
-                        <div className="truncate font-medium">{bookmark.label}</div>
-                        <div className="text-[10px] text-muted-foreground">p. {bookmark.pageNumber}</div>
-                        {bookmark.chapterLabel && (
-                          <div className="text-[10px] text-muted-foreground">{bookmark.chapterLabel}</div>
-                        )}
-                        {bookmark.note && (
-                          <div className="mt-1 text-[11px] text-muted-foreground whitespace-pre-line">
-                            {bookmark.note}
-                          </div>
-                        )}
-                      </button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-5 w-5 p-0 opacity-0 transition-opacity group-hover:opacity-100"
-                        onClick={() => onRemoveBookmark(activeDocForBookmarks.id, bookmark.id)}
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+              {sidebarOpen ? (
+                sidebarTab === "thumbnails" ? (
+                  <div ref={thumbnailsScrollRef} className="flex-1 overflow-auto px-2 py-2">
+                    {pageCount === 0 ? (
+                      <p className="text-[11px] text-muted-foreground">Upload a PDF to see page thumbnails.</p>
+                    ) : (
+                      <div className="relative w-full" style={{ height: thumbnailsTotalHeight || THUMBNAIL_ITEM_HEIGHT }}>
+                        <div
+                          className="absolute left-0 right-0 space-y-2"
+                          style={{ transform: `translateY(${thumbnailWindow.offset}px)` }}
+                        >
+                          {visibleThumbnailPages.map((pageNum) => {
+                            const src = thumbnailImages[pageNum];
+                            const isActivePage = pageNum === pageNumber;
+                            return (
+                              <button
+                                key={pageNum}
+                                className={cn(
+                                  "w-full rounded border p-1 text-left text-[11px] transition-colors",
+                                  isActivePage ? "border-primary bg-primary/10" : "border-border hover:bg-muted"
+                                )}
+                                onClick={() => jumpToPage(pageNum)}
+                              >
+                                {src ? (
+                                  <img
+                                    src={src}
+                                    alt={`Page ${pageNum}`}
+                                    className="mb-1 h-32 w-full rounded bg-background object-contain"
+                                  />
+                                ) : (
+                                  <div className="mb-1 flex h-32 items-center justify-center rounded bg-muted text-[10px] text-muted-foreground">
+                                    Rendering…
+                                  </div>
+                                )}
+                                <div className="font-mono text-center">Page {pageNum}</div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex-1 space-y-1 overflow-auto px-2 py-2">
+                    {hasBookmarks ? (
+                      activeDocBookmarks.map((bookmark) => (
+                        <div
+                          key={bookmark.id}
+                          className="group flex items-start justify-between gap-1 rounded p-1.5 transition-colors hover:bg-muted"
+                        >
+                          <button className="flex-1 text-left text-xs" onClick={() => jumpToPage(bookmark.pageNumber)}>
+                            <div className="truncate font-medium">{bookmark.label}</div>
+                            <div className="text-[10px] text-muted-foreground">p. {bookmark.pageNumber}</div>
+                            {bookmark.chapterLabel && (
+                              <div className="text-[10px] text-muted-foreground">{bookmark.chapterLabel}</div>
+                            )}
+                            {bookmark.note && (
+                              <div className="mt-1 whitespace-pre-line text-[11px] text-muted-foreground">{bookmark.note}</div>
+                            )}
+                          </button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-5 w-5 p-0 opacity-0 transition-opacity group-hover:opacity-100"
+                            onClick={() => handleBookmarkRemoval(bookmark.id)}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-[11px] text-muted-foreground">Add a bookmark to see it here.</p>
+                    )}
+                  </div>
+                )
               ) : (
                 <div className="flex flex-1 items-center justify-center text-[10px] font-medium uppercase tracking-wide text-muted-foreground [writing-mode:vertical-rl]">
-                  Marks
+                  {sidebarTab === "thumbnails" ? "Pages" : "Bookmarks"}
                 </div>
               )}
             </div>

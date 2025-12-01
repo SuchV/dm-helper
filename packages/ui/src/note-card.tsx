@@ -8,7 +8,7 @@ const NoteGrid = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
     <div
       ref={ref}
       className={cn(
-        "grid auto-rows-[minmax(140px,_auto)] grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-3",
+        "grid auto-rows-[minmax(180px,_auto)] grid-cols-[repeat(auto-fit,minmax(230px,1fr))] gap-4",
         className,
       )}
       {...props}
@@ -42,7 +42,7 @@ const NoteCard = React.forwardRef<HTMLDivElement, NoteCardProps>(
         role={onClick ? "button" : undefined}
         tabIndex={onClick ? 0 : undefined}
         className={cn(
-          "flex h-full min-h-[150px] flex-col rounded-xl border bg-muted/40 p-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70",
+          "flex h-full min-h-[190px] flex-col rounded-2xl border bg-muted/40 p-4 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70",
           active
             ? "border-primary bg-background shadow-sm"
             : "hover:border-muted-foreground/60 hover:bg-muted",
@@ -116,7 +116,7 @@ const NoteCreateCard = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttri
       ref={ref}
       type="button"
       className={cn(
-        "flex min-h-[150px] flex-col items-center justify-center rounded-xl border border-dashed border-muted-foreground/60 bg-muted/30 text-sm text-muted-foreground transition hover:border-muted-foreground",
+        "flex min-h-[190px] flex-col items-center justify-center rounded-2xl border border-dashed border-muted-foreground/60 bg-muted/30 text-sm text-muted-foreground transition hover:border-muted-foreground",
         className,
       )}
       {...props}

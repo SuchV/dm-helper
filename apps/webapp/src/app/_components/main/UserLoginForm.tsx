@@ -20,8 +20,8 @@ const UserLoginForm = async () => {
     return null;
   }
   return (
-    <div className="min-h-[60vh] flex items-center justify-center p-4">
-      <WidgetSurface className="w-full max-w-md mx-auto">
+    <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-10">
+      <WidgetSurface className="mx-auto w-full max-w-sm sm:max-w-md">
         <WidgetHeader>
           <div>
             <WidgetTitle>Sign in</WidgetTitle>

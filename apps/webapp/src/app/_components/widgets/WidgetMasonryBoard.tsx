@@ -234,7 +234,7 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
   if (!isMounted) {
     return (
       <div
-        className="grid grid-flow-row-dense items-start md:grid-cols-2 xl:grid-cols-3"
+        className="grid grid-flow-row-dense items-start md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
         style={{
           gridAutoRows: `${ROW_HEIGHT_PX}px`,
           gap: `${ROW_GAP_PX}px`,
@@ -265,7 +265,7 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
     >
       <SortableContext items={orderedIds} strategy={rectSortingStrategy}>
         <div
-          className="grid grid-flow-row-dense items-start md:grid-cols-2 xl:grid-cols-3"
+          className="grid grid-flow-row-dense items-start md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
           style={{
             gridAutoRows: `${ROW_HEIGHT_PX}px`,
             gap: `${ROW_GAP_PX}px`,

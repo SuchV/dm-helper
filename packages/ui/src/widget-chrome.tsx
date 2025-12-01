@@ -14,7 +14,7 @@ const WidgetSurface = React.forwardRef<HTMLElement, WidgetSurfaceProps>(
       <Comp
         ref={ref as never}
         className={cn(
-          "self-start rounded-2xl border border-border/60 bg-card text-card-foreground shadow-sm",
+          "w-full min-w-0 self-start rounded-2xl border border-border/60 bg-card text-card-foreground shadow-sm",
           collapsed ? "border-t-0" : "",
           className,
         )}
@@ -81,7 +81,7 @@ const WidgetBody = React.forwardRef<
     ref={ref}
     className={cn(
       "transition-all duration-200",
-      collapsed ? "max-h-0 overflow-hidden p-0" : "max-h-[2000px] p-4",
+      collapsed ? "max-h-0 overflow-hidden p-0" : "max-h-[2000px] p-3 sm:p-4",
       className,
     )}
     {...props}

@@ -60,4 +60,7 @@ dist/
 # github
 .github/
 
+# pdf-worker-mjs
+pdf.worker.min.mjs
+
 snowflake.log

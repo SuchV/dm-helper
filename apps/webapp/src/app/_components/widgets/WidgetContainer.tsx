@@ -121,8 +121,10 @@ const WidgetContainer = ({
   );
   const title = shouldShowNumber ? `${metadata.title} ${instanceNumber}` : metadata.title;
   const bodyClassName = widget.type === "pdf-viewer"
-    ? "flex min-h-[65vh] flex-col p-0"
-    : undefined;
+    ? "flex min-h-[72vh] flex-col overflow-hidden p-0 sm:min-h-[78vh] lg:min-h-[84vh]"
+    : widget.type === "notes"
+      ? "max-h-none"
+      : undefined;
 
   return (
     <WidgetShell

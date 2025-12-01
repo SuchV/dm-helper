@@ -150,11 +150,11 @@ export const GameClock: React.FC<GameClockProps> = ({
                 <div className="text-xs uppercase text-muted-foreground">
                   Game time
                 </div>
-                <div className="flex items-baseline justify-between gap-4">
-                  <div className="text-4xl font-mono font-bold">
+                <div className="flex flex-wrap items-baseline gap-3 sm:justify-between">
+                  <div className="flex-1 text-4xl font-mono font-bold">
                     {clockState.gameTime || DEFAULT_STATE.gameTime}
                   </div>
-                  <div className="text-right text-base text-muted-foreground">
+                  <div className="w-full text-left text-base text-muted-foreground sm:w-auto sm:text-right">
                     <div>{formatDateDisplay(clockState.gameDate)}</div>
                     <div>{clockState.weekDay || "Monday"}</div>
                   </div>

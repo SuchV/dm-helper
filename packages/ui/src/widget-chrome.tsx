@@ -76,16 +76,17 @@ WidgetToolbar.displayName = "WidgetToolbar";
 const WidgetBody = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & { collapsed?: boolean }
->(({ className, collapsed, ...props }, ref) => (
+>(({ className, collapsed, children, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "transition-all duration-200",
-      collapsed ? "max-h-0 overflow-hidden p-0" : "max-h-[2000px] p-3 sm:p-4",
-      className,
+      "transition-[max-height] duration-200 ease-in-out",
+      collapsed ? "max-h-0 overflow-hidden" : "max-h-[5000px]",
     )}
     {...props}
-  />
+  >
+    <div className={cn(collapsed ? "p-0" : "p-3 sm:p-4", className)}>{children}</div>
+  </div>
 ));
 WidgetBody.displayName = "WidgetBody";
 

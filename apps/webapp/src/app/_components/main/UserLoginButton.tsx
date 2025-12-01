@@ -10,7 +10,12 @@ import { api } from "~/trpc/react";
 import { login } from "~/app/actions";
 import { useRouter } from "next/navigation";
 
-const UserLoginButton = () => {
+interface UserLoginButtonProps {
+  variant?: "default" | "icon";
+  className?: string;
+}
+
+const UserLoginButton = ({ variant = "default", className }: UserLoginButtonProps) => {
   const {
     data: session,
     isLoading,
@@ -42,9 +47,27 @@ const UserLoginButton = () => {
 
   if (session?.user) {
     return (
-      <AuthButton type="button" intent="logout" onClick={handleLogout} className="w-full">
+      <AuthButton type="button" intent="logout" onClick={handleLogout} className={cn("w-full", className)}>
         Sign out, {session.user.name}
       </AuthButton>
+    );
+  }
+
+  if (variant === "icon") {
+    return (
+      <button
+        type="button"
+        onClick={handleLogin}
+        className={cn(
+          "flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-card",
+          "text-foreground shadow-sm transition hover:bg-accent/40 focus-visible:outline-none",
+          "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          className,
+        )}
+        aria-label="Sign in with Google"
+      >
+        <GoogleMark />
+      </button>
     );
   }
 
@@ -59,6 +82,7 @@ const UserLoginButton = () => {
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
         "focus-visible:ring-offset-background",
         "dark:border-border/60 dark:bg-card dark:shadow-none dark:hover:bg-accent/30",
+        className,
       )}
     >
       <GoogleMark />

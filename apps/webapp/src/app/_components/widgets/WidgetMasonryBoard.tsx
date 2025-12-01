@@ -271,21 +271,28 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
             gap: `${ROW_GAP_PX}px`,
           }}
         >
-          {orderedWidgets.map((widget) => (
-            <SortableMasonryItem
-              key={widget.id}
-              widgetId={widget.id}
-              onDimensionChange={handleItemMeasure}
-            >
-              <WidgetContainer
-                widget={widget}
-                instanceNumber={instanceNumberById.get(widget.id) ?? undefined}
-                totalInstancesOfType={instanceCountByType[widget.type] ?? 0}
-                collapsedOverride={collapsedState[widget.id] ?? widget.collapsed}
-                onCollapsedOverride={(next) => handleLocalCollapsedChange(widget.id, next)}
-              />
-            </SortableMasonryItem>
-          ))}
+          {orderedWidgets.map((widget) => {
+            const spanClass = widget.type === "pdf-viewer"
+              ? "md:col-span-2 lg:col-span-2 2xl:col-span-2 min-[2200px]:col-span-3"
+              : undefined;
+
+            return (
+              <SortableMasonryItem
+                key={widget.id}
+                widgetId={widget.id}
+                className={spanClass}
+                onDimensionChange={handleItemMeasure}
+              >
+                <WidgetContainer
+                  widget={widget}
+                  instanceNumber={instanceNumberById.get(widget.id) ?? undefined}
+                  totalInstancesOfType={instanceCountByType[widget.type] ?? 0}
+                  collapsedOverride={collapsedState[widget.id] ?? widget.collapsed}
+                  onCollapsedOverride={(next) => handleLocalCollapsedChange(widget.id, next)}
+                />
+              </SortableMasonryItem>
+            );
+          })}
         </div>
       </SortableContext>
       <DragOverlay dropAnimation={{ duration: 180, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }}>
@@ -311,10 +318,11 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
 interface SortableMasonryItemProps {
   widgetId: string;
   children: React.ReactNode;
+  className?: string;
   onDimensionChange?: (id: string, size: WidgetDimensions) => void;
 }
 
-const SortableMasonryItem: React.FC<SortableMasonryItemProps> = ({ widgetId, children, onDimensionChange }) => {
+const SortableMasonryItem: React.FC<SortableMasonryItemProps> = ({ widgetId, children, className, onDimensionChange }) => {
   const [rowSpan, setRowSpan] = React.useState(1);
   const [measuredNode, setMeasuredNode] = React.useState<HTMLDivElement | null>(null);
 
@@ -369,6 +377,7 @@ const SortableMasonryItem: React.FC<SortableMasonryItemProps> = ({ widgetId, chi
       className={cn(
         "self-start rounded-2xl",
         isDragging ? "z-20 cursor-grabbing opacity-90" : "cursor-grab",
+        className,
       )}
       {...attributes}
       {...listeners}

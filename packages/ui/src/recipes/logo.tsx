@@ -18,10 +18,13 @@ function Logo({ className, variant = "default", href = "/" }: LogoProps) {
       <LogoIcon className={isIconOnly ? "h-9 w-9" : "h-10 w-10"} />
       {isIconOnly ? null : (
         <div className="flex min-w-0 flex-col leading-tight">
-          <span className="text-base font-semibold tracking-tight text-foreground sm:text-lg">
+          <span className="text-base font-semibold tracking-tight text-foreground sm:hidden">
+            DM Dash
+          </span>
+          <span className="hidden text-base font-semibold tracking-tight text-foreground sm:inline sm:text-lg">
             DM Dashboard
           </span>
-          <span className="text-[11px] font-medium uppercase tracking-[0.35em] text-muted-foreground">
+          <span className="hidden text-[11px] font-medium uppercase tracking-[0.35em] text-muted-foreground md:inline">
             Command Center
           </span>
         </div>

@@ -14,27 +14,25 @@ const UserLoginButton = () => {
   const {
     data: session,
     isLoading,
-    error,
   } = api.user.getUser.useQuery(undefined, {
     retry: false,
     refetchOnWindowFocus: false,
   });
   const router = useRouter();
-  const utils = api.useUtils();
 
-  const handleLogout = async () => {
+  const handleLogout = React.useCallback(async () => {
     console.log("[Client] Logout button clicked");
     try {
       await signOut({ callbackUrl: "/" });
     } catch (error) {
       console.error("[Client] Logout error:", error);
     }
-  };
+  }, []);
 
-  const handleLogin = async () => {
+  const handleLogin = React.useCallback(async () => {
     await login();
     router.refresh();
-  };
+  }, [router]);
 
   if (isLoading) {
     return (
@@ -51,31 +49,50 @@ const UserLoginButton = () => {
   }
 
   return (
-    <AuthButton
+    <button
       type="button"
-      intent="login"
       onClick={handleLogin}
-      className="w-full justify-center gap-3"
+      className={cn(
+        "flex w-full items-center justify-center gap-3 rounded-full border px-4 py-2 text-sm font-medium",
+        "border-border/70 bg-card text-foreground shadow-sm transition",
+        "hover:bg-accent/40 hover:text-foreground",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+        "focus-visible:ring-offset-background",
+        "dark:border-border/60 dark:bg-card dark:shadow-none dark:hover:bg-accent/30",
+      )}
     >
-      <GoogleGlyph />
+      <GoogleMark />
       Continue with Google
-    </AuthButton>
+    </button>
   );
 };
 
 export default UserLoginButton;
 
-const GoogleGlyph = () => {
+const GoogleMark = () => {
   return (
-    <span
+    <svg
       aria-hidden="true"
-      className={cn(
-        "inline-flex size-6 items-center justify-center rounded-full",
-        "border border-primary-foreground/40 bg-primary-foreground/10",
-        "text-sm font-semibold uppercase tracking-tight text-primary-foreground",
-      )}
+      className="h-5 w-5"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      G
-    </span>
+      <path
+        fill="#EA4335"
+        d="M12 5.09c1.4 0 2.66.48 3.65 1.41l2.73-2.73C16.71 1.69 14.55.79 12 .79 7.73.79 3.99 3.24 2.34 7.01l3.35 2.6C6.6 7.07 9.03 5.09 12 5.09z"
+      />
+      <path
+        fill="#34A853"
+        d="M21.8 12.18c0-.74-.07-1.45-.21-2.13H12v4.02h5.52c-.24 1.26-.97 2.33-2.06 3.04l3.2 2.49c1.88-1.74 3.14-4.31 3.14-7.42z"
+      />
+      <path
+        fill="#4285F4"
+        d="M6.44 14.21c-.3-.89-.47-1.84-.47-2.82 0-.98.16-1.93.47-2.82L3.1 6c-.74 1.48-1.16 3.15-1.16 4.99s.42 3.51 1.16 4.99l3.34-2.77z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M12 22.21c2.55 0 4.71-.84 6.28-2.29l-3.2-2.49c-.89.6-2.03.95-3.08.95-2.97 0-5.4-1.98-6.31-4.67l-3.35 2.6C3.99 20.76 7.73 23.21 12 23.21z"
+      />
+    </svg>
   );
 };

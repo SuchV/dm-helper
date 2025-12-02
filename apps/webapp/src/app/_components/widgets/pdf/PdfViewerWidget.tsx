@@ -166,7 +166,7 @@ const PdfViewerWidgetV2 = ({ widgetId }: PdfViewerWidgetV2Props) => {
       
       setActiveFile(bytes);
     } catch {
-      removePdfFile(storageKey);
+      await removePdfFile(storageKey);
       toast.error("Failed to upload PDF");
     } finally {
       setIsLoading(false);
@@ -195,7 +195,7 @@ const PdfViewerWidgetV2 = ({ widgetId }: PdfViewerWidgetV2Props) => {
     
     try {
       await closeTabMutation.mutateAsync({ tabId: id });
-      removePdfFile(tab.storageKey);
+      await removePdfFile(tab.storageKey);
       
       updateState((prev) => {
         const remainingTabs = prev.tabs.filter((t) => t.id !== id);

@@ -376,13 +376,11 @@ const SortableMasonryItem: React.FC<SortableMasonryItemProps> = ({ widgetId, chi
       style={style}
       className={cn(
         "self-start rounded-2xl",
-        isDragging ? "z-20 cursor-grabbing opacity-90" : "cursor-grab",
+        isDragging && "z-20 opacity-90",
         className,
       )}
-      {...attributes}
-      {...listeners}
     >
-      <div ref={measureRef}>
+      <div ref={measureRef} data-drag-handle {...attributes} {...listeners}>
           {children}
         </div>
     </div>

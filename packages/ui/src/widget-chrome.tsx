@@ -32,7 +32,7 @@ const WidgetHeader = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex items-start gap-3 px-4 py-3 text-left",
+      "flex cursor-grab items-start gap-3 px-4 py-3 text-left active:cursor-grabbing",
       collapsed ? "border-b-0" : "border-b border-border/60",
       className,
     )}
@@ -80,12 +80,14 @@ const WidgetBody = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "transition-[max-height] duration-200 ease-in-out",
-      collapsed ? "max-h-0 overflow-hidden" : "max-h-[5000px]",
+      "grid transition-[grid-template-rows] duration-200 ease-in-out",
+      collapsed ? "grid-rows-[0fr]" : "grid-rows-[1fr]",
     )}
     {...props}
   >
-    <div className={cn(collapsed ? "p-0" : "p-3 sm:p-4", className)}>{children}</div>
+    <div className="overflow-hidden">
+      <div className={cn(collapsed ? "p-0" : "p-3 sm:p-4", className)}>{children}</div>
+    </div>
   </div>
 ));
 WidgetBody.displayName = "WidgetBody";

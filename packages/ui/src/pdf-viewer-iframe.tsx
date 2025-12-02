@@ -3,7 +3,6 @@
 import * as React from "react";
 import {
   BookmarkPlus,
-  BookMarked,
   ChevronLeft,
   ChevronRight,
   LayoutList,
@@ -133,7 +132,7 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
   const fitScaleRef = React.useRef(1);
 
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
-  const [sidebarTab, setSidebarTab] = React.useState<"thumbnails" | "bookmarks">("thumbnails");
+  const [sidebarTab, setSidebarTab] = React.useState<"thumbnails" | "bookmarks">("bookmarks");
   const [pdfjsReady, setPdfjsReady] = React.useState(false);
   const [pdfDoc, setPdfDoc] = React.useState<PdfDocumentProxy | null>(null);
   const [pageNumber, setPageNumber] = React.useState(1);
@@ -687,27 +686,6 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
     [activeDoc, onRemoveBookmark],
   );
 
-  const handleSidebarButtonClick = React.useCallback(
-    (tab: "thumbnails" | "bookmarks") => {
-      if (sidebarOpen && sidebarTab === tab) {
-        setSidebarOpen(false);
-        return;
-      }
-      setSidebarTab(tab);
-      setSidebarOpen(true);
-      if (tab === "thumbnails") {
-        requestAnimationFrame(() => {
-          const node = thumbnailsScrollRef.current;
-          if (!node) return;
-          const target = Math.max(0, (pageNumber - 1) * THUMBNAIL_ITEM_HEIGHT - THUMBNAIL_ITEM_HEIGHT);
-          node.scrollTop = target;
-          setThumbnailViewport((prev) => ({ ...prev, scrollTop: target, height: node.clientHeight }));
-        });
-      }
-    },
-    [pageNumber, sidebarOpen, sidebarTab],
-  );
-
   React.useEffect(() => {
     closeBookmarkForm();
     pendingPageRef.current = null;
@@ -746,26 +724,15 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
                 <BookmarkPlus className="h-4 w-4 mr-1" />
                 Bookmark
               </Button>
-              <div className="flex items-center gap-1">
-                <Button
-                  size="sm"
-                  variant={sidebarOpen && sidebarTab === "thumbnails" ? "primary" : "outline"}
-                  onClick={() => handleSidebarButtonClick("thumbnails")}
-                  disabled={!pdfDoc}
-                >
-                  <LayoutList className="h-4 w-4 mr-1" />
-                  Pages
-                </Button>
-                <Button
-                  size="sm"
-                  variant={sidebarOpen && sidebarTab === "bookmarks" ? "primary" : "outline"}
-                  onClick={() => handleSidebarButtonClick("bookmarks")}
-                  disabled={!hasBookmarks}
-                >
-                  <BookMarked className="h-4 w-4 mr-1" />
-                  Marks
-                </Button>
-              </div>
+              <Button
+                size="sm"
+                variant={sidebarOpen ? "primary" : "outline"}
+                onClick={() => setSidebarOpen((prev) => !prev)}
+                disabled={!pdfDoc && !hasBookmarks}
+              >
+                <LayoutList className="h-4 w-4 mr-1" />
+                {sidebarOpen ? "Hide Panel" : "Show Panel"}
+              </Button>
             </>
           )}
           <input
@@ -877,6 +844,118 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
         </div>
       ) : (
         <div className="flex flex-1 gap-2 overflow-hidden min-h-0">
+          {/* Sidebar on left for natural reading flow */}
+          {canShowSidebar && sidebarOpen && (
+            <div
+              className="flex h-full w-56 flex-shrink-0 flex-col overflow-hidden rounded border border-border bg-muted/20"
+            >
+              <div className="flex items-center justify-between border-b border-border/60 px-2 py-1">
+                <div className="flex items-center gap-1">
+                  <Button
+                    size="sm"
+                    variant={sidebarTab === "thumbnails" ? "secondary" : "ghost"}
+                    className="h-6 px-2 text-[10px]"
+                    onClick={() => setSidebarTab("thumbnails")}
+                    disabled={!pdfDoc}
+                  >
+                    Pages
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={sidebarTab === "bookmarks" ? "secondary" : "ghost"}
+                    className="h-6 px-2 text-[10px]"
+                    onClick={() => setSidebarTab("bookmarks")}
+                  >
+                    Marks
+                  </Button>
+                </div>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-6 w-6 p-0"
+                  aria-label="Close sidebar"
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+              {sidebarTab === "thumbnails" ? (
+                <div ref={thumbnailsScrollRef} className="flex-1 overflow-auto px-2 py-2">
+                  {pageCount === 0 ? (
+                    <p className="text-[11px] text-muted-foreground">Upload a PDF to see page thumbnails.</p>
+                  ) : (
+                    <div className="relative w-full" style={{ height: thumbnailsTotalHeight || THUMBNAIL_ITEM_HEIGHT }}>
+                      <div
+                        className="absolute left-0 right-0 space-y-2"
+                        style={{ transform: `translateY(${thumbnailWindow.offset}px)` }}
+                      >
+                        {visibleThumbnailPages.map((pageNum) => {
+                          const src = thumbnailImages[pageNum];
+                          const isActivePage = pageNum === pageNumber;
+                          return (
+                            <button
+                              key={pageNum}
+                              className={cn(
+                                "w-full rounded border p-1 text-left text-[11px] transition-colors",
+                                isActivePage ? "border-primary bg-primary/10" : "border-border hover:bg-muted"
+                              )}
+                              onClick={() => jumpToPage(pageNum)}
+                            >
+                              {src ? (
+                                <img
+                                  src={src}
+                                  alt={`Page ${pageNum}`}
+                                  className="mb-1 h-28 w-full rounded bg-background object-contain"
+                                />
+                              ) : (
+                                <div className="mb-1 flex h-28 items-center justify-center rounded bg-muted text-[10px] text-muted-foreground">
+                                  Rendering…
+                                </div>
+                              )}
+                              <div className="font-mono text-center">Page {pageNum}</div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex-1 space-y-1 overflow-auto px-2 py-2">
+                  {hasBookmarks ? (
+                    activeDocBookmarks.map((bookmark) => (
+                      <div
+                        key={bookmark.id}
+                        className="group flex items-start justify-between gap-1 rounded p-1.5 transition-colors hover:bg-muted"
+                      >
+                        <button className="flex-1 text-left text-xs" onClick={() => jumpToPage(bookmark.pageNumber)}>
+                          <div className="truncate font-medium">{bookmark.label}</div>
+                          <div className="text-[10px] text-muted-foreground">p. {bookmark.pageNumber}</div>
+                          {bookmark.chapterLabel && (
+                            <div className="text-[10px] text-muted-foreground">{bookmark.chapterLabel}</div>
+                          )}
+                          {bookmark.note && (
+                            <div className="mt-1 line-clamp-2 whitespace-pre-line text-[11px] text-muted-foreground">{bookmark.note}</div>
+                          )}
+                        </button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-5 w-5 p-0 opacity-0 transition-opacity group-hover:opacity-100"
+                          onClick={() => handleBookmarkRemoval(bookmark.id)}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-[11px] text-muted-foreground">Add a bookmark to see it here.</p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="flex-1 overflow-hidden rounded border border-border min-h-0 bg-background">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-3 py-2 text-xs text-muted-foreground">
               <div className="flex flex-wrap items-center gap-2">
@@ -957,118 +1036,6 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
               )}
             </div>
           </div>
-
-          {canShowSidebar && (
-            <div
-              className={cn(
-                "flex h-full flex-shrink-0 flex-col overflow-hidden rounded border border-border bg-muted/20 transition-[width] duration-200",
-                sidebarOpen ? "w-60" : "w-[44px]"
-              )}
-            >
-              <div
-                className={cn(
-                  "flex items-center border-b border-border/60 px-2 py-1",
-                  sidebarOpen ? "justify-between" : "justify-center"
-                )}
-              >
-                {sidebarOpen && (
-                  <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    {sidebarTab === "thumbnails" ? "Pages" : "Bookmarks"}
-                  </span>
-                )}
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="h-6 w-6 p-0"
-                  aria-expanded={sidebarOpen}
-                  aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-                  onClick={() => setSidebarOpen((prev) => !prev)}
-                >
-                  {sidebarOpen ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-                </Button>
-              </div>
-              {sidebarOpen ? (
-                sidebarTab === "thumbnails" ? (
-                  <div ref={thumbnailsScrollRef} className="flex-1 overflow-auto px-2 py-2">
-                    {pageCount === 0 ? (
-                      <p className="text-[11px] text-muted-foreground">Upload a PDF to see page thumbnails.</p>
-                    ) : (
-                      <div className="relative w-full" style={{ height: thumbnailsTotalHeight || THUMBNAIL_ITEM_HEIGHT }}>
-                        <div
-                          className="absolute left-0 right-0 space-y-2"
-                          style={{ transform: `translateY(${thumbnailWindow.offset}px)` }}
-                        >
-                          {visibleThumbnailPages.map((pageNum) => {
-                            const src = thumbnailImages[pageNum];
-                            const isActivePage = pageNum === pageNumber;
-                            return (
-                              <button
-                                key={pageNum}
-                                className={cn(
-                                  "w-full rounded border p-1 text-left text-[11px] transition-colors",
-                                  isActivePage ? "border-primary bg-primary/10" : "border-border hover:bg-muted"
-                                )}
-                                onClick={() => jumpToPage(pageNum)}
-                              >
-                                {src ? (
-                                  <img
-                                    src={src}
-                                    alt={`Page ${pageNum}`}
-                                    className="mb-1 h-32 w-full rounded bg-background object-contain"
-                                  />
-                                ) : (
-                                  <div className="mb-1 flex h-32 items-center justify-center rounded bg-muted text-[10px] text-muted-foreground">
-                                    Rendering…
-                                  </div>
-                                )}
-                                <div className="font-mono text-center">Page {pageNum}</div>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex-1 space-y-1 overflow-auto px-2 py-2">
-                    {hasBookmarks ? (
-                      activeDocBookmarks.map((bookmark) => (
-                        <div
-                          key={bookmark.id}
-                          className="group flex items-start justify-between gap-1 rounded p-1.5 transition-colors hover:bg-muted"
-                        >
-                          <button className="flex-1 text-left text-xs" onClick={() => jumpToPage(bookmark.pageNumber)}>
-                            <div className="truncate font-medium">{bookmark.label}</div>
-                            <div className="text-[10px] text-muted-foreground">p. {bookmark.pageNumber}</div>
-                            {bookmark.chapterLabel && (
-                              <div className="text-[10px] text-muted-foreground">{bookmark.chapterLabel}</div>
-                            )}
-                            {bookmark.note && (
-                              <div className="mt-1 whitespace-pre-line text-[11px] text-muted-foreground">{bookmark.note}</div>
-                            )}
-                          </button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-5 w-5 p-0 opacity-0 transition-opacity group-hover:opacity-100"
-                            onClick={() => handleBookmarkRemoval(bookmark.id)}
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-[11px] text-muted-foreground">Add a bookmark to see it here.</p>
-                    )}
-                  </div>
-                )
-              ) : (
-                <div className="flex flex-1 items-center justify-center text-[10px] font-medium uppercase tracking-wide text-muted-foreground [writing-mode:vertical-rl]">
-                  {sidebarTab === "thumbnails" ? "Pages" : "Bookmarks"}
-                </div>
-              )}
-            </div>
-          )}
         </div>
       )}
     </div>

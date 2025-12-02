@@ -89,8 +89,11 @@ const HomePage = async () => {
           label: bookmark.label,
           pageNumber: bookmark.pageNumber,
           createdAt: bookmark.createdAt.toISOString(),
+          note: bookmark.note ?? "",
+          chapterLabel: bookmark.chapterLabel ?? null,
         })),
       }));
+      
 
       initialStateBundle["pdf-viewer"][widget.id] = {
         tabs,

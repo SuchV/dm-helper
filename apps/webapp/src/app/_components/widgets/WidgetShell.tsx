@@ -88,14 +88,14 @@ const WidgetShell: React.FC<WidgetShellProps> = ({
     <>
       <WidgetSurface collapsed={collapsed}>
         <WidgetHeader collapsed={collapsed} aria-expanded={!collapsed}>
-          <div className="flex flex-col gap-0.5">
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
             <div className="flex items-center gap-2">
               {icon ? <span className="text-muted-foreground">{icon}</span> : null}
               <WidgetTitle>{title}</WidgetTitle>
             </div>
             {description ? <WidgetDescription>{description}</WidgetDescription> : null}
           </div>
-          <WidgetToolbar>
+          <WidgetToolbar className="shrink-0">
             <Button
               type="button"
               size="icon"

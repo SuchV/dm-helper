@@ -42,27 +42,27 @@ const UserMenu = ({ name, email, image, onSignOut, className }: UserMenuProps) =
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         className={cn(
-          "flex items-center gap-3 rounded-full border border-border/60 bg-background px-3 py-1.5 text-left shadow-sm transition hover:border-border",
+          "flex items-center gap-2 rounded-full border border-border/60 bg-background p-1 text-left shadow-sm transition hover:border-border sm:gap-3 sm:px-3 sm:py-1.5",
           className,
         )}
       >
-        <Avatar className="h-9 w-9">
+        <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
           <AvatarImage src={image ?? undefined} alt={name ?? "User avatar"} />
           <AvatarFallback>{initials(name, email)}</AvatarFallback>
         </Avatar>
-        <div className="min-w-[120px] flex-1">
+        <div className="hidden min-w-[100px] flex-1 sm:block">
           {name ? (
-            <p className="text-sm font-medium leading-tight">{name}</p>
+            <p className="truncate text-sm font-medium leading-tight">{name}</p>
           ) : (
             <p className="text-sm font-medium text-muted-foreground">User</p>
           )}
           {email ? (
-            <p className="text-xs text-muted-foreground">{email}</p>
+            <p className="truncate text-xs text-muted-foreground">{email}</p>
           ) : null}
         </div>
         <ChevronDown
           className={cn(
-            "h-4 w-4 text-muted-foreground transition-transform",
+            "hidden h-4 w-4 text-muted-foreground transition-transform sm:block",
             open ? "-scale-y-100" : "scale-y-100",
           )}
         />

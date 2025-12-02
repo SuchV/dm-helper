@@ -22,13 +22,13 @@ const Layout = async ({ children }: { children: ReactNode }) => {
   return (
     <BasicPage>
       <BasicPageHeader>
-        <div className="flex flex-1 min-w-0 items-center">
+        <div className="flex min-w-0 shrink-0 items-center">
           <Logo className="shrink-0" />
         </div>
         <div className="flex flex-1 justify-center">
           {session?.user ? <Navigation /> : null}
         </div>
-        <div className="flex flex-1 items-center justify-end gap-2">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
           <ThemeToggle />
           <UserAvatarButton />
         </div>

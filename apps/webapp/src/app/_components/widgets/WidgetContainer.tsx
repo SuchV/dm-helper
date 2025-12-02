@@ -138,8 +138,47 @@ const WidgetContainer = ({
       bodyClassName={bodyClassName}
     >
       {isDragging && widget.type === "pdf-viewer" ? (
-        <div className="flex items-center justify-center p-8 text-sm text-muted-foreground">
-          PDF Viewer
+        <div className="flex min-h-[200px] flex-1 flex-col gap-3 p-3">
+          {/* Mock toolbar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/40 px-3 pb-2">
+            <div className="flex items-center gap-2">
+              <div className="h-7 w-16 rounded bg-muted/60" />
+              <div className="h-4 w-px bg-border/40" />
+              <div className="h-7 w-24 rounded bg-muted/60" />
+            </div>
+          </div>
+          {/* Mock main area with sidebar + canvas */}
+          <div className="flex flex-1 gap-3">
+            {/* Mock sidebar */}
+            <div className="hidden w-14 flex-col gap-2 rounded border border-border/40 bg-muted/30 p-2 sm:flex">
+              <div className="h-16 w-full rounded bg-muted/60" />
+              <div className="h-16 w-full rounded bg-muted/60" />
+              <div className="h-16 w-full rounded bg-muted/60" />
+            </div>
+            {/* Mock canvas area */}
+            <div className="flex flex-1 flex-col gap-2 rounded border border-border/40 bg-muted/20">
+              {/* Mock page controls */}
+              <div className="flex items-center justify-between border-b border-border/40 px-3 py-2">
+                <div className="flex items-center gap-2">
+                  <div className="h-6 w-6 rounded bg-muted/60" />
+                  <div className="h-6 w-6 rounded bg-muted/60" />
+                  <div className="h-6 w-12 rounded bg-muted/60" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-6 w-6 rounded bg-muted/60" />
+                  <div className="h-6 w-6 rounded bg-muted/60" />
+                  <div className="h-6 w-16 rounded bg-muted/60" />
+                </div>
+              </div>
+              {/* Mock PDF page */}
+              <div className="flex flex-1 items-center justify-center p-4">
+                <div className="flex h-full w-full max-w-[200px] flex-col items-center justify-center gap-3 rounded bg-muted/40 p-6">
+                  <FileText className="h-10 w-10 text-muted-foreground/50" />
+                  <span className="text-xs font-medium text-muted-foreground/70">PDF Viewer</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       ) : (
         metadata.render({ widget })

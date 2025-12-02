@@ -151,6 +151,10 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
   const [zoomMode, setZoomMode] = React.useState<"auto" | "manual">("auto");
   const [manualZoom, setManualZoom] = React.useState(1);
   const [canvasContainerWidth, setCanvasContainerWidth] = React.useState(0);
+  const [isPanning, setIsPanning] = React.useState(false);
+  const [panStart, setPanStart] = React.useState({ x: 0, y: 0 });
+  const [scrollStart, setScrollStart] = React.useState({ x: 0, y: 0 });
+  const [isContentScrollable, setIsContentScrollable] = React.useState(false);
   const componentId = React.useId();
   const bookmarkLabelId = `${componentId}-bookmark-label`;
   const bookmarkChapterId = `${componentId}-bookmark-chapter`;
@@ -530,6 +534,19 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
     };
   }, []);
 
+  // Check if content is scrollable after rendering
+  React.useEffect(() => {
+    if (isRendering) return;
+    const container = canvasContainerRef.current;
+    if (!container) {
+      setIsContentScrollable(false);
+      return;
+    }
+    const scrollable = container.scrollWidth > container.clientWidth || 
+                       container.scrollHeight > container.clientHeight;
+    setIsContentScrollable(scrollable);
+  }, [isRendering, manualZoom, zoomMode, pageNumber]);
+
   // Notify parent when the user navigates to a different page
   React.useEffect(() => {
     if (!activeDocId || !pdfDoc) return;
@@ -673,6 +690,39 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
     },
     [applyManualZoom],
   );
+
+  // Pan handlers for drag-to-scroll when zoomed
+  const handlePanStart = React.useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    // Only enable panning with left mouse button
+    if (e.button !== 0) return;
+    const container = canvasContainerRef.current;
+    if (!container) return;
+    
+    // Check if content is scrollable (zoomed in)
+    const isScrollable = container.scrollWidth > container.clientWidth || 
+                         container.scrollHeight > container.clientHeight;
+    if (!isScrollable) return;
+    
+    setIsPanning(true);
+    setPanStart({ x: e.clientX, y: e.clientY });
+    setScrollStart({ x: container.scrollLeft, y: container.scrollTop });
+    e.preventDefault();
+  }, []);
+
+  const handlePanMove = React.useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isPanning) return;
+    const container = canvasContainerRef.current;
+    if (!container) return;
+    
+    const dx = e.clientX - panStart.x;
+    const dy = e.clientY - panStart.y;
+    container.scrollLeft = scrollStart.x - dx;
+    container.scrollTop = scrollStart.y - dy;
+  }, [isPanning, panStart, scrollStart]);
+
+  const handlePanEnd = React.useCallback(() => {
+    setIsPanning(false);
+  }, []);
 
   const zoomLabel = zoomMode === "auto" ? "Auto" : `${Math.round(manualZoom * 100)}%`;
   const zoomOutDisabled = zoomMode === "manual" && manualZoom <= MIN_ZOOM;
@@ -1022,8 +1072,26 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
                 </DropdownMenu>
               </div>
             </div>
-            <div ref={canvasContainerRef} className="relative flex h-full w-full items-center justify-center overflow-auto bg-muted/20">
-              <canvas ref={canvasRef} className="max-h-full" />
+            <div 
+              ref={canvasContainerRef} 
+              className={cn(
+                "relative h-full w-full overflow-auto bg-muted/20",
+                isContentScrollable 
+                  ? (isPanning ? "cursor-grabbing" : "cursor-grab")
+                  : "flex items-center justify-center"
+              )}
+              onMouseDown={handlePanStart}
+              onMouseMove={handlePanMove}
+              onMouseUp={handlePanEnd}
+              onMouseLeave={handlePanEnd}
+            >
+              <canvas 
+                ref={canvasRef} 
+                className={cn(
+                  "pointer-events-none select-none",
+                  !isContentScrollable && "max-h-full"
+                )} 
+              />
               {isRendering && (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/60">
                   <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />

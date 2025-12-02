@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 import { Button } from "./button";
 import {
@@ -14,13 +15,6 @@ import {
 } from "./dialog";
 import { Input } from "./input";
 import { Label } from "./label";
-import {
-  WidgetBody,
-  WidgetDescription,
-  WidgetHeader,
-  WidgetSurface,
-  WidgetTitle,
-} from "./widget-chrome";
 import { cn } from ".";
 
 const DICE_OPTIONS = [4, 6, 8, 10, 12, 20, 100] as const;
@@ -77,6 +71,7 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({
   const [modifierDialogOpen, setModifierDialogOpen] = React.useState(false);
   const [isRolling, setIsRolling] = React.useState(false);
   const [isClearing, setIsClearing] = React.useState(false);
+  const [historyOpen, setHistoryOpen] = React.useState(false);
 
   const hasResults = results.length > 0;
   const subtotal = results.reduce((sum, die) => sum + die.value, 0);
@@ -146,152 +141,158 @@ export const DiceRoller: React.FC<DiceRollerProps> = ({
     entries.map((entry) => `d${entry.sides}→${entry.value}`).join(", ") || "No dice rolled";
 
   return (
-    <WidgetSurface className={cn("w-full max-w-xl", className)}>
-      <WidgetHeader>
-        <div>
-          <WidgetTitle></WidgetTitle>
-          <WidgetDescription>Pick dice, build a pool, add modifiers, and roll.</WidgetDescription>
-        </div>
-      </WidgetHeader>
-      <WidgetBody className="space-y-5">
-        <div className="space-y-2">
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-xs uppercase tracking-wide text-muted-foreground">Dice selection</p>
-            <Dialog open={modifierDialogOpen} onOpenChange={setModifierDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="shrink-0">
-                  +/- ({modifier >= 0 ? `+${modifier}` : modifier})
+    <div className={cn("w-full space-y-4", className)}>
+      {/* Dice Selection + Modifier */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">Add dice to pool</p>
+          <Dialog open={modifierDialogOpen} onOpenChange={setModifierDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" className="shrink-0">
+                Modifier: {modifier >= 0 ? `+${modifier}` : modifier}
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Adjust modifier</DialogTitle>
+                <DialogDescription>
+                  Set a positive or negative number to apply to your next total.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-2">
+                <Label htmlFor="dice-modifier">Modifier</Label>
+                <Input
+                  id="dice-modifier"
+                  type="number"
+                  inputMode="numeric"
+                  value={modifierDraft}
+                  onChange={(event) => setModifierDraft(event.target.value)}
+                />
+              </div>
+              <DialogFooter>
+                <Button variant="secondary" onClick={() => setModifierDialogOpen(false)}>
+                  Cancel
                 </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Adjust modifier</DialogTitle>
-                  <DialogDescription>
-                    Set a positive or negative number to apply to your next total.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-2">
-                  <Label htmlFor="dice-modifier">Modifier</Label>
-                  <Input
-                    id="dice-modifier"
-                    type="number"
-                    inputMode="numeric"
-                    value={modifierDraft}
-                    onChange={(event) => setModifierDraft(event.target.value)}
-                  />
-                </div>
-                <DialogFooter>
-                  <Button variant="secondary" onClick={() => setModifierDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={handleModifierApply}>Apply</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {DICE_OPTIONS.map((sides) => (
+                <Button onClick={handleModifierApply}>Apply</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {DICE_OPTIONS.map((sides) => (
+            <Button
+              key={sides}
+              variant="secondary"
+              size="sm"
+              className="min-w-[48px]"
+              onClick={() => handleAddDie(sides)}
+            >
+              d{sides}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {/* Dice Pool */}
+      <div className="space-y-1">
+        <p className="text-xs uppercase tracking-wide text-muted-foreground">Your pool</p>
+        {dicePool.length ? (
+          <div className="flex flex-wrap gap-1.5">
+            {dicePool.map((die) => (
               <Button
-                key={sides}
-                variant="secondary"
+                key={die.id}
+                type="button"
+                variant="ghost"
                 size="sm"
-                onClick={() => handleAddDie(sides)}
+                className="border border-border/60 bg-background font-semibold text-foreground"
+                onClick={() => handleRemoveDie(die.id)}
+                title="Click to remove"
               >
-                d{sides}
+                d{die.sides}
               </Button>
             ))}
           </div>
-        </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">Tap a die above to add it.</p>
+        )}
+      </div>
 
-        <div className="space-y-1">
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">Dice pool</p>
-          {dicePool.length ? (
-            <div className="flex flex-wrap gap-2">
-              {dicePool.map((die) => (
-                <Button
-                  key={die.id}
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="border border-border/60 bg-background font-semibold text-foreground"
-                  onClick={() => handleRemoveDie(die.id)}
-                >
-                  d{die.sides}
-                </Button>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">Click a die above to add it to your pool.</p>
-          )}
-        </div>
-
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border/60 bg-muted/30 p-4">
-          <div>
-            <p className="text-xs uppercase tracking-wide text-muted-foreground">Roll total</p>
-            <div className="flex items-baseline gap-3">
-              <span className="text-4xl font-mono font-bold">{typeof total === "number" ? total : "—"}</span>
-              <span className="text-sm text-muted-foreground">
-                Modifier {formatModifier(modifier)}
-              </span>
-            </div>
+      {/* Roll Result + Button */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/60 bg-muted/30 p-3">
+        <div>
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Total</p>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-mono font-bold">{typeof total === "number" ? total : "—"}</span>
+            {modifier !== 0 && (
+              <span className="text-xs text-muted-foreground">({formatModifier(modifier)})</span>
+            )}
           </div>
-          <Button onClick={handleRoll} disabled={!dicePool.length || isRolling}>
-            {isRolling ? "Rolling..." : "Roll"}
-          </Button>
         </div>
+        <Button onClick={handleRoll} disabled={!dicePool.length || isRolling} size="sm">
+          {isRolling ? "Rolling..." : "Roll"}
+        </Button>
+      </div>
 
+      {/* Last Roll Results */}
+      {hasResults && (
         <div className="space-y-1">
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">Last roll</p>
-          {hasResults ? (
-            <div className="flex flex-wrap gap-2">
-              {results.map((result) => (
-                <div
-                  key={result.id}
-                  className="rounded-lg border border-border/60 bg-background px-3 py-1 text-sm font-medium"
-                >
-                  d{result.sides} → {result.value}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">Roll the pool to see individual results.</p>
-          )}
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">Last roll breakdown</p>
+          <div className="flex flex-wrap gap-1.5">
+            {results.map((result) => (
+              <div
+                key={result.id}
+                className="rounded-md border border-border/60 bg-background px-2 py-0.5 text-xs font-medium"
+              >
+                d{result.sides} → {result.value}
+              </div>
+            ))}
+          </div>
         </div>
+      )}
 
+      {/* Roll History (collapsible) */}
+      {history.length > 0 && (
         <div className="space-y-2">
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-xs uppercase tracking-wide text-muted-foreground">Roll history</p>
-            {onClearLogs && history.length ? (
-              <Button variant="ghost" size="sm" onClick={handleClearLogs} disabled={isClearing}>
-                {isClearing ? "Clearing..." : "Clear logs"}
-              </Button>
-            ) : null}
-          </div>
-          {history.length ? (
+          <button
+            type="button"
+            className="flex w-full items-center justify-between text-xs uppercase tracking-wide text-muted-foreground hover:text-foreground"
+            onClick={() => setHistoryOpen((prev) => !prev)}
+          >
+            <span>Roll history ({history.length})</span>
+            {historyOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </button>
+          {historyOpen && (
             <div className="space-y-2">
-              {history.map((log, index) => (
-                <div
-                  key={log.id}
-                  className="rounded-xl border border-border/60 bg-background/80 p-3 text-sm"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs uppercase tracking-wide text-muted-foreground">
-                    <span>Roll {index + 1}</span>
-                    <span>{new Date(log.createdAt).toLocaleString()}</span>
-                  </div>
-                  <div className="mt-2 text-sm font-semibold">
-                    Total {log.total} (modifier {formatModifier(log.modifier)})
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {formatResultsSummary(log.results)}
-                  </div>
+              {onClearLogs && (
+                <div className="flex justify-end">
+                  <Button variant="ghost" size="sm" onClick={handleClearLogs} disabled={isClearing}>
+                    {isClearing ? "Clearing..." : "Clear all"}
+                  </Button>
                 </div>
-              ))}
+              )}
+              <div className="max-h-48 space-y-1.5 overflow-auto">
+                {history.map((log, index) => (
+                  <div
+                    key={log.id}
+                    className="rounded-lg border border-border/60 bg-background/80 p-2 text-xs"
+                  >
+                    <div className="flex items-center justify-between text-muted-foreground">
+                      <span>Roll {history.length - index}</span>
+                      <span>{new Date(log.createdAt).toLocaleTimeString()}</span>
+                    </div>
+                    <div className="mt-1 font-semibold">
+                      Total: {log.total} ({formatModifier(log.modifier)})
+                    </div>
+                    <div className="text-muted-foreground">
+                      {formatResultsSummary(log.results)}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">Logged rolls will appear here.</p>
           )}
         </div>
-      </WidgetBody>
-    </WidgetSurface>
+      )}
+    </div>
   );
 };

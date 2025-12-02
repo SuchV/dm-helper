@@ -312,10 +312,6 @@ const NotesWidget = ({ widgetId }: NotesWidgetProps) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <p>Click a card to jump into edit mode.</p>
-      </div>
-
       <NoteGrid>
         {notes.map((note) => {
           const isActive = isEditorOpen && note.id === activeNoteId;

@@ -50,7 +50,7 @@ export const useDiceRollerWidgetState = (widgetId: string) => {
   return [storedState, updateState] as const;
 };
 
-export type PdfViewerWidgetStateHookResult = readonly [
+type PdfViewerWidgetStateHookResult = readonly [
   PdfViewerWidgetState | undefined,
   (updater: (prev: PdfViewerWidgetState) => PdfViewerWidgetState) => void,
 ];

@@ -15,8 +15,11 @@
   ],
   "scripts": {
     "build": "turbo build",
-    "clean": "git clean -xdf node_modules",
-    "clean:workspaces": "turbo clean",
+    "clean": "git clean -xdf node_modules .turbo",
+    "clean:cache": "rimraf .turbo node_modules/.cache apps/**/.next apps/**/.turbo packages/**/.turbo packages/**/dist",
+    "clean:all": "rimraf .turbo node_modules apps/**/node_modules packages/**/node_modules apps/**/.next packages/**/dist packages/**/.turbo apps/**/.turbo tooling/**/node_modules",
+    "knip": "knip",
+    "knip:fix": "knip --fix",
     "db:types": "supabase gen types typescript --local > supabase/src/types.gen.ts",
     "db:reset": "supabase db reset && pnpm db:types && pnpm format:fix",
     "db:test": "turbo db:test",
@@ -40,12 +43,10 @@
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
-    "@turbo/gen": "catalog:",
-    "husky": "^9.0.11",
     "knip": "^5.18.0",
-    "lint-staged": "^15.2.2",
     "prettier": "catalog:",
-    "supports-color": "8.1.1",
+    "rimraf": "^6.0.1",
+    "supabase": "^1.223.10",
     "turbo": "catalog:",
     "typescript": "catalog:"
   },

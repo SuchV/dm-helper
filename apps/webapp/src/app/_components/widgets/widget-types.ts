@@ -76,7 +76,7 @@ export interface WidgetIdsByType {
   "pdf-viewer": string[];
 }
 
-export type WidgetNoteRecord = WidgetInstanceWithState["notes"][number];
+type WidgetNoteRecord = WidgetInstanceWithState["notes"][number];
 
 export type GameClockWidgetState = Pick<GameClockState, "gameTime" | "gameDate" | "weekDay">;
 
@@ -95,7 +95,7 @@ export interface NotesWidgetState {
   notes: NotesWidgetNote[];
 }
 
-export interface DiceRollLogEntry {
+interface DiceRollLogEntry {
   id: string;
   modifier: number;
   total: number;
@@ -107,7 +107,7 @@ export interface DiceRollerWidgetState {
   logs: DiceRollLogEntry[];
 }
 
-export interface PdfViewerBookmarkState {
+interface PdfViewerBookmarkState {
   id: string;
   label: string;
   pageNumber: number;
@@ -116,7 +116,7 @@ export interface PdfViewerBookmarkState {
   createdAt: string;
 }
 
-export interface PdfViewerTabState {
+interface PdfViewerTabState {
   id: string;
   title: string;
   storageKey: string;

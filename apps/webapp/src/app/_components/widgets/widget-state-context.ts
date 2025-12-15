@@ -8,7 +8,7 @@ import type {
   WidgetStateBundle,
 } from "./widget-types";
 
-export interface WidgetStateContextValue {
+interface WidgetStateContextValue {
   state: WidgetStateBundle;
   setGameClockState: (widgetId: string, next: GameClockWidgetState) => void;
   setNotesState: (

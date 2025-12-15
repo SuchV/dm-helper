@@ -146,7 +146,7 @@ export const removePdfFile = async (storageKey: string): Promise<void> => {
 /**
  * Get storage usage information (for debugging/monitoring)
  */
-export const getStorageInfo = async (): Promise<{ count: number; estimatedSize: number } | null> => {
+const getStorageInfo = async (): Promise<{ count: number; estimatedSize: number } | null> => {
   try {
     const db = await openDatabase();
 

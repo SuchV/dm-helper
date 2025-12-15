@@ -27,9 +27,9 @@
     "next-auth": "beta"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
-    "@repo/tsconfig": "workspace:*"
+    "@repo/tsconfig": "workspace:*",
+    "eslint": "^9.9.0"
   },
   "scripts": {
     "build": "tsc",

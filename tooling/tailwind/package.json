@@ -14,7 +14,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "postcss": "^8.4.41",
     "tailwindcss": "catalog:",
     "tailwindcss-animate": "^1.0.7"
   },

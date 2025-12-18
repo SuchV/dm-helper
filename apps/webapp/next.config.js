@@ -16,7 +16,6 @@ const nextConfig = {
     "@repo/api",
     "@repo/auth",
     "@repo/env/next-env",
-    "@repo/supabase",
     "@repo/ui",
     "@repo/validators",
   ],
@@ -37,17 +36,6 @@ const nextConfig = {
         permanent: false,
       },
     ];
-  },
-
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "cdn.discordapp.com",
-        port: "",
-        pathname: "/**",
-      },
-    ],
   },
 };
 

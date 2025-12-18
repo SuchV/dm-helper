@@ -5,7 +5,6 @@
   "type": "module",
   "dependencies": {
     "@t3-oss/env-nextjs": "^0.12.0",
-    "dotenv-mono": "^1.3.14",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -42,10 +41,6 @@
     "./next-env": {
       "types": "./dist/src/next-env.d.ts",
       "default": "./src/next-env.ts"
-    },
-    "./bot-env": {
-      "types": "./dist/src/bot-env.d.ts",
-      "default": "./src/bot-env.ts"
     }
   }
 }

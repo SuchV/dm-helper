@@ -54,4 +54,4 @@ export const envSchema = {
     process.env.npm_lifecycle_event === "lint",
 };
 
-export const botEnvSchema = z.object(envSchema.server);
+

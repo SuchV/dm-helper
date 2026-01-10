@@ -75,6 +75,7 @@ interface WidgetContainerProps {
   collapsedOverride?: boolean;
   onCollapsedOverride?: (collapsed: boolean) => void;
   isDragging?: boolean;
+  dragHandleProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
 const WidgetContainer = ({
@@ -84,6 +85,7 @@ const WidgetContainer = ({
   collapsedOverride,
   onCollapsedOverride,
   isDragging = false,
+  dragHandleProps,
 }: WidgetContainerProps) => {
   const router = useRouter();
   const removeMutation = api.widget.remove.useMutation({
@@ -136,6 +138,7 @@ const WidgetContainer = ({
       onCollapsedChange={handleCollapsedChange}
       onRemove={handleRemove}
       bodyClassName={bodyClassName}
+      dragHandleProps={dragHandleProps}
     >
       {isDragging && widget.type === "pdf-viewer" ? (
         <div className="flex min-h-[200px] flex-1 flex-col gap-3 p-3">

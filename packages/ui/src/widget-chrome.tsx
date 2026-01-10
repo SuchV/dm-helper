@@ -68,9 +68,22 @@ WidgetDescription.displayName = "WidgetDescription";
 const WidgetToolbar = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("flex items-center gap-1", className)} {...props} />
-));
+>(({ className, onPointerDown, ...props }, ref) => {
+  // Prevent pointer events from starting drag when clicking toolbar buttons
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    onPointerDown?.(e);
+  };
+
+  return (
+    <div 
+      ref={ref} 
+      className={cn("flex items-center gap-1", className)} 
+      onPointerDown={handlePointerDown}
+      {...props} 
+    />
+  );
+});
 WidgetToolbar.displayName = "WidgetToolbar";
 
 const WidgetBody = React.forwardRef<

@@ -1006,8 +1006,8 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
             </div>
           )}
 
-          <div className="flex-1 overflow-hidden rounded border border-border min-h-0 bg-background">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-3 py-2 text-xs text-muted-foreground">
+          <div className="flex flex-1 flex-col overflow-hidden rounded border border-border min-h-0 bg-background">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-3 py-2 text-xs text-muted-foreground shrink-0">
               <div className="flex flex-wrap items-center gap-2">
                 <Button size="icon" variant="ghost" onClick={() => goToPage(-1)} disabled={pageNumber <= 1}>
                   <ChevronLeft className="h-4 w-4" />
@@ -1075,7 +1075,7 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
             <div 
               ref={canvasContainerRef} 
               className={cn(
-                "relative h-full w-full overflow-auto bg-muted/20",
+                "relative flex-1 overflow-auto bg-muted/20",
                 isContentScrollable 
                   ? (isPanning ? "cursor-grabbing" : "cursor-grab")
                   : "flex items-center justify-center"
@@ -1087,10 +1087,7 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
             >
               <canvas 
                 ref={canvasRef} 
-                className={cn(
-                  "pointer-events-none select-none",
-                  !isContentScrollable && "max-h-full"
-                )} 
+                className="pointer-events-none select-none" 
               />
               {isRendering && (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/60">

@@ -317,7 +317,7 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
 
 interface SortableMasonryItemProps {
   widgetId: string;
-  children: React.ReactNode;
+  children: React.ReactElement<{ dragHandleProps?: React.HTMLAttributes<HTMLDivElement> }>;
   className?: string;
   onDimensionChange?: (id: string, size: WidgetDimensions) => void;
 }
@@ -370,6 +370,12 @@ const SortableMasonryItem: React.FC<SortableMasonryItemProps> = ({ widgetId, chi
     opacity: isDragging ? 0 : 1,
   };
 
+  // Combine drag handle attributes and listeners for the header
+  const dragHandleProps = {
+    ...attributes,
+    ...listeners,
+  } as React.HTMLAttributes<HTMLDivElement>;
+
   return (
     <div
       ref={composedRef}
@@ -380,9 +386,9 @@ const SortableMasonryItem: React.FC<SortableMasonryItemProps> = ({ widgetId, chi
         className,
       )}
     >
-      <div ref={measureRef} data-drag-handle {...attributes} {...listeners}>
-          {children}
-        </div>
+      <div ref={measureRef} data-drag-handle>
+        {React.cloneElement(children, { dragHandleProps })}
+      </div>
     </div>
   );
 };

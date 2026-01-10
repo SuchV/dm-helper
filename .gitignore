@@ -60,6 +60,12 @@ dist/
 # github
 .github/
 
+# docx
+*.docx
+
+# mermaid
+*.mermaid
+
 # pdf-worker-mjs
 pdf.worker.min.mjs
 

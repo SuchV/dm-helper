@@ -8,6 +8,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator dbml {
+  provider = "prisma-dbml-generator"
+  output   = "../schema.dbml"
+}
+
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")

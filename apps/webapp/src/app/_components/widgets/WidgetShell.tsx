@@ -31,6 +31,7 @@ interface WidgetShellProps {
   onCollapsedChange?: (collapsed: boolean) => void;
   onRemove?: () => Promise<void> | void;
   bodyClassName?: string;
+  dragHandleProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
 const WidgetShell: React.FC<WidgetShellProps> = ({
@@ -43,6 +44,7 @@ const WidgetShell: React.FC<WidgetShellProps> = ({
   onCollapsedChange,
   onRemove,
   bodyClassName,
+  dragHandleProps,
 }) => {
   const isControlled = collapsedProp !== undefined;
   const [internalCollapsed, setInternalCollapsed] = React.useState(defaultCollapsed);
@@ -87,7 +89,7 @@ const WidgetShell: React.FC<WidgetShellProps> = ({
   return (
     <>
       <WidgetSurface collapsed={collapsed}>
-        <WidgetHeader collapsed={collapsed} aria-expanded={!collapsed}>
+        <WidgetHeader collapsed={collapsed} aria-expanded={!collapsed} {...dragHandleProps}>
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
             <div className="flex items-center gap-2">
               {icon ? <span className="text-muted-foreground">{icon}</span> : null}

@@ -750,16 +750,17 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
 
   return (
     <div className="flex flex-1 min-h-0 flex-col gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-3 pt-3 pb-2 shrink-0">
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="flex items-center gap-3 border-b border-border px-3 pt-3 pb-2 shrink-0">
+        {/* Action buttons - fixed width */}
+        <div className="flex items-center gap-2 shrink-0">
           <Button
             size="sm"
             variant="outline"
             onClick={() => fileInputRef.current?.click()}
             disabled={isLoading}
           >
-            <Upload className="h-4 w-4 mr-1" />
-            Upload
+            <Upload className="h-4 w-4 sm:mr-1" />
+            <span className="hidden sm:inline">Upload</span>
           </Button>
           {activeDoc && (
             <>
@@ -771,8 +772,8 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
                 aria-controls={bookmarkFormOpen ? bookmarkFormContainerId : undefined}
                 aria-pressed={bookmarkFormOpen}
               >
-                <BookmarkPlus className="h-4 w-4 mr-1" />
-                Bookmark
+                <BookmarkPlus className="h-4 w-4 sm:mr-1" />
+                <span className="hidden sm:inline">Bookmark</span>
               </Button>
               <Button
                 size="sm"
@@ -780,8 +781,8 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
                 onClick={() => setSidebarOpen((prev) => !prev)}
                 disabled={!pdfDoc && !hasBookmarks}
               >
-                <LayoutList className="h-4 w-4 mr-1" />
-                {sidebarOpen ? "Hide Panel" : "Show Panel"}
+                <LayoutList className="h-4 w-4 sm:mr-1" />
+                <span className="hidden sm:inline">{sidebarOpen ? "Hide" : "Panel"}</span>
               </Button>
             </>
           )}
@@ -794,24 +795,33 @@ export const IframePdfViewer: React.FC<IframePdfViewerProps> = ({
           />
         </div>
 
+        {/* Document tabs - scrollable */}
         {documents.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {documents.map((doc) => (
-              <div
-                key={doc.id}
-                className={cn(
-                  "group flex items-center gap-1 rounded border px-2 py-1 text-xs transition-colors",
-                  doc.id === activeDocumentId ? "border-primary bg-primary/10" : "border-border hover:bg-muted/50"
-                )}
-              >
-                <button className="text-left" onClick={() => onSelectDocument(doc.id)}>
-                  {doc.title}
-                </button>
-                <Button size="sm" variant="ghost" className="h-4 w-4 p-0" onClick={() => onRemoveDocument(doc.id)}>
-                  <X className="h-3 w-3" />
-                </Button>
-              </div>
-            ))}
+          <div 
+            className="flex-1 min-w-0 overflow-x-auto"
+            style={{
+              scrollbarWidth: "thin",
+              scrollbarColor: "hsl(var(--border)) transparent",
+            }}
+          >
+            <div className="flex items-center gap-2">
+              {documents.map((doc) => (
+                <div
+                  key={doc.id}
+                  className={cn(
+                    "group flex items-center gap-1 rounded border px-2 py-1 text-xs transition-colors whitespace-nowrap shrink-0",
+                    doc.id === activeDocumentId ? "border-primary bg-primary/10" : "border-border hover:bg-muted/50"
+                  )}
+                >
+                  <button className="text-left max-w-[120px] truncate" onClick={() => onSelectDocument(doc.id)}>
+                    {doc.title}
+                  </button>
+                  <Button size="sm" variant="ghost" className="h-4 w-4 p-0 shrink-0" onClick={() => onRemoveDocument(doc.id)}>
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

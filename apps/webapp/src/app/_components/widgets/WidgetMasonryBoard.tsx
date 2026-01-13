@@ -169,18 +169,18 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
   const handleDragEnd = React.useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
+      setActiveId(null);
+      setOverlaySize(null);
+      
       if (!over || active.id === over.id) {
-        setActiveId(null);
-        setOverlaySize(null);
         return;
       }
 
       const currentOrder = orderedIdsRef.current;
       const oldIndex = currentOrder.indexOf(active.id as string);
       const newIndex = currentOrder.indexOf(over.id as string);
+      
       if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) {
-        setActiveId(null);
-        setOverlaySize(null);
         return;
       }
 
@@ -188,8 +188,6 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
       setOrderedIds(nextOrder);
       orderedIdsRef.current = nextOrder;
       persistOrder(nextOrder);
-      setActiveId(null);
-      setOverlaySize(null);
     },
     [persistOrder],
   );
@@ -269,6 +267,7 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
           style={{
             gridAutoRows: `${ROW_HEIGHT_PX}px`,
             gap: `${ROW_GAP_PX}px`,
+            isolation: "isolate", // Create stacking context to prevent z-index bleed
           }}
         >
           {orderedWidgets.map((widget) => {
@@ -295,11 +294,15 @@ const WidgetMasonryBoard: React.FC<WidgetMasonryBoardProps> = ({ widgets }) => {
           })}
         </div>
       </SortableContext>
-      <DragOverlay dropAnimation={{ duration: 180, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }}>
+      <DragOverlay dropAnimation={{ duration: 200, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }}>
         {activeWidget ? (
           <div
             className="pointer-events-none"
-            style={overlaySize ? { width: overlaySize.width, maxWidth: "100%" } : undefined}
+            style={{
+              ...(overlaySize ? { width: overlaySize.width, maxWidth: "100%" } : {}),
+              transform: "scale(1.02) rotate(1deg)",
+              filter: "drop-shadow(0 20px 40px rgba(0, 0, 0, 0.2))",
+            }}
           >
             <WidgetContainer
               widget={activeWidget}
@@ -342,6 +345,10 @@ const SortableMasonryItem: React.FC<SortableMasonryItemProps> = ({ widgetId, chi
   React.useEffect(() => {
     if (!measuredNode) return;
 
+    let rafId: number | null = null;
+    let lastMeasureTime = 0;
+    const THROTTLE_MS = 100; // Throttle measurements to prevent slowdowns
+
     const handleMeasurement = (rect: DOMRectReadOnly) => {
       setRowSpan((prev) => {
         const next = computeRowSpan(rect.height);
@@ -353,21 +360,34 @@ const SortableMasonryItem: React.FC<SortableMasonryItemProps> = ({ widgetId, chi
     handleMeasurement(measuredNode.getBoundingClientRect());
 
     const observer = new ResizeObserver((entries) => {
+      const now = Date.now();
+      if (now - lastMeasureTime < THROTTLE_MS) return;
+      lastMeasureTime = now;
+
       for (const entry of entries) {
         if (entry.target !== measuredNode) continue;
-        handleMeasurement(entry.contentRect);
+        // Use RAF to batch measurements and avoid layout thrashing
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          handleMeasurement(entry.contentRect);
+          rafId = null;
+        });
       }
     });
 
     observer.observe(measuredNode);
-    return () => observer.disconnect();
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      observer.disconnect();
+    };
   }, [measuredNode, onDimensionChange, widgetId]);
 
   const style: React.CSSProperties = {
     gridRowEnd: `span ${rowSpan}`,
     transform: stringifyTransform(transform),
     transition,
-    opacity: isDragging ? 0 : 1,
+    opacity: isDragging ? 0.4 : 1,
+    filter: isDragging ? "grayscale(0.5) blur(1px)" : undefined,
   };
 
   // Combine drag handle attributes and listeners for the header
@@ -381,8 +401,7 @@ const SortableMasonryItem: React.FC<SortableMasonryItemProps> = ({ widgetId, chi
       ref={composedRef}
       style={style}
       className={cn(
-        "self-start rounded-2xl",
-        isDragging && "z-20 opacity-90",
+        "relative self-start rounded-2xl",
         className,
       )}
     >

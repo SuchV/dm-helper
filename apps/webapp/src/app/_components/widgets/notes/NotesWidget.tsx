@@ -380,7 +380,7 @@ const NotesWidget = ({ widgetId }: NotesWidgetProps) => {
             className="max-w-3xl overflow-hidden rounded-3xl border border-border/70 bg-card p-0 shadow-2xl"
             aria-describedby={undefined}
           >
-            <div className="border-b border-border/60 bg-gradient-to-r from-muted/50 via-card to-muted/40 px-6 py-4">
+            <div className="border-b border-border/60 bg-muted/40 px-6 py-4">
               <DialogHeader className="gap-1 text-left">
                 <DialogTitle className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   Editing note

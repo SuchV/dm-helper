@@ -1,8 +1,25 @@
 # DM Helper
 
-DM Helper is a web-based dashboard for Tabletop RPG (TTRPG) Game Masters.
+DM Helper is a full-stack web application for Tabletop RPG (TTRPG) Game Masters.
 
 It provides a widget-driven workspace to track in-game time, organize session notes, roll dice, and reference PDFs in one place with per-user persisted state.
+
+Built to demonstrate practical product engineering: typed API design, authenticated multi-entity data modeling, and clean UI composition in a modern monorepo.
+
+## Product Preview
+
+<p align="center">
+  <img src="docs/screenshots/dashboard-overview.png" alt="DM Helper dashboard overview" width="100%" />
+</p>
+<p align="center"><em>Main dashboard with notes, PDF reference, game clock, and dice roller widgets active in a single GM workspace.</em></p>
+
+| Game Clock | Notes |
+|---|---|
+| <img src="docs/screenshots/game-clock-widget.png" alt="Game Clock widget" width="100%" /><br/><sub>Tracks in-world date, weekday, and time for campaign continuity.</sub> | <img src="docs/screenshots/notes-widget.png" alt="Notes widget" width="100%" /><br/><sub>Session note capture with ordering and pinning for fast prep.</sub> |
+
+| Dice Roller | PDF Viewer |
+|---|---|
+| <img src="docs/screenshots/dice-roller-widget.png" alt="Dice Roller widget" width="100%" /><br/><sub>Roll history and transparent outcome tracking in-session.</sub> | <img src="docs/screenshots/pdf-viewer-widget.png" alt="PDF Viewer widget" width="100%" /><br/><sub>Tabbed rulebook/reference viewing with bookmarks.</sub> |
 
 ## Features
 
@@ -12,6 +29,14 @@ It provides a widget-driven workspace to track in-game time, organize session no
 - **Dice Roller** with roll history logs
 - **PDF Viewer** with tabs, bookmarks, and reading state
 - **Authenticated user workspaces** (Google OAuth + credentials)
+
+## Portfolio Highlights
+
+- **Full-stack architecture:** Next.js App Router frontend with tRPC end-to-end typed procedures
+- **Data modeling:** Prisma + SQLite schema with user-scoped relational entities per widget domain
+- **Authentication:** NextAuth integration with OAuth and credentials providers
+- **Monorepo engineering:** pnpm workspaces + Turborepo with shared UI, API, env, and validator packages
+- **Product UX:** Modular widget dashboard designed for real session workflow, not isolated demos
 
 ## Tech Stack
 
@@ -116,20 +141,6 @@ pnpm --filter @repo/db run db:seed
   - `notes`
   - `dice-roller`
   - `pdf-viewer`
-
-## Screenshots
-
-| Dashboard | Game Clock |
-|---|---|
-| <img src="docs/screenshots/dashboard-overview.png" alt="Dashboard overview" width="100%" /><br/><sub>Main GM workspace showing the widget-based dashboard layout and session controls.</sub> | <img src="docs/screenshots/game-clock-widget.png" alt="Game Clock widget" width="100%" /><br/><sub>Tracks in-world date, weekday, and time to keep campaign pacing consistent.</sub> |
-
-| Notes | Dice Roller |
-|---|---|
-| <img src="docs/screenshots/notes-widget.png" alt="Notes widget" width="100%" /><br/><sub>Session note management with quick capture, ordering, and pinning for priority information.</sub> | <img src="docs/screenshots/dice-roller-widget.png" alt="Dice Roller widget" width="100%" /><br/><sub>Integrated dice rolling with stored roll history for transparent outcomes during play.</sub> |
-
-| PDF Viewer |
-|---|
-| <img src="docs/screenshots/pdf-viewer-widget.png" alt="PDF Viewer widget" width="100%" /><br/><sub>In-app rules reference with tabbed documents and bookmarks for fast lookup.</sub> |
 
 ## Documentation
 

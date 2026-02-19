@@ -4,12 +4,19 @@ import webpack from "webpack";
 
 const jiti = _jiti(fileURLToPath(import.meta.url));
 
+const allowedDevOrigins = process.env.ALLOWED_DEV_ORIGINS
+  ? process.env.ALLOWED_DEV_ORIGINS.split(",")
+      .map((origin) => origin.trim())
+      .filter(Boolean)
+  : undefined;
+
 // Import env files to validate at build time. Use jiti so we can load .ts files in here.
 jiti("@repo/env/next-env");
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  allowedDevOrigins,
 
   /** Enables hot reloading for local packages without a build step */
   transpilePackages: [

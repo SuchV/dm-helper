@@ -13,7 +13,7 @@ import { env } from "@repo/env/next-env";
 import { getUser } from "./credentials";
 
 export const authConfig: NextAuthConfig = {
-  debug: env.NODE_ENV === "development",
+  debug: process.env.AUTH_DEBUG === "true",
   providers: [
     Google({
       clientId: env.GOOGLE_CLIENT_ID,
